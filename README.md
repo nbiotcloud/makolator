@@ -8,4 +8,7 @@
 
 # Extended Mako Templates for Python
 
-TODO
+* [Documentation](https://makolator.readthedocs.io/en/latest/)
+* [PyPI](https://pypi.org/project/makolator/)
+* [Sources](https://github.com/nbiotcloud/makolator)
+* [Issues](https://github.com/nbiotcloud/makolator/issues)

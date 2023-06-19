@@ -21,39 +21,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Data Model."""
+"""Datamodel Testing."""
+
+from makolator import Datamodel
+
+# pylint: disable=use-implicit-booleaness-not-comparison
 
 
-class Datamodel:
-    # pylint: disable=too-few-public-methods
+def test_datamodel():
+    """Basic Testing on Datamodel."""
+    datamodel = Datamodel()
+    assert datamodel.__dict__ == {}
+    assert str(datamodel) == "Datamodel()"
+    assert repr(datamodel) == "Datamodel()"
 
-    """
-    Datamodel.
 
-    A simple container for all data attributes.
-    Add attributes on your needs. That's it.
+def test_datamodel_init():
+    """Initialize Data Model."""
+    datamodel = Datamodel(a="bc", d=4)
+    assert datamodel.__dict__ == {"a": "bc", "d": 4}
+    text = "Datamodel(a='bc', d=4)"
+    assert str(datamodel) == text
+    assert repr(datamodel) == text
 
-    >>> Datamodel()
-    Datamodel()
-    >>> Datamodel(abc='def', item=4)
-    Datamodel(abc='def', item=4)
-    >>> datamodel = Datamodel(abc='def')
-    >>> datamodel
-    Datamodel(abc='def')
-    >>> datamodel.item=4
-    >>> datamodel
-    Datamodel(abc='def', item=4)
-    """
 
-    def __init__(self, **kwargs):
-        """Datamodel."""
-        self.__dict__.update(kwargs)
-
-    def __repr__(self):
-        kwargs = ", ".join(f"{key}={value!r}" for key, value in self.__dict__.items())
-        return f"{self.__class__.__name__}({kwargs})"
-
-    def __eq__(self, other):
-        if self.__class__ == other.__class__:
-            return self.__dict__ == other.__dict__
-        return NotImplemented
+def test_datamodel_update():
+    """Update Datamodel Later."""
+    datamodel = Datamodel(a="bc")
+    assert datamodel.__dict__ == {"a": "bc"}
+    datamodel.data = 4
+    text = "Datamodel(a='bc', data=4)"
+    assert datamodel.__dict__ == {"a": "bc", "data": 4}
+    assert str(datamodel) == text
+    assert repr(datamodel) == text

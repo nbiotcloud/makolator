@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+from pathlib import Path
 
 from makolator import Config, Existing
 
@@ -34,3 +35,35 @@ def test_config():
     assert config.existing == Existing.KEEP_TIMESTAMP
     assert config.diffout is None
     assert config.verbose is False
+    text = (
+        "Config(template_paths=[], "
+        "existing=<Existing.KEEP_TIMESTAMP: 'keep_timestamp'>, "
+        "diffout=None, "
+        "verbose=False, "
+        "template_marker='MAKO TEMPLATE', "
+        "inplace_marker='GENERATE INPLACE', "
+        "cache_path=None)"
+    )
+    assert str(config) == text
+    assert repr(config) == text
+
+
+def test_config_modified():
+    """Modified Configuration"""
+    config = Config(template_paths=[Path("foo"), Path("bar")], existing=Existing.KEEP, diffout=print, verbose=True)
+
+    assert config.template_paths == [Path("foo"), Path("bar")]
+    assert config.existing == Existing.KEEP
+    assert config.diffout is print
+    assert config.verbose is True
+    text = (
+        "Config(template_paths=[PosixPath('foo'), PosixPath('bar')], "
+        "existing=<Existing.KEEP: 'keep'>, "
+        "diffout=<built-in function print>, "
+        "verbose=True, "
+        "template_marker='MAKO TEMPLATE', "
+        "inplace_marker='GENERATE INPLACE', "
+        "cache_path=None)"
+    )
+    assert str(config) == text
+    assert repr(config) == text

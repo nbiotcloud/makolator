@@ -24,7 +24,7 @@
 """Configuration Handling."""
 
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from attrs import define
 from outputfile import Existing
@@ -37,9 +37,22 @@ class Config:
     # pylint: disable=too-few-public-methods
 
     template_paths: List[Path] = []
+    """Default Search Paths for Templates."""
+
     existing: Existing = Existing.KEEP_TIMESTAMP
-    diffout: Callable[[str], None] = None
+    """Behaviour in case of existing files."""
+
+    diffout: Optional[Callable[[str], None]] = None
+    """``print`` function to handle differential output on changed files."""
+
     verbose: bool = False
+    """Enable Verbose Output."""
+
     template_marker: str = "MAKO TEMPLATE"
+    """Search marker for template code within output file."""
+
     inplace_marker: str = "GENERATE INPLACE"
-    cache_path: Path = None
+    """Search marker for output code within output file."""
+
+    cache_path: Optional[Path] = None
+    """Cache Directory."""

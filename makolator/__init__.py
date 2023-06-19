@@ -30,4 +30,6 @@ from outputfile import Existing
 
 from .config import Config
 from .datamodel import Datamodel
+from .escape import tex
+from .exceptions import MakolatorError
 from .makolator import Makolator

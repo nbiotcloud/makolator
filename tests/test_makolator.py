@@ -22,14 +22,21 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+import time
+from pathlib import Path
 
-from makolator import Config, Datamodel, Existing, Makolator
+from pytest import raises
 
-from .util import chdir
+from makolator import Config, Datamodel, Existing, Makolator, MakolatorError
+
+from .util import assert_gen, chdir, cmp_mtime
+
+TESTDATA = Path(__file__).parent / "testdata"
+PAUSE = 0.1
 
 
 def test_makolator():
-    """Basic Testing on Makolator."""
+    """Basic Testing On Makolator."""
     mkl = Makolator()
     assert mkl.config == Config()
     assert mkl.datamodel == Datamodel()
@@ -52,7 +59,7 @@ def test_outputfile(tmp_path, capsys):
 
 
 def test_outputfile_keep(tmp_path, capsys):
-    """Test Outputfile with Keep"""
+    """Test Outputfile With Keep"""
     mkl = Makolator()
     mkl.config.existing = Existing.KEEP
     with chdir(tmp_path):
@@ -66,3 +73,85 @@ def test_outputfile_keep(tmp_path, capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == ""
+
+
+def test_render_abs(tmp_path):
+    """Render File With Absolute Path."""
+    mklt = Makolator()
+    mklt.render([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_abs")
+
+
+def test_render_abs_template_not_found(tmp_path):
+    """Template File With Absolute Path Not Found."""
+    mklt = Makolator()
+    with raises(MakolatorError, match="None of the templates.*"):
+        mklt.render([TESTDATA / "test.tt.mako"], tmp_path / "test.txt")
+
+
+def test_render_rel(tmp_path):
+    """Render File With Relative Path."""
+    mklt = Makolator(config=Config(template_paths=[TESTDATA]))
+    mklt.render([Path("test.txt.mako")], tmp_path / "test.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_rel")
+
+
+def test_render_rel_sub(tmp_path):
+    """Render File With Relative Path Sub."""
+    mklt = Makolator(config=Config(template_paths=[TESTDATA.parent]))
+    mklt.render([Path(TESTDATA.name) / "test.txt.mako"], tmp_path / "test.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_rel_sub")
+
+
+def test_render_rel_sub_not_found(tmp_path):
+    """Render File With Relative Path Sub."""
+    mklt = Makolator(config=Config(template_paths=[TESTDATA.parent]))
+    with raises(MakolatorError, match="None of the templates.*"):
+        mklt.render([Path(TESTDATA.name) / "test.tt.mako"], tmp_path / "test.txt")
+
+
+def test_render_datamodel(tmp_path):
+    """Use Datamodel Statement In Templates."""
+    mklt = Makolator()
+    mklt.datamodel.item = "myitem"
+    mklt.render([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_datamodel")
+
+
+def test_render_datamodel_timestamp(tmp_path):
+    """Keep Timestamp by Default."""
+    mklt = Makolator()
+    outfile = tmp_path / "test.txt"
+    mklt.render([TESTDATA / "test.txt.mako"], outfile)
+
+    mtime = outfile.stat().st_mtime
+
+    time.sleep(PAUSE)
+    mklt.render([TESTDATA / "test.txt.mako"], outfile)
+
+    assert cmp_mtime(mtime, outfile.stat().st_mtime)
+
+
+def test_create_dir(tmp_path):
+    """Create Output Directory Structure If It Does Not Exist."""
+    mklt = Makolator()
+    outfile = tmp_path / "sub" / "test.txt"
+    mklt.render([TESTDATA / "test.txt.mako"], outfile)
+
+
+def test_cachepath_default(tmp_path):
+    """Default Cache Path."""
+    mklt = Makolator()
+    cachepath = mklt.cache_path
+    assert cachepath.exists()
+    assert len(tuple(cachepath.glob("*"))) == 0
+    mklt.render([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
+
+
+def test_cachepath_explicit(tmp_path):
+    """Explicit Cache Path."""
+    mklt = Makolator(config=Config(cache_path=tmp_path / "cache"))
+    cachepath = mklt.cache_path
+    assert cachepath.exists()
+    assert len(tuple(cachepath.glob("*"))) == 0
+    mklt.render([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")

@@ -1,0 +1,3 @@
+DEBUG   makolator.makolator render_file_inlplace(['PRJROOT/tests/testdata/inplace.txt.mako'], PosixPath('TMP/inplace.txt'))
+DEBUG   makolator.makolator _render_inplace('PRJROOT/tests/testdata/inplace.txt.mako', PosixPath('TMP/inplace.txt'))
+WARNING makolator.makolator TMP/inplace.txt:3 Indent of END tag 0 does not match indent of BEGIN tag 2.

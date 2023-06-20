@@ -20,6 +20,7 @@ from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from mako.template import Template
 from outputfile import Existing, open_
+from uniquer import uniquelist
 
 from .config import Config
 from .datamodel import Datamodel
@@ -235,12 +236,6 @@ class Makolator:
                 f"{info.filepath!s}:{info.lineno} Function '{info.funcname}' " f"invocation failed. {exc!r}. {debug}"
             ) from exc
 
-    def _create_template_from_str(self, searchpaths: List[Path], template: Optional[str] = None) -> Template:
-        if template is None:
-            template = sys.stdin.read()
-        lookup = self._create_template_lookup(searchpaths)
-        return Template(template, lookup=lookup)
-
     def _create_template_from_filepaths(self, template_filepaths: List[Path], searchpaths: List[Path]) -> Template:
         searchpaths = [filepath.parent for filepath in template_filepaths] + searchpaths
         template_filepath = self._find_file(template_filepaths, searchpaths)
@@ -248,20 +243,20 @@ class Makolator:
             msg = f"None of the templates {_humanify(template_filepaths)} found at {_humanify(searchpaths)}."
             raise MakolatorError(msg)
         lookup = self._create_template_lookup([template_filepath.parent] + searchpaths)
-        return Template(filename=str(template_filepath), lookup=lookup)
+        return lookup.get_template(template_filepath.name)
 
     def _create_template_lookup(self, searchpaths: List[Path]) -> TemplateLookup:
         cache_path = self.cache_path
 
-        def get_module_filename(filepath, uri):
+        def get_module_filename(filepath: str, uri: str):
             # pylint: disable=unused-argument
             hash_ = hashlib.sha256()
-            hash_.update(bytes(str(filepath), encoding="utf-8"))
+            hash_.update(bytes(filepath, encoding="utf-8"))
             ident = hash_.hexdigest()
-            return cache_path / f"{filepath.name}_{ident}.py"
+            return cache_path / f"{Path(filepath).name}_{ident}.py"
 
         return TemplateLookup(
-            directories=[str(item) for item in searchpaths],
+            directories=uniquelist([str(item.resolve()) for item in searchpaths]),
             cache_dir=self.cache_path,
             input_encoding="utf-8",
             output_encoding="utf-8",

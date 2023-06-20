@@ -1,0 +1,6 @@
+-- GENERATE INPLACE BEGIN afunc("foo")
+inplace.txt
+pos=foo
+
+  -- GENERATE INPLACE END afunc
+inbetween

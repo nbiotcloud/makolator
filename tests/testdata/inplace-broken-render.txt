@@ -1,0 +1,4 @@
+-- GENERATE INPLACE BEGIN brokenfunc()
+obsolete
+-- GENERATE INPLACE END brokenfunc
+inbetween

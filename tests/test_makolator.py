@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+import re
 import time
 from pathlib import Path
 from shutil import copyfile
@@ -196,6 +197,22 @@ def test_render_file_context(tmp_path):
     assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_file_context")
 
 
+def test_render_file_hier_base(tmp_path):
+    """Render File Hierarchy - base."""
+    mklt = Makolator()
+    mklt.config.template_paths = [TESTDATA]
+    mklt.render_file([Path("base.txt.mako")], tmp_path / "base.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_file_hier_base")
+
+
+def test_render_file_hier_impl(tmp_path):
+    """Render File Hierarchy - impl."""
+    mklt = Makolator()
+    mklt.config.template_paths = [TESTDATA]
+    mklt.render_file([Path("impl.txt.mako")], tmp_path / "impl.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_file_hier_impl")
+
+
 def test_render_file_inplace(tmp_path):
     """Render File Inplace."""
     filepath = tmp_path / "inplace.txt"
@@ -203,3 +220,59 @@ def test_render_file_inplace(tmp_path):
     mklt = Makolator()
     mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath)
     assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_file_inplace")
+
+
+def test_render_file_inplace_indent(tmp_path, caplog):
+    """Render File Inplace Indent."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-indent.txt", filepath)
+    mklt = Makolator()
+    mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(
+        tmp_path, TESTDATA / "test_makolator" / "test_render_file_inplace_indent", caplog=caplog, tmp_path=tmp_path
+    )
+
+
+def test_render_file_inplace_broken_arg(tmp_path):
+    """Rarger File Inplace with broken arg."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-broken-arg.txt", filepath)
+    mklt = Makolator()
+    with raises(MakolatorError, match=re.escape(r"SyntaxError in arguments: ")):
+        mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+
+
+def test_render_file_inplace_broken_end(tmp_path):
+    """Render File Inplace with broken end."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-broken-end.txt", filepath)
+    mklt = Makolator()
+    with raises(MakolatorError, match=re.escape(r"without END tag.")):
+        mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+
+
+def test_render_file_inplace_broken_render(tmp_path):
+    """Render File Inplace with broken render."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-broken-render.txt", filepath)
+    mklt = Makolator()
+    with raises(MakolatorError, match=re.escape(r"ZeroDivisionError: division by zero")):
+        mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+
+
+def test_render_file_inplace_unknown(tmp_path):
+    """Render File Inplace with missing func."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-unknown.txt", filepath)
+    mklt = Makolator()
+    with raises(MakolatorError, match=re.escape(r"Function 'bfunc' is not found in template")):
+        mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+
+
+def test_render_file_inplace_unknown_ignore(tmp_path):
+    """Render File Inplace with missing func."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-unknown.txt", filepath)
+    mklt = Makolator()
+    mklt.render_file_inplace([TESTDATA / "inplace.txt.mako"], filepath, ignore_unknown=True)
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_file_inplace_unknown_ignore")

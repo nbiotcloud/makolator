@@ -1,0 +1,15 @@
+
+impl
+  args: (1,)
+  kwargs: {}
+
+
+impl
+  args: (2,)
+  kwargs: {'b': 3}
+
+
+basefunc
+  args: (4,)
+  kwargs: {'c': 5}
+

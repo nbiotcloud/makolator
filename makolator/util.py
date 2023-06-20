@@ -21,17 +21,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""
-Extended Mako Templates for Python.
+"""Utilities."""
 
-TODO: general introduction
-"""
+from pathlib import Path
 
-# pylint: disable=unused-import
-from outputfile import Existing
+from attrs import mutable
 
-from .config import Config
-from .datamodel import Datamodel
-from .escape import tex
-from .exceptions import MakolatorError
-from .makolator import Makolator
+
+@mutable()
+class _InplaceInfo:
+
+    """Inplace Rendering Context Information."""
+
+    # pylint: disable=too-few-public-methods
+
+    filepath: Path
+    lineno: int
+    indent: str
+    funcname: str
+    args: str

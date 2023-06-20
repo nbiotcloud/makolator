@@ -1,6 +1,7 @@
 """Escape reserved characters."""
 
 import re
+from typing import Optional
 
 __TEX_CONV = {
     "&": r"\&",
@@ -22,7 +23,7 @@ __TEX_CONV = {
 __TEX_REGEX = re.compile("|".join(re.escape(key) for key in sorted(__TEX_CONV.keys(), key=lambda item: -len(item))))
 
 
-def tex(text):
+def tex(text: Optional[str]):
     r"""
     Escape (La)Tex.
 
@@ -31,9 +32,9 @@ def tex(text):
     >>> tex(None)
 
     Args:
-        text (str): tex
+        text: tex
     Returns:
-        (str): escaped string.
+        escaped string.
     """
     if text is None:
         return None

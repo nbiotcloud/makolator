@@ -32,7 +32,11 @@ from outputfile import Existing
 
 @define
 class Config:
-    """Configuration."""
+    """
+    Configuration.
+
+    Container For All Customization Options.
+    """
 
     # pylint: disable=too-few-public-methods
 

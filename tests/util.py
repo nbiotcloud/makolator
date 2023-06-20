@@ -25,6 +25,7 @@
 import contextlib
 import logging
 import os
+import pathlib
 import re
 import shutil
 import subprocess
@@ -34,6 +35,7 @@ from pytest import approx
 LEARN = True
 
 LOGGER = logging.getLogger(__name__)
+PRJROOT = pathlib.Path(__file__).parent.parent
 
 
 @contextlib.contextmanager
@@ -52,7 +54,7 @@ def format_output(result, tmp_path=None):
     text = result.output
     lines = text.split("\n")
     if tmp_path:
-        lines = [replace_path(line, tmp_path, "TMP") for line in lines]
+        lines = [replace_path(replace_path(line, tmp_path, "TMP"), PRJROOT, "PRJROOT") for line in lines]
     return lines
 
 
@@ -60,7 +62,7 @@ def format_logs(caplog, tmp_path=None):
     """Format Logs."""
     lines = [f"{record.levelname:7s} {record.name} {record.message}" for record in caplog.records]
     if tmp_path:
-        lines = [replace_path(line, tmp_path, "TMP") for line in lines]
+        lines = [replace_path(replace_path(line, tmp_path, "TMP"), PRJROOT, "PRJROOT") for line in lines]
     return lines
 
 
@@ -89,6 +91,8 @@ def assert_gen(genpath, refpath, capsys=None, caplog=None, tmp_path=None):
         if tmp_path:
             out = replace_path(out, tmp_path, "TMP")
             err = replace_path(err, tmp_path, "TMP")
+        out = replace_path(out, PRJROOT, "PRJROOT")
+        err = replace_path(err, PRJROOT, "PRJROOT")
         (genpath / "stdout.txt").write_text(out)
         (genpath / "stderr.txt").write_text(err)
     if caplog:

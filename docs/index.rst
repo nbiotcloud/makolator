@@ -1,7 +1,15 @@
 Extended Mako Templates for Python
 ==================================
 
-TODO
+Links
+-----
+
+- `PyPI - Python Package Index <https://pypi.org/project/outputfile/>`_
+- `Source Code <https://github.com/nbiotcloud/outputfile>`_
+- `Issues <https://github.com/nbiotcloud/outputfile/issues>`_
+
+API
+---
 
 .. toctree::
    :maxdepth: 1

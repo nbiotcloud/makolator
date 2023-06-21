@@ -1,4 +1,0 @@
-DEBUG   makolator.makolator render_file(['test.txt.mako'], PosixPath('TMP/test.txt'))
-DEBUG   makolator.makolator _render('PRJROOT/tests/testdata/test.txt.mako', PosixPath('TMP/test.txt'))
-DEBUG   makolator.makolator render_file(['test.txt.mako'], PosixPath('TMP/test.txt'))
-DEBUG   makolator.makolator _render('PRJROOT/tests/testdata/test.txt.mako', PosixPath('TMP/test.txt'))

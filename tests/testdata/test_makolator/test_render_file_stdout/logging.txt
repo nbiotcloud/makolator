@@ -1,2 +1,0 @@
-DEBUG   makolator.makolator render_file(['test.txt.mako'], None)
-DEBUG   makolator.makolator _render('PRJROOT/tests/testdata/test.txt.mako', None)

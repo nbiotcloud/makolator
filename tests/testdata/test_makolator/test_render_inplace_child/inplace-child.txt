@@ -1,0 +1,12 @@
+-- GENERATE INPLACE BEGIN afunc("foo")
+obsolete
+-- GENERATE INPLACE END afunc
+
+GENERATE INPLACE BEGIN bfunc("foo")
+bfunc - start
+inplace-child.txt
+pos=foo
+
+
+bfunc - end
+GENERATE INPLACE END bfunc

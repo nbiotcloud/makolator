@@ -1,0 +1,7 @@
+-- GENERATE INPLACE BEGIN afunc("foo")
+obsolete
+-- GENERATE INPLACE END afunc
+
+GENERATE INPLACE BEGIN bfunc("foo")
+    obsolete
+GENERATE INPLACE END bfunc

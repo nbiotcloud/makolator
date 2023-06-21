@@ -1,0 +1,2 @@
+DEBUG   makolator.makolator render_inplace(['PRJROOT/tests/testdata/inplace.txt.mako'], PosixPath('TMP/inplace.txt'))
+WARNING makolator.makolator TMP/inplace.txt:3 Indent of END tag '  -- GENERATE INPLACE END afunc' does not match indent of BEGIN tag ''.

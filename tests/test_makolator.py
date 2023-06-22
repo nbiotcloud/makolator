@@ -77,11 +77,13 @@ def test_outputfile_keep(tmp_path, capsys):
     assert captured.err == ""
 
 
-def test_render_abs(tmp_path):
+def test_render_abs(tmp_path, caplog, capsys):
     """Render File With Absolute Path."""
     mklt = Makolator()
     mklt.render([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_abs")
+    assert_gen(
+        tmp_path, TESTDATA / "test_makolator" / "test_render_abs", capsys=capsys, caplog=caplog, tmp_path=tmp_path
+    )
 
 
 def test_render_abs_template_not_found(tmp_path):
@@ -91,11 +93,13 @@ def test_render_abs_template_not_found(tmp_path):
         mklt.render([TESTDATA / "test.tt.mako"], tmp_path / "test.txt")
 
 
-def test_render_rel(tmp_path):
+def test_render_rel(tmp_path, caplog, capsys):
     """Render File With Relative Path."""
     mklt = Makolator(config=Config(template_paths=[TESTDATA]))
     mklt.render([Path("test.txt.mako")], tmp_path / "test.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_rel")
+    assert_gen(
+        tmp_path, TESTDATA / "test_makolator" / "test_render_rel", capsys=capsys, caplog=caplog, tmp_path=tmp_path
+    )
 
 
 def test_render_rel_sub(tmp_path):
@@ -213,13 +217,31 @@ def test_render_hier_impl(tmp_path):
     assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_hier_impl")
 
 
-def test_render_inplace(tmp_path):
+def test_render_inplace(tmp_path, capsys, caplog):
     """Render File Inplace."""
     filepath = tmp_path / "inplace.txt"
     copyfile(TESTDATA / "inplace.txt", filepath)
     mklt = Makolator()
     mklt.render_inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_inplace")
+    assert_gen(
+        tmp_path, TESTDATA / "test_makolator" / "test_render_inplace", capsys=capsys, caplog=caplog, tmp_path=tmp_path
+    )
+
+
+def test_render_inplace_disabled(tmp_path, capsys, caplog):
+    """Render File Inplace."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace.txt", filepath)
+    mklt = Makolator()
+    mklt.config.template_marker = None
+    mklt.render_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(
+        tmp_path,
+        TESTDATA / "test_makolator" / "test_render_inplace_disabled",
+        capsys=capsys,
+        caplog=caplog,
+        tmp_path=tmp_path,
+    )
 
 
 def test_render_inplace_indent(tmp_path, caplog):
@@ -245,7 +267,7 @@ def test_render_inplace_broken_end(tmp_path):
     filepath = tmp_path / "inplace.txt"
     copyfile(TESTDATA / "inplace-broken-end.txt", filepath)
     mklt = Makolator()
-    with raises(MakolatorError, match=re.escape(r"without END tag.")):
+    with raises(MakolatorError, match=re.escape(r"without END.")):
         mklt.render_inplace([TESTDATA / "inplace.txt.mako"], filepath)
 
 
@@ -283,3 +305,30 @@ def test_render_inplace_child(tmp_path):
     mklt = Makolator()
     mklt.render_inplace([TESTDATA / "inplace-child.txt.mako"], filepath, ignore_unknown=True)
     assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_inplace_child")
+
+
+def test_render_inplace_mako_only(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-tpl.txt", filepath)
+    mklt = Makolator()
+    mklt.render_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator" / "test_render_inplace_mako_only")
+
+
+def test_render_inplace_mako_disabled(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-tpl.txt", filepath)
+    mklt = Makolator()
+    mklt.config.inplace_marker = None
+    mklt.render_inplace([TESTDATA / "inplace.txt.mako"], filepath)
+
+
+def test_render_inplace_mako_broken(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-tpl-broken.txt", filepath)
+    mklt = Makolator()
+    with raises(MakolatorError, match=re.escape(" BEGIN without END.")):
+        mklt.render_inplace([TESTDATA / "inplace.txt.mako"], filepath)

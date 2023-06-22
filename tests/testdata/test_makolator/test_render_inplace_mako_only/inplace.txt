@@ -1,0 +1,48 @@
+
+
+# MAKO TEMPLATE BEGIN
+# <%def name="myhelper(*args, **kwargs)">\
+# myhelper
+# ${output_filepath.name}
+# args: {args}
+# kwargs: {kwargs}
+# </%def>
+# MAKO TEMPLATE END
+
+# MAKO TEMPLATE BEGIN
+<%def name="other(*args, **kwargs)">\
+other
+${output_filepath.name}
+args: {args}
+kwargs: {kwargs}
+</%def>
+# MAKO TEMPLATE END
+
+    -- GENERATE INPLACE BEGIN afunc("foo")
+    inplace.txt
+    pos=foo
+
+    -- GENERATE INPLACE END afunc
+
+
+GENERATE INPLACE BEGIN myhelper("a", "b", c=4)
+myhelper
+inplace.txt
+args: {args}
+kwargs: {kwargs}
+GENERATE INPLACE END myhelper
+
+    -- GENERATE INPLACE BEGIN myhelper("c", "d", x=4)
+    myhelper
+    inplace.txt
+    args: {args}
+    kwargs: {kwargs}
+    -- GENERATE INPLACE END myhelper
+
+
+GENERATE INPLACE BEGIN other("x", z=4)
+other
+inplace.txt
+args: {args}
+kwargs: {kwargs}
+GENERATE INPLACE END other

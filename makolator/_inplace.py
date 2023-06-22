@@ -26,10 +26,11 @@ import io
 import re
 from logging import Logger
 from pathlib import Path
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
-from attrs import define
+from attrs import define, field
 from mako.exceptions import text_error_template
+from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from mako.template import Template
 
@@ -52,6 +53,16 @@ class InplaceInfo:
 
 
 @define
+class TplInfo:
+
+    """Template Context Information."""
+
+    lineno: int
+    pre: str
+    lines: List[str] = field(factory=list)
+
+
+@define
 class InplaceRenderer:
 
     """Inplace Renderer."""
@@ -63,51 +74,82 @@ class InplaceRenderer:
     ignore_unknown: bool
     context: dict
 
-    def render(self, filepath: Path, outputfile, context: dict):
+    def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):
         """Render."""
-        ibegin = re.compile(rf"(?P<indent>\s*).*{self.inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\).*")
-        inplace = None
+        # We know this is bad code - it is kept as best, but optimized for speed
+        # pylint: disable=too-many-locals,too-many-branches,too-many-nested-blocks
+        inplace_marker = self.inplace_marker
+        ibegin = re.compile(rf"(?P<indent>\s*).*{inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\).*")
+        iinfo = None
+
+        template_marker = self.template_marker
+        tplinfo = None
+        tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN.*")
+        tend = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+END.*")
+        templates = list(self.templates)
 
         with open(filepath, encoding="utf-8") as inputfile:
             inputiter = enumerate(inputfile.readlines(), 1)
             try:
                 while True:
-                    if inplace:
-                        # search for "END <funcname>"
+                    if iinfo:
+                        # search for "INPLACE END <funcname>"
                         while True:
                             lineno, line = next(inputiter)
-                            endmatch = inplace.end.match(line)
+                            endmatch = iinfo.end.match(line)
                             if endmatch:
                                 # fill
-                                self._fill_inplace(filepath, outputfile, inplace, context)
-                                # propagate END tag
+                                self._fill_inplace(filepath, outputfile, iinfo, context)
+                                # propagate INPLACE END tag
                                 outputfile.write(line)
-                                self._check_indent(filepath, lineno, inplace, endmatch.group())
-                                # consume END
-                                inplace = None
+                                self._check_indent(filepath, lineno, iinfo, endmatch.group("indent"))
+                                # consume INPLACE END
+                                iinfo = None
                                 break
+                    elif tplinfo:
+                        # capture TEMPLATE
+                        while True:
+                            lineno, line = next(inputiter)
+                            # propagate
+                            outputfile.write(line)
+                            # search for "INPLACE END"
+                            endmatch = tend.match(line)
+                            if endmatch:
+                                templates.append(Template("".join(tplinfo.lines), lookup=lookup))
+                                tplinfo = None
+                                break
+                            tplinfo.lines.append(line.removeprefix(tplinfo.pre))
                     else:
                         # normal lines
                         while True:
                             lineno, line = next(inputiter)
                             outputfile.write(line)
-                            # search for "BEGIN <funcname>(<args>)"
-                            beginmatch = ibegin.match(line)
-                            if beginmatch:
-                                # consume BEGIN
-                                inplace = self._start_inplace(filepath, lineno, **beginmatch.groupdict())
-                                break
+                            if inplace_marker:
+                                # search for "INPLACE BEGIN <funcname>(<args>)"
+                                beginmatch = ibegin.match(line)
+                                if beginmatch:
+                                    # consume INPLACE BEGIN
+                                    iinfo = self._start_inplace(templates, filepath, lineno, **beginmatch.groupdict())
+                                    break
+                            if template_marker:
+                                # search for "TEMPLATE BEGIN"
+                                beginmatch = tbegin.match(line)
+                                if beginmatch:
+                                    # consume TEMPLATE BEGIN
+                                    tplinfo = TplInfo(lineno, beginmatch.group("pre"))
+                                    break
+
             except StopIteration:
                 pass
-        if inplace:
-            raise MakolatorError(
-                f"{filepath!s}:{inplace.lineno} BEGIN tag " f"{inplace.funcname}({inplace.args})' without END tag."
-            )
+        if iinfo:
+            raise MakolatorError(f"{filepath!s}:{iinfo.lineno} BEGIN {iinfo.funcname}({iinfo.args})' without END.")
+        if tplinfo:
+            raise MakolatorError(f"{filepath!s}:{tplinfo.lineno} BEGIN without END.")
 
     def _start_inplace(
-        self, filepath: Path, lineno: int, indent: str, funcname: str, args: str
+        self, templates: List[Template], filepath: Path, lineno: int, indent: str, funcname: str, args: str
     ) -> Optional[InplaceInfo]:
-        for template in self.templates:
+        for template in templates:
             try:
                 func = template.get_def(funcname)
             except AttributeError:

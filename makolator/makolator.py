@@ -11,7 +11,7 @@ import tempfile
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
-from typing import Generator, List, Optional
+from typing import Generator, List, Optional, Tuple
 
 from attrs import define, field
 from mako.lookup import TemplateLookup
@@ -100,7 +100,10 @@ class Makolator:
             context: Key-Value Pairs pairs forwarded to the template.
         """
         LOGGER.debug("render(%r, %r)", [str(filepath) for filepath in template_filepaths], dest)
-        templates = self._create_templates(template_filepaths, self.config.template_paths)
+        tplfilepaths, lookup = self._create_template_lookup(
+            template_filepaths, self.config.template_paths, required=True
+        )
+        templates = self._create_templates(tplfilepaths, lookup)
         context = context or {}
         if dest is None:
             self._render(next(templates), sys.stdout, None, context)
@@ -133,7 +136,8 @@ class Makolator:
             ignore_unknown: Ignore unknown inplace markers, instead of raising an error.
         """
         LOGGER.debug("render_inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], filepath)
-        templates = tuple(self._create_templates(template_filepaths, self.config.template_paths))
+        tplfilepaths, lookup = self._create_template_lookup(template_filepaths, self.config.template_paths)
+        templates = tuple(self._create_templates(tplfilepaths, lookup))
         config = self.config
         context = context or {}
         inplace = InplaceRenderer(
@@ -141,25 +145,18 @@ class Makolator:
         )
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             context = self._get_render_context(filepath, context or {})
-            inplace.render(filepath, outputfile, context)
+            inplace.render(lookup, filepath, outputfile, context)
 
-    def _create_templates(
-        self, template_filepaths: List[Path], searchpaths: List[Path]
-    ) -> Generator[Template, None, None]:
-        filepaths = list(self._find_files(template_filepaths, searchpaths))
-        lookuppaths = uniquelist([filepath.parent for filepath in filepaths] + searchpaths)
-        lookup = self._create_template_lookup(lookuppaths)
-        found = False
-        for filepath in filepaths:
-            yield lookup.get_template(filepath.name)
-            found = True
-        if template_filepaths and not found:
-            raise MakolatorError(
-                f"None of the templates {_humanify(template_filepaths)} found at {_humanify(searchpaths)}."
-            )
+    def _create_templates(self, tplfilepaths: List[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
+        for tplfilepath in tplfilepaths:
+            yield lookup.get_template(tplfilepath.name)
 
-    def _create_template_lookup(self, searchpaths: List[Path]) -> TemplateLookup:
+    def _create_template_lookup(
+        self, template_filepaths: List[Path], searchpaths: List[Path], required: bool = False
+    ) -> Tuple[List[Path], TemplateLookup]:
         cache_path = self.cache_path
+        tplfilepaths = list(self._find_files(template_filepaths, searchpaths, required=required))
+        lookuppaths = uniquelist([tplfilepath.parent for tplfilepath in tplfilepaths] + searchpaths)
 
         def get_module_filename(filepath: str, uri: str):
             # pylint: disable=unused-argument
@@ -168,28 +165,36 @@ class Makolator:
             ident = hash_.hexdigest()
             return cache_path / f"{Path(filepath).name}_{ident}.py"
 
-        return TemplateLookup(
-            directories=[str(item) for item in searchpaths],
+        lookup = TemplateLookup(
+            directories=[str(item) for item in lookuppaths],
             cache_dir=self.cache_path,
             input_encoding="utf-8",
             output_encoding="utf-8",
             modulename_callable=get_module_filename,
         )
+        return tplfilepaths, lookup
 
     @staticmethod
-    def _find_files(filepaths: List[Path], searchpaths: List[Path]) -> Generator[Path, None, None]:
+    def _find_files(
+        filepaths: List[Path], searchpaths: List[Path], required: bool = False
+    ) -> Generator[Path, None, None]:
         """Find `filepath` in `searchpaths` and return first match."""
+        found = False
         for filepath in filepaths:
             if filepath.is_absolute():
                 # absolute
                 if filepath.exists():
                     yield filepath
+                    found = True
             else:
                 # relative
                 for searchpath in searchpaths:
                     joined = searchpath / filepath
                     if joined.exists():
                         yield joined
+                        found = True
+        if not found and required:
+            raise MakolatorError(f"None of the templates {_humanify(filepaths)} found at {_humanify(searchpaths)}.")
 
     def _get_render_context(self, output_filepath: Optional[Path], context: dict) -> dict:
         result = {

@@ -157,7 +157,7 @@ class InplaceRenderer:
             end = re.compile(rf"(?P<indent>\s*).*{self.inplace_marker}\s+END\s{funcname}.*")
             return InplaceInfo(lineno, indent, funcname, args, func, end)
         if not self.ignore_unknown:
-            raise MakolatorError(f"{filepath!s}:{lineno} Function '{funcname}' " f"is not found in templates.")
+            raise MakolatorError(f"{filepath!s}:{lineno} Function '{funcname}' is not found in templates.")
         return None
 
     def _check_indent(self, filepath: Path, lineno: int, inplace: InplaceInfo, endindent):

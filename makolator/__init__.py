@@ -31,8 +31,8 @@ Makolator is not makulation. It extends the https://www.makotemplates.org/ engin
 * Easy hierarchical template usage
 * Inplace File Rendering
 
-Getting Started
----------------
+This is how to use it
+---------------------
 
 Initialize
 ~~~~~~~~~~
@@ -57,7 +57,7 @@ The most relevant settings are search paths for general templates ...
 >>> mklt.config.existing
 <Existing.KEEP_TIMESTAMP: 'keep_timestamp'>
 
-If you like want to place templates in the actual working directory - set it as search path:
+If you want to place templates in the actual working directory - set it as search path:
 
 >>> from pathlib import Path
 >>> mklt.config.template_paths = [Path('.')]
@@ -69,7 +69,8 @@ If you like it verbose - try:
 Rendering
 ~~~~~~~~~
 
-Assume you have this template in a file:
+Assume you have this template in a file
+(please ignore the `...` here - they are just there for a proper python example):
 
 >>> Path('file.txt.mako').write_text('''\\
 ... <%def name="top(name)">\\
@@ -116,6 +117,31 @@ and you get notified about the changed content:
 >>> mklt.render([Path('file.txt.mako')], dest=Path("file.txt"))
 'file.txt'... UPDATED.
 
+Differential output
+~~~~~~~~~~~~~~~~~~~
+
+If you like it even more verbose - try:
+
+>>> mklt.config.diffout = print
+
+This will send any diff of the updated files to stdout.
+
+>>> mklt.datamodel.mydata['b'] = 2
+>>> mklt.render([Path('file.txt.mako')], dest=Path("file.txt")) # doctest: +SKIP
+---
++++
+@@ -1,3 +1,3 @@
+-Datamodel(mydata={'a': 0, 'b': 1})
++Datamodel(mydata={'a': 0, 'b': 2})
+ generated-top: foo
+ generated-bot: foo {'b': 4}
+<BLANKLINE>
+'file.txt'... UPDATED.
+
+By default this is disabled:
+
+>>> mklt.config.diffout = None
+
 Inplace Rendering
 ~~~~~~~~~~~~~~~~~
 
@@ -144,6 +170,7 @@ generated-top: bar
 GENERATE INPLACE END top
 This is handwritten text too.
 <BLANKLINE>
+
 
 That's it.
 """

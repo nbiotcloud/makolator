@@ -80,7 +80,7 @@ class Makolator:
         ...     file.write("data")
         'myfile.txt'... identical. untouched.
         """
-        with open_(filepath, encoding=encoding, mkdir=True, **kwargs) as file:
+        with open_(filepath, encoding=encoding, mkdir=True, diffout=self.config.diffout, **kwargs) as file:
             try:
                 yield file
             finally:

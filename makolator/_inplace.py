@@ -26,7 +26,7 @@ import io
 import re
 from logging import Logger
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, Optional, Tuple
 
 from attrs import define
 from mako.exceptions import text_error_template
@@ -57,38 +57,48 @@ class InplaceRenderer:
     """Inplace Renderer."""
 
     logger: Logger
+    template_marker: str
     inplace_marker: str
-    templates: List[Template]
+    templates: Tuple[Template, ...]
     ignore_unknown: bool
     context: dict
 
     def render(self, filepath: Path, outputfile, context: dict):
         """Render."""
-        inplace_start = re.compile(
-            rf"(?P<indent>\s*).*{self.inplace_marker}\s+BEGIN\s" r"(?P<funcname>[a-z_]+)\((?P<args>.*)\).*"
-        )
+        ibegin = re.compile(rf"(?P<indent>\s*).*{self.inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\).*")
         inplace = None
+
         with open(filepath, encoding="utf-8") as inputfile:
-            for lineno, line in enumerate(inputfile.readlines(), 1):
-                if inplace is None:
-                    # populate line
-                    outputfile.write(line)
-                    # search for "BEGIN <funcname>(<args>)"
-                    startmatch = inplace_start.match(line)
-                    if startmatch:
-                        # consume BEGIN
-                        inplace = self._start_inplace(filepath, lineno, **startmatch.groupdict())
-                else:
-                    # search for "END <funcname>"
-                    endmatch = inplace.end.match(line)
-                    if endmatch:
-                        # fill
-                        self._fill_inplace(filepath, outputfile, inplace, context)
-                        # propagate END tag
-                        outputfile.write(line)
-                        self._check_indent(filepath, lineno, inplace, endmatch.group())
-                        # consume END
-                        inplace = None
+            inputiter = enumerate(inputfile.readlines(), 1)
+            try:
+                while True:
+                    if inplace:
+                        # search for "END <funcname>"
+                        while True:
+                            lineno, line = next(inputiter)
+                            endmatch = inplace.end.match(line)
+                            if endmatch:
+                                # fill
+                                self._fill_inplace(filepath, outputfile, inplace, context)
+                                # propagate END tag
+                                outputfile.write(line)
+                                self._check_indent(filepath, lineno, inplace, endmatch.group())
+                                # consume END
+                                inplace = None
+                                break
+                    else:
+                        # normal lines
+                        while True:
+                            lineno, line = next(inputiter)
+                            outputfile.write(line)
+                            # search for "BEGIN <funcname>(<args>)"
+                            beginmatch = ibegin.match(line)
+                            if beginmatch:
+                                # consume BEGIN
+                                inplace = self._start_inplace(filepath, lineno, **beginmatch.groupdict())
+                                break
+            except StopIteration:
+                pass
         if inplace:
             raise MakolatorError(
                 f"{filepath!s}:{inplace.lineno} BEGIN tag " f"{inplace.funcname}({inplace.args})' without END tag."

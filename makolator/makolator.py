@@ -133,8 +133,12 @@ class Makolator:
             ignore_unknown: Ignore unknown inplace markers, instead of raising an error.
         """
         LOGGER.debug("render_inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], filepath)
-        templates = self._create_templates(template_filepaths, self.config.template_paths)
-        inplace = InplaceRenderer(LOGGER, self.config.inplace_marker, list(templates), ignore_unknown, context or {})
+        templates = tuple(self._create_templates(template_filepaths, self.config.template_paths))
+        config = self.config
+        context = context or {}
+        inplace = InplaceRenderer(
+            LOGGER, config.template_marker, config.inplace_marker, templates, ignore_unknown, context
+        )
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             context = self._get_render_context(filepath, context or {})
             inplace.render(filepath, outputfile, context)

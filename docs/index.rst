@@ -4,9 +4,9 @@ Extended Mako Templates for Python
 Links
 -----
 
-- `PyPI - Python Package Index <https://pypi.org/project/outputfile/>`_
-- `Source Code <https://github.com/nbiotcloud/outputfile>`_
-- `Issues <https://github.com/nbiotcloud/outputfile/issues>`_
+- `PyPI - Python Package Index <https://pypi.org/project/makolator/>`_
+- `Source Code <https://github.com/nbiotcloud/makolator>`_
+- `Issues <https://github.com/nbiotcloud/makolator/issues>`_
 
 Programming Interface
 ---------------------

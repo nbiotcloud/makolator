@@ -76,8 +76,7 @@ class InplaceRenderer:
 
     def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):
         """Render."""
-        # We know this is bad code - it is kept as best, but optimized for speed
-        # pylint: disable=too-many-locals,too-many-branches,too-many-nested-blocks
+        # pylint: disable=too-many-locals,too-many-nested-blocks
         inplace_marker = self.inplace_marker
         ibegin = re.compile(rf"(?P<indent>\s*).*{inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\).*")
         iinfo = None
@@ -85,7 +84,6 @@ class InplaceRenderer:
         template_marker = self.template_marker
         tplinfo = None
         tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN.*")
-        tend = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+END.*")
         templates = list(self.templates)
 
         with open(filepath, encoding="utf-8") as inputfile:
@@ -93,32 +91,15 @@ class InplaceRenderer:
             try:
                 while True:
                     if iinfo:
-                        # search for "INPLACE END <funcname>"
-                        while True:
-                            lineno, line = next(inputiter)
-                            endmatch = iinfo.end.match(line)
-                            if endmatch:
-                                # fill
-                                self._fill_inplace(filepath, outputfile, iinfo, context)
-                                # propagate INPLACE END tag
-                                outputfile.write(line)
-                                self._check_indent(filepath, lineno, iinfo, endmatch.group("indent"))
-                                # consume INPLACE END
-                                iinfo = None
-                                break
+                        # GENERATE INPLACE
+                        self._process_inplace(filepath, outputfile, context, inputiter, iinfo)
+                        iinfo = None
+
                     elif tplinfo:
-                        # capture TEMPLATE
-                        while True:
-                            lineno, line = next(inputiter)
-                            # propagate
-                            outputfile.write(line)
-                            # search for "INPLACE END"
-                            endmatch = tend.match(line)
-                            if endmatch:
-                                templates.append(Template("".join(tplinfo.lines), lookup=lookup))
-                                tplinfo = None
-                                break
-                            tplinfo.lines.append(line.removeprefix(tplinfo.pre))
+                        # MAKO TEMPLATE
+                        self._process_template(lookup, outputfile, templates, inputiter, tplinfo)
+                        tplinfo = None
+
                     else:
                         # normal lines
                         while True:
@@ -145,6 +126,38 @@ class InplaceRenderer:
             raise MakolatorError(f"{filepath!s}:{iinfo.lineno} BEGIN {iinfo.funcname}({iinfo.args})' without END.")
         if tplinfo:
             raise MakolatorError(f"{filepath!s}:{tplinfo.lineno} BEGIN without END.")
+
+    def _process_inplace(self, filepath: Path, outputfile, context: dict, inputiter, iinfo):
+        while True:
+            # search for "INPLACE END <funcname>"
+            lineno, line = next(inputiter)
+            endmatch = iinfo.end.match(line)
+            if endmatch:
+                # fill
+                self._fill_inplace(filepath, outputfile, iinfo, context)
+                # propagate INPLACE END tag
+                outputfile.write(line)
+                self._check_indent(filepath, lineno, iinfo, endmatch.group("indent"))
+                # consume INPLACE END
+                break
+
+    def _process_template(self, lookup: TemplateLookup, outputfile, templates, inputiter, tplinfo):
+        # capture TEMPLATE
+        pre = tplinfo.pre
+        prelen = len(pre)
+        tend = re.compile(rf"(?P<pre>.*)\s*{self.template_marker}\s+END.*")
+        while True:
+            _, line = next(inputiter)
+            # propagate
+            outputfile.write(line)
+            # search for "INPLACE END"
+            endmatch = tend.match(line)
+            if endmatch:
+                templates.append(Template("".join(tplinfo.lines), lookup=lookup))
+                break
+            if line.startswith(pre):
+                line = line[prelen:]
+            tplinfo.lines.append(line)
 
     def _start_inplace(
         self, templates: List[Template], filepath: Path, lineno: int, indent: str, funcname: str, args: str

@@ -1,0 +1,5 @@
+DEBUG   makolator inplace(['PRJROOT/tests/testdata/inplace.txt.mako'], PosixPath('TMP/inplace.txt'))
+INFO    makolator Template 'PRJROOT/tests/testdata/inplace.txt.mako'
+INFO    makolator Inplace 'TMP/inplace.txt:3'
+INFO    makolator Inplace 'TMP/inplace.txt:7'
+INFO    makolator Inplace 'TMP/inplace.txt:13'

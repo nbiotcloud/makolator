@@ -1,0 +1,11 @@
+This is just some handwritten text.
+
+    GENERATE INPLACE BEGIN afunc("foo")
+obsolete
+    GENERATE INPLACE END afunc
+
+This is also something inbetween.
+
+// ==== GENERATE INPLACE BEGIN afunc("foo", "bar") ====
+    will be updated
+// ==== GENERATE INPLACE END afunc ====

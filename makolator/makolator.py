@@ -25,7 +25,7 @@ from .config import Config
 from .datamodel import Datamodel
 from .exceptions import MakolatorError
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("makolator")
 
 
 @define
@@ -88,7 +88,7 @@ class Makolator:
                 if self.config.verbose:
                     print(f"'{filepath!s}'... {file.state.value}")
 
-    def render(self, template_filepaths: List[Path], dest: Optional[Path] = None, context: Optional[dict] = None):
+    def gen(self, template_filepaths: List[Path], dest: Optional[Path] = None, context: Optional[dict] = None):
         """
         Render template file.
 
@@ -99,7 +99,7 @@ class Makolator:
             dest: Output File.
             context: Key-Value Pairs pairs forwarded to the template.
         """
-        LOGGER.debug("render(%r, %r)", [str(filepath) for filepath in template_filepaths], dest)
+        LOGGER.debug("gen(%r, %r)", [str(filepath) for filepath in template_filepaths], dest)
         tplfilepaths, lookup = self._create_template_lookup(
             template_filepaths, self.config.template_paths, required=True
         )
@@ -111,13 +111,15 @@ class Makolator:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".
             with self.open_outputfile(dest, newline="") as output:
-                self._render(next(templates), output, dest, context)
+                template = next(templates)  # Load template
+                LOGGER.info("Generate '%s'", dest)
+                self._render(template, output, dest, context)
 
     def _render(self, template: Template, output, dest: Optional[Path], context: dict):
         context = Context(output, **self._get_render_context(dest, context))
         template.render_context(context)
 
-    def render_inplace(
+    def inplace(
         self,
         template_filepaths: List[Path],
         filepath: Path,
@@ -135,20 +137,19 @@ class Makolator:
             context: Key-Value Pairs pairs forwarded to the template.
             ignore_unknown: Ignore unknown inplace markers, instead of raising an error.
         """
-        LOGGER.debug("render_inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], filepath)
+        LOGGER.debug("inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], filepath)
         tplfilepaths, lookup = self._create_template_lookup(template_filepaths, self.config.template_paths)
         templates = tuple(self._create_templates(tplfilepaths, lookup))
         config = self.config
         context = context or {}
-        inplace = InplaceRenderer(
-            LOGGER, config.template_marker, config.inplace_marker, templates, ignore_unknown, context
-        )
+        inplace = InplaceRenderer(config.template_marker, config.inplace_marker, templates, ignore_unknown, context)
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             context = self._get_render_context(filepath, context or {})
             inplace.render(lookup, filepath, outputfile, context)
 
     def _create_templates(self, tplfilepaths: List[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
         for tplfilepath in tplfilepaths:
+            LOGGER.info("Template '%s'", tplfilepath)
             yield lookup.get_template(tplfilepath.name)
 
     def _create_template_lookup(
@@ -200,8 +201,8 @@ class Makolator:
         result = {
             "datamodel": self.datamodel,
             "output_filepath": output_filepath,
-            "render": self.render,
-            "render_inplace": self.render_inplace,
+            "gen": self.gen,
+            "inplace": self.inplace,
         }
         result.update(context)
         return result

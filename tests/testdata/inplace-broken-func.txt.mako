@@ -6,3 +6,7 @@ options: ${opt}
 % endif
 
 </%def>
+
+<%def name="brokenfunc()">\
+${4 / 0}
+</%def>

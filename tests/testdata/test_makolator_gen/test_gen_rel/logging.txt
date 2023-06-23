@@ -1,0 +1,3 @@
+DEBUG   makolator gen(['test.txt.mako'], PosixPath('TMP/test.txt'))
+INFO    makolator Template 'PRJROOT/tests/testdata/test.txt.mako'
+INFO    makolator Generate 'TMP/test.txt'

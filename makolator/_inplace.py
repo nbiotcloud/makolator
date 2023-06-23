@@ -23,8 +23,8 @@
 #
 """Inplace Generation."""
 import io
+import logging
 import re
-from logging import Logger
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
@@ -37,6 +37,8 @@ from mako.template import Template
 from .exceptions import MakolatorError
 
 # pylint: disable=too-many-arguments,too-few-public-methods
+
+LOGGER = logging.getLogger("makolator")
 
 
 @define
@@ -67,7 +69,6 @@ class InplaceRenderer:
 
     """Inplace Renderer."""
 
-    logger: Logger
     template_marker: str
     inplace_marker: str
     templates: Tuple[Template, ...]
@@ -131,6 +132,7 @@ class InplaceRenderer:
         while True:
             # search for "INPLACE END <funcname>"
             lineno, line = next(inputiter)
+
             endmatch = iinfo.end.match(line)
             if endmatch:
                 # fill
@@ -153,6 +155,7 @@ class InplaceRenderer:
             # search for "INPLACE END"
             endmatch = tend.match(line)
             if endmatch:
+                LOGGER.info("Template '%s:%d'", outputfile, tplinfo.lineno)
                 templates.append(Template("".join(tplinfo.lines), lookup=lookup))
                 break
             if line.startswith(pre):
@@ -175,7 +178,7 @@ class InplaceRenderer:
 
     def _check_indent(self, filepath: Path, lineno: int, inplace: InplaceInfo, endindent):
         if endindent != inplace.indent:
-            self.logger.warning(
+            LOGGER.warning(
                 "%s:%d Indent of END tag %r does not match indent of BEGIN tag %r.",
                 filepath,
                 lineno,
@@ -184,6 +187,7 @@ class InplaceRenderer:
             )
 
     def _fill_inplace(self, filepath: Path, outputfile, inplace: InplaceInfo, context: dict):
+        LOGGER.info("Inplace '%s:%d'", filepath, inplace.lineno)
         # determine args, kwargs
         try:
             # pylint: disable=eval-used

@@ -1,0 +1,24 @@
+usage: makolator gen [-h] [--verbose] [--show-diff] [--existing {error,keep,overwrite,keep_timestamp}]
+                     [--template-path TEMPLATE_PATH]
+                     templates [templates ...] output
+
+positional arguments:
+  templates             Template Files. At least one must exist
+  output                Output File
+
+options:
+  -h, --help            show this help message and exit
+  --verbose, -v         Tell what happens to the file.
+  --show-diff, -s       Show what lines changed.
+  --existing {error,keep,overwrite,keep_timestamp}, -e {error,keep,overwrite,keep_timestamp}
+                        What if the file exists. Default is 'keep_timestamp'
+  --template-path TEMPLATE_PATH, -T TEMPLATE_PATH
+                        Directories with templates referred by include/inherit/...
+
+Generate a file from a template:
+
+    makolator gen test.txt.mako test.txt
+
+Generate a file from a template and fallback to 'default.txt.mako' if 'test.txt.mako' is missing:
+
+    makolator gen test.txt.mako default.txt.mako test.txt

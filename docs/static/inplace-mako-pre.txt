@@ -1,0 +1,20 @@
+You can define your own template in the source code
+
+// MAKO TEMPLATE BEGIN
+// <%def name="repeat(num)">\
+// ${output_filepath.name}
+// % for idx in range(num):
+// item${idx}
+// % endfor
+// </%def>
+// MAKO TEMPLATE END
+
+
+GENERATE INPLACE BEGIN repeat(2)
+obsolete
+GENERATE INPLACE END repeat
+
+
+GENERATE INPLACE BEGIN repeat(5)
+obsolete
+GENERATE INPLACE END repeat

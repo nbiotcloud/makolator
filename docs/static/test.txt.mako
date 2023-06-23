@@ -6,3 +6,6 @@ options: ${opt}
 % endif
 
 </%def>
+Text
+${afunc('abc')}
+${afunc('def', opt=5)}

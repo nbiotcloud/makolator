@@ -1,0 +1,11 @@
+usage: makolator [-h] {gen,inplace} ...
+
+Mako Templates (https://www.makotemplates.org/) extended.
+
+positional arguments:
+  {gen,inplace}
+    gen          Generate File
+    inplace      Update File Inplace
+
+options:
+  -h, --help     show this help message and exit

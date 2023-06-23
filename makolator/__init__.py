@@ -84,18 +84,18 @@ Assume you have this template in a file
 ... ${bot('foo', b=4)}\\
 ... ''') and None
 
-:any:`render` use ``sys.stdout`` by default ...
+:any:`gen` use ``sys.stdout`` by default ...
 
->>> mklt.render([Path('file.txt.mako')])
+>>> mklt.gen([Path('file.txt.mako')])
 Datamodel()
 generated-top: foo
 generated-bot: foo {'b': 4}
 
 ... or use ``dest`` for file creation - the verbose mode shares some nice information:
 
->>> mklt.render([Path('file.txt.mako')], dest=Path("file.txt"))
+>>> mklt.gen([Path('file.txt.mako')], dest=Path("file.txt"))
 'file.txt'... CREATED.
->>> mklt.render([Path('file.txt.mako')], dest=Path("file.txt"))
+>>> mklt.gen([Path('file.txt.mako')], dest=Path("file.txt"))
 'file.txt'... identical. untouched.
 
 Datamodel
@@ -107,14 +107,14 @@ The :any:`Datamodel` is your container to forward data to the template.
 
 The output looks like that:
 
->>> mklt.render([Path('file.txt.mako')])
+>>> mklt.gen([Path('file.txt.mako')])
 Datamodel(mydata={'a': 0, 'b': 1})
 generated-top: foo
 generated-bot: foo {'b': 4}
 
 and you get notified about the changed content:
 
->>> mklt.render([Path('file.txt.mako')], dest=Path("file.txt"))
+>>> mklt.gen([Path('file.txt.mako')], dest=Path("file.txt"))
 'file.txt'... UPDATED.
 
 Differential output
@@ -127,7 +127,7 @@ If you like it even more verbose - try:
 This will send any diff of the updated files to stdout.
 
 >>> mklt.datamodel.mydata['b'] = 2
->>> mklt.render([Path('file.txt.mako')], dest=Path("file.txt")) # doctest: +SKIP
+>>> mklt.gen([Path('file.txt.mako')], dest=Path("file.txt")) # doctest: +SKIP
 ---
 +++
 @@ -1,3 +1,3 @@
@@ -159,7 +159,7 @@ Assume you have a handwritten file and you just want to update/generate a part o
 ... This is handwritten text too.
 ... ''') and None
 
->>> mklt.render_inplace([Path('file.txt.mako')], Path("inplace.txt"))
+>>> mklt.inplace([Path('file.txt.mako')], Path("inplace.txt"))
 'inplace.txt'... UPDATED.
 
 >>> print(Path('inplace.txt').read_text())

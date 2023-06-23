@@ -1,0 +1,16 @@
+This is just some handwritten text.
+
+    GENERATE INPLACE BEGIN afunc("foo")
+    inplace.txt
+    pos=foo
+
+    GENERATE INPLACE END afunc
+
+This is also something inbetween.
+
+// ==== GENERATE INPLACE BEGIN afunc("foo", "bar") ====
+inplace.txt
+pos=foo
+options: bar
+
+// ==== GENERATE INPLACE END afunc ====

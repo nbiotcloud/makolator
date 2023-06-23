@@ -20,7 +20,8 @@ packages = [
 "Documentation" = "https://makolator.readthedocs.io/en/latest/"
 "Bug Tracker" = "https://github.com/nbiotcloud/makolator/issues"
 
-#[tool.poetry.scripts]
+[tool.poetry.scripts]
+makolator = "makolator.cli:main"
 
 
 [tool.poetry.dependencies]
@@ -104,6 +105,7 @@ commands =
     poetry run black .
     poetry run isort .
     poetry run coverage run --source=makolator --branch -m pytest --doctest-glob=docs/*.rst --doctest-modules --ignore-glob=tests/testdata* --ignore=docs/conf.py --log-level=DEBUG -vv --junitxml=report.xml
+    poetry run coverage run -a --source=makolator --branch -m makolator
     poetry run coverage report
     poetry run coverage html
     poetry run coverage xml

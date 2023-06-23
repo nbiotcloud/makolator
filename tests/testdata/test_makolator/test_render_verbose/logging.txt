@@ -1,2 +1,0 @@
-DEBUG   makolator.makolator render(['test.txt.mako'], PosixPath('TMP/test.txt'))
-DEBUG   makolator.makolator render(['test.txt.mako'], PosixPath('TMP/test.txt'))

@@ -1,0 +1,2 @@
+DEBUG   makolator gen(['test.txt.mako'], None)
+INFO    makolator Template 'PRJROOT/tests/testdata/test.txt.mako'

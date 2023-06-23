@@ -32,9 +32,8 @@ import subprocess
 
 from pytest import approx
 
-LEARN = True
+LEARN = False
 
-LOGGER = logging.getLogger(__name__)
 PRJROOT = pathlib.Path(__file__).parent.parent
 
 

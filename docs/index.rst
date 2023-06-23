@@ -86,7 +86,7 @@ filled via a template like:
 .. literalinclude:: static/inplace.txt.mako
    :language: text
 
-An inplace update (``makolator inplace file.txt``) will result in:
+An inplace update (``makolator inplace test.txt.mako file.txt``) will result in:
 
 .. literalinclude:: static/inplace.txt
    :language: text

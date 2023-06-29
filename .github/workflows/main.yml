@@ -1,6 +1,6 @@
 name: test
 
-on: [push, pull_request]
+on: [push, pull_request, release]
 
 jobs:
   build:
@@ -43,7 +43,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
-    if: ${{ github.event_name.push.tags == 'v*.*.*' }}
+    if: github.event_name == 'release' && github.event.action == 'created'
     needs: coveralls
     runs-on: ubuntu-latest
     steps:

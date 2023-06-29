@@ -43,7 +43,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
-    if: github.event_name == 'release' && github.event.action == 'created'
+    if: github.event_name == 'create' && github.event.ref_type == 'tag'
     needs: coveralls
     runs-on: ubuntu-latest
     steps:

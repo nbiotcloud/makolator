@@ -42,6 +42,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
+  publish:
+    if: ${{ github.event_name.push.tags == 'v*.*.*' }}
     needs: coveralls
-    uses: ./.github/workflows/publish.yml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.17
+        with:
+          pypi_token: ${{ secrets.PYPI_TOKEN }}

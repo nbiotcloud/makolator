@@ -44,4 +44,4 @@ jobs:
 
   deploy:
     needs: coveralls
-    uses: ./.github/workflows/publish.yml@main
+    uses: ./.github/workflows/publish.yml

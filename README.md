@@ -12,3 +12,11 @@
 * [PyPI](https://pypi.org/project/makolator/)
 * [Sources](https://github.com/nbiotcloud/makolator)
 * [Issues](https://github.com/nbiotcloud/makolator/issues)
+
+## Installation
+
+Installing it is pretty easy:
+
+```bash
+pip install makolator
+```

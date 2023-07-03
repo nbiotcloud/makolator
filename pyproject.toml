@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "makolator"
-version = "2.0.1"
+version = "2.0.2"
 description = "Extended Mako Templates for Python"
 readme = "README.md"
 license = "MIT"

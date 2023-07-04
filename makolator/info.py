@@ -35,7 +35,7 @@ def get_cli() -> str:
     """Determine Command Line Invocation."""
     argv = sys.argv[:]
     argv[0] = pathlib.Path(argv[0]).name
-    return shlex.join(argv)
+    return " ".join(shlex.quote(arg) for arg in argv)
 
 
 @define

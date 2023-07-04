@@ -2,6 +2,8 @@ You can define your own template in the source code
 
 // MAKO TEMPLATE BEGIN
 // <%def name="repeat(num)">\
+// # ${makolator.info.inplacewarning}
+// # This section is updated via '${makolator.info.cli}'
 // ${output_filepath.name}
 // % for idx in range(num):
 // item${idx}
@@ -11,6 +13,8 @@ You can define your own template in the source code
 
 
 GENERATE INPLACE BEGIN repeat(2)
+# THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+# This section is updated via 'makolator inplace inplace-mako.txt'
 inplace-mako.txt
 item0
 item1
@@ -18,6 +22,8 @@ GENERATE INPLACE END repeat
 
 
 GENERATE INPLACE BEGIN repeat(5)
+# THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+# This section is updated via 'makolator inplace inplace-mako.txt'
 inplace-mako.txt
 item0
 item1

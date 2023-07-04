@@ -21,8 +21,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Exceptions."""
+"""Info Testing."""
+
+from makolator import Info
 
 
-class MakolatorError(RuntimeError):
-    """Just a Helper to Distinguish our Error."""
+def test_info():
+    """Basic Testing on Info."""
+    info = Info()
+
+    assert info.cli is None
+    assert info.genwarning == "THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
+    assert info.inplacewarning == "THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
+
+
+def test_info_init():
+    """Info with initialization."""
+    info = Info(genwarning="gen", inplacewarning="inplace", cli="foo")
+    assert info.cli == "foo"
+    assert info.genwarning == "gen"
+    assert info.inplacewarning == "inplace"

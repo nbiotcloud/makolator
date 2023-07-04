@@ -1,5 +1,4 @@
-usage: makolator gen [-h] [--verbose] [--show-diff]
-                     [--existing {error,keep,overwrite,keep_timestamp}]
+usage: makolator gen [-h] [--verbose] [--show-diff] [--existing {error,keep,overwrite,keep_timestamp}]
                      [--template-path TEMPLATE_PATH]
                      templates [templates ...] output
 

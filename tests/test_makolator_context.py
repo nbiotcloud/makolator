@@ -21,8 +21,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Exceptions."""
+"""Makolator Testing."""
+from pathlib import Path
+
+from makolator import Makolator
+
+from .util import assert_gen
+
+TESTDATA = Path(__file__).parent / "testdata"
 
 
-class MakolatorError(RuntimeError):
-    """Just a Helper to Distinguish our Error."""
+def test_makolator_main(tmp_path, caplog, capsys):
+    """."""
+    mkl = Makolator()
+    mkl.config.template_paths = [TESTDATA]
+    mkl.gen(Path("main.txt.mako"), tmp_path / "main.txt")
+    assert_gen(
+        tmp_path,
+        TESTDATA / "test_makolator_context" / "test_makolator_main",
+        capsys=capsys,
+        caplog=caplog,
+        tmp_path=tmp_path,
+    )

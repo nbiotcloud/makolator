@@ -1,3 +1,26 @@
+#
+# MIT License
+#
+# Copyright (c) 2023 nbiotcloud
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
 """
 The Makolator.
 
@@ -21,9 +44,11 @@ from outputfile import Existing, open_
 from uniquer import uniquelist
 
 from ._inplace import InplaceRenderer
+from ._util import Paths, norm_paths
 from .config import Config
 from .datamodel import Datamodel
 from .exceptions import MakolatorError
+from .info import Info
 
 LOGGER = logging.getLogger("makolator")
 
@@ -41,6 +66,9 @@ class Makolator:
 
     datamodel: Datamodel = field(factory=Datamodel)
     """The Data Container."""
+
+    info: Info = field(factory=Info)
+    """Makolator Information."""
 
     __cache_path: Optional[Path] = None
 
@@ -88,7 +116,7 @@ class Makolator:
                 if self.config.verbose:
                     print(f"'{filepath!s}'... {file.state.value}")
 
-    def gen(self, template_filepaths: List[Path], dest: Optional[Path] = None, context: Optional[dict] = None):
+    def gen(self, template_filepaths: Paths, dest: Optional[Path] = None, context: Optional[dict] = None):
         """
         Render template file.
 
@@ -99,6 +127,7 @@ class Makolator:
             dest: Output File.
             context: Key-Value Pairs pairs forwarded to the template.
         """
+        template_filepaths = norm_paths(template_filepaths)
         LOGGER.debug("gen(%r, %r)", [str(filepath) for filepath in template_filepaths], dest)
         tplfilepaths, lookup = self._create_template_lookup(
             template_filepaths, self.config.template_paths, required=True
@@ -121,7 +150,7 @@ class Makolator:
 
     def inplace(
         self,
-        template_filepaths: List[Path],
+        template_filepaths: Paths,
         filepath: Path,
         context: Optional[dict] = None,
         ignore_unknown: bool = False,
@@ -137,6 +166,7 @@ class Makolator:
             context: Key-Value Pairs pairs forwarded to the template.
             ignore_unknown: Ignore unknown inplace markers, instead of raising an error.
         """
+        template_filepaths = norm_paths(template_filepaths)
         LOGGER.debug("inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], filepath)
         tplfilepaths, lookup = self._create_template_lookup(template_filepaths, self.config.template_paths)
         templates = tuple(self._create_templates(tplfilepaths, lookup))
@@ -201,8 +231,7 @@ class Makolator:
         result = {
             "datamodel": self.datamodel,
             "output_filepath": output_filepath,
-            "gen": self.gen,
-            "inplace": self.inplace,
+            "makolator": self,
         }
         result.update(context)
         return result

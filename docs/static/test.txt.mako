@@ -6,6 +6,9 @@ options: ${opt}
 % endif
 
 </%def>
+# ${makolator.info.genwarning}
+# This file is updated by '${makolator.info.cli}'
+
 Text
 ${afunc('abc')}
 ${afunc('def', opt=5)}

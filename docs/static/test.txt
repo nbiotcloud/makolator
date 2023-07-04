@@ -1,4 +1,7 @@
 
+# THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+# This file is updated by 'makolator gen test.txt.mako test.txt'
+
 Text
 test.txt
 pos=abc

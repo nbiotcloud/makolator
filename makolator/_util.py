@@ -21,8 +21,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Exceptions."""
+"""
+Utilties.
+"""
+from pathlib import Path
+from typing import Iterable, List, Union
+
+Paths = Union[Path, Iterable[Path]]
 
 
-class MakolatorError(RuntimeError):
-    """Just a Helper to Distinguish our Error."""
+def norm_paths(paths: Paths) -> List[Path]:
+    """Normalize Single Path or List of Paths to List of Paths."""
+    try:
+        return list(paths)  # type: ignore
+    except TypeError:
+        return [paths]  # type: ignore

@@ -52,10 +52,16 @@ Within the template the following symbols are available
      - :any:`Datamodel` - the data container
    * - ``output_filepath``
      - ``pathlib.Path`` with outputfile path
-   * - ``gen``
+   * - ``makolator``
+     - :any:`Makolator` - Makolator Engine
+   * - ``makolator.open_outputfile``
+     - :any:`Makolator.open_outputfile` - Create file handle with timestamp preserving.
+   * - ``makolator.gen``
      - :any:`Makolator.gen` - generate file
-   * - ``inplace``
+   * - ``makolator.inplace``
      - :any:`Makolator.inplace` - update file
+   * - ``makolator.info``
+     - :any:`Makolator.info` - Information Container
 
 File Generation
 ~~~~~~~~~~~~~~~

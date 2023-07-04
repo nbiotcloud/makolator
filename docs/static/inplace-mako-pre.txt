@@ -2,6 +2,8 @@ You can define your own template in the source code
 
 // MAKO TEMPLATE BEGIN
 // <%def name="repeat(num)">\
+// # ${makolator.info.inplacewarning}
+// # This section is updated via '${makolator.info.cli}'
 // ${output_filepath.name}
 // % for idx in range(num):
 // item${idx}

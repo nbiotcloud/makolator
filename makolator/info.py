@@ -21,8 +21,42 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Exceptions."""
+"""Makolator Information."""
+
+import pathlib
+import shlex
+import sys
+from typing import Optional
+
+from attrs import define
 
 
-class MakolatorError(RuntimeError):
-    """Just a Helper to Distinguish our Error."""
+def get_cli() -> str:
+    """Determine Command Line Invocation."""
+    argv = sys.argv[:]
+    argv[0] = pathlib.Path(argv[0]).name
+    return shlex.join(argv)
+
+
+@define
+class Info:
+    """
+    Makolator Information.
+    """
+
+    # pylint: disable=too-few-public-methods
+
+    cli: Optional[str] = None
+    """
+    Actual Command Line Interface Call.
+    """
+
+    genwarning: str = "THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
+    """
+    Generated Code Warning.
+    """
+
+    inplacewarning: str = "THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
+    """
+    Generated Inplace Code Warning.
+    """

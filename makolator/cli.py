@@ -27,7 +27,7 @@ Command Line Interface.
 import argparse
 from pathlib import Path
 
-from makolator import Config, Existing, Makolator
+from makolator import Config, Existing, Info, Makolator, get_cli
 
 
 def main(args=None):
@@ -110,7 +110,8 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             existing=args.existing,
             template_paths=args.template_path + [Path(".")],
         )
-        mklt = Makolator(config=config)
+        info = Info(cli=get_cli())
+        mklt = Makolator(config=config, info=info)
         if args.cmd == "gen":
             mklt.gen(args.templates, args.output)
         else:

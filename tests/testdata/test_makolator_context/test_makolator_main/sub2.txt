@@ -1,0 +1,5 @@
+This is a template called by main.txt.mako
+
+sub2.txt
+Datamodel()
+sub-var2

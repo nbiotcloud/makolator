@@ -109,12 +109,9 @@ class Makolator:
         'myfile.txt'... identical. untouched.
         """
         with open_(filepath, encoding=encoding, mkdir=True, diffout=self.config.diffout, **kwargs) as file:
-            try:
-                yield file
-            finally:
-                file.close()
-                if self.config.verbose:
-                    print(f"'{filepath!s}'... {file.state.value}")
+            yield file
+        if self.config.verbose:
+            print(f"'{filepath!s}'... {file.state.value}")
 
     def gen(self, template_filepaths: Paths, dest: Optional[Path] = None, context: Optional[dict] = None):
         """

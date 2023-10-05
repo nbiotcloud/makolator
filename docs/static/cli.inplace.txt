@@ -1,5 +1,6 @@
 usage: makolator inplace [-h] [--ignore-unknown] [--verbose] [--show-diff]
-                         [--existing {error,keep,overwrite,keep_timestamp}] [--template-path TEMPLATE_PATH]
+                         [--existing {error,keep,overwrite,keep_timestamp}]
+                         [--template-path TEMPLATE_PATH]
                          [templates ...] inplace
 
 positional arguments:

@@ -4,8 +4,8 @@
 # <%def name="myhelper(*args, **kwargs)">\
 # myhelper
 # ${output_filepath.name}
-# args: {args}
-# kwargs: {kwargs}
+# args: ${args}
+# kwargs: ${kwargs}
 # </%def>
 # MAKO TEMPLATE END
 

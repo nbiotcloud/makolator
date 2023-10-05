@@ -26,6 +26,7 @@ import re
 from pathlib import Path
 from shutil import copyfile
 
+from mako.exceptions import CompileException
 from pytest import raises
 
 from makolator import Makolator, MakolatorError
@@ -146,7 +147,21 @@ def test_inplace_mako_disabled(tmp_path):
 def test_inplace_mako_broken(tmp_path):
     """Render File Inplace with mako."""
     filepath = tmp_path / "inplace.txt"
-    copyfile(TESTDATA / "inplace-tpl-broken.txt", filepath)
+    inpfilepath = TESTDATA / "inplace-tpl-broken.txt"
+    copyfile(inpfilepath, filepath)
     mklt = Makolator()
     with raises(MakolatorError, match=re.escape(" BEGIN without END.")):
         mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+
+    assert filepath.read_text() == inpfilepath.read_text()
+
+
+def test_inplace_mako_broken2(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    inpfilepath = TESTDATA / "inplace-tpl-broken2.txt"
+    copyfile(inpfilepath, filepath)
+    mklt = Makolator()
+    with raises(CompileException, match=re.escape("Fragment")):
+        mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert filepath.read_text() == inpfilepath.read_text()

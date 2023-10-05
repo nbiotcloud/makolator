@@ -153,7 +153,7 @@ def test_inplace_mako_broken(tmp_path):
     with raises(MakolatorError, match=re.escape(" BEGIN without END.")):
         mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
 
-    assert filepath.read_text() == inpfilepath.read_text()
+    assert filepath.read_text(encoding="utf-8") == inpfilepath.read_text(encoding="utf-8")
 
 
 def test_inplace_mako_broken2(tmp_path):
@@ -164,4 +164,4 @@ def test_inplace_mako_broken2(tmp_path):
     mklt = Makolator()
     with raises(CompileException, match=re.escape("Fragment")):
         mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert filepath.read_text() == inpfilepath.read_text()
+    assert filepath.read_text(encoding="utf-8") == inpfilepath.read_text(encoding="utf-8")

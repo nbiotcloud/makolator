@@ -28,6 +28,7 @@ import re
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
+from aligntext import Align
 from attrs import define, field
 from mako.exceptions import text_error_template
 from mako.lookup import TemplateLookup
@@ -74,6 +75,7 @@ class InplaceRenderer:
     templates: Tuple[Template, ...]
     ignore_unknown: bool
     context: dict
+    eol: str
 
     def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):
         """Render."""
@@ -187,6 +189,7 @@ class InplaceRenderer:
             )
 
     def _fill_inplace(self, filepath: Path, outputfile, inplace: InplaceInfo, context: dict):
+        # pylint: disable=too-many-locals
         LOGGER.info("Inplace '%s:%d'", filepath, inplace.lineno)
         # determine args, kwargs
         try:
@@ -209,11 +212,20 @@ class InplaceRenderer:
             raise MakolatorError(
                 f"{filepath!s}:{inplace.lineno} Function '{inplace.funcname}' invocation failed. {exc!r}. {debug}"
             ) from exc
-        for line in buffer.getvalue().splitlines():
-            if line:
-                outputfile.write(f"{indent}{line}\n")
-            else:
-                outputfile.write("\n")
+        eol = self.eol
+        lines = buffer.getvalue().splitlines()
+        if eol:
+            align = Align()
+            for line in lines:
+                align.add_row(line, eol)
+            for aline in align:
+                outputfile.write(f"{indent}{aline}\n")
+        else:
+            for line in lines:
+                if line:
+                    outputfile.write(f"{indent}{line}\n")
+                else:
+                    outputfile.write("\n")
 
         buffer.close()
 

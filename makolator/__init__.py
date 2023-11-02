@@ -37,7 +37,7 @@ This is how to use it
 Initialize
 ~~~~~~~~~~
 
-Just create your instance of :any:`Makulator`
+Just create your instance of :any:`Makolator`
 
 >>> from makolator import Makolator
 >>> mklt = Makolator()
@@ -171,6 +171,20 @@ GENERATE INPLACE END top
 This is handwritten text too.
 <BLANKLINE>
 
+If you like to warn your users about generated sections even more, you can add a comment by default
+
+>>> mklt.config.inplace_eol_comment = "GENERATED"
+>>> mklt.inplace([Path('file.txt.mako')], Path("inplace.txt"))
+'inplace.txt'... UPDATED.
+
+>>> print(Path('inplace.txt').read_text())
+I am a regular text file.
+This is handwritten text.
+GENERATE INPLACE BEGIN top('bar')
+generated-top: bar // GENERATED
+GENERATE INPLACE END top
+This is handwritten text too.
+<BLANKLINE>
 
 That's it.
 """

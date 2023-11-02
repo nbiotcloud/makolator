@@ -82,6 +82,7 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
         action="store_true",
         help="Ignore unknown template function calls.",
     )
+    inplace.add_argument("--eol", "-E", help="EOL comment on generated lines")
 
     for sub in (gen, inplace):
         sub.add_argument("--verbose", "-v", action="store_true", help="Tell what happens to the file.")
@@ -115,6 +116,7 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
         if args.cmd == "gen":
             mklt.gen(args.templates, args.output)
         else:
+            mklt.config.inplace_eol_comment = args.eol
             mklt.inplace(args.templates, args.inplace, ignore_unknown=args.ignore_unknown)
     else:
         parser.print_help()

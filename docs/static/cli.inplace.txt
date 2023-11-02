@@ -1,4 +1,5 @@
-usage: makolator inplace [-h] [--ignore-unknown] [--verbose] [--show-diff]
+usage: makolator inplace [-h] [--ignore-unknown] [--eol EOL] [--verbose]
+                         [--show-diff]
                          [--existing {error,keep,overwrite,keep_timestamp}]
                          [--template-path TEMPLATE_PATH]
                          [templates ...] inplace
@@ -10,6 +11,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   --ignore-unknown, -i  Ignore unknown template function calls.
+  --eol EOL, -E EOL     EOL comment on generated lines
   --verbose, -v         Tell what happens to the file.
   --show-diff, -s       Show what lines changed.
   --existing {error,keep,overwrite,keep_timestamp}, -e {error,keep,overwrite,keep_timestamp}

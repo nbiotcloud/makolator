@@ -26,9 +26,10 @@ makolator = "makolator.cli:main"
 
 [tool.poetry.dependencies]
 python = '^3.7.2'
+aligntext = "^1.0.0"
 attrs = "^23.1.0"
-outputfile = "^0.2.0"
 mako = "^1.2.4"
+outputfile = "^0.2.0"
 uniquer = "^1.0.0"
 
 [tool.poetry.group.test.dependencies]

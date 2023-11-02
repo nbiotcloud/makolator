@@ -26,6 +26,21 @@ from pathlib import Path
 
 from makolator import Config, Existing
 
+# pylint: disable=duplicate-code
+COMMENT_MAP = {
+    ".c": "//",
+    ".c++": "//",
+    ".cpp": "//",
+    ".ini": "#",
+    ".py": "#",
+    ".sv": "//",
+    ".svh": "//",
+    ".tex": "%",
+    ".txt": "//",
+    ".v": "//",
+    ".vh": "//",
+}
+
 
 def test_config():
     """Basic Testing on Config."""
@@ -35,17 +50,8 @@ def test_config():
     assert config.existing == Existing.KEEP_TIMESTAMP
     assert config.diffout is None
     assert config.verbose is False
-    text = (
-        "Config(template_paths=[], "
-        "existing=<Existing.KEEP_TIMESTAMP: 'keep_timestamp'>, "
-        "diffout=None, "
-        "verbose=False, "
-        "template_marker='MAKO TEMPLATE', "
-        "inplace_marker='GENERATE INPLACE', "
-        "cache_path=None)"
-    )
-    assert str(config) == text
-    assert repr(config) == text
+    assert config.inplace_eol_comment is None
+    assert config.comment_map == COMMENT_MAP
 
 
 def test_config_modified():
@@ -56,14 +62,5 @@ def test_config_modified():
     assert config.existing == Existing.KEEP
     assert config.diffout is print
     assert config.verbose is True
-    text = (
-        "Config(template_paths=[PosixPath('foo'), PosixPath('bar')], "
-        "existing=<Existing.KEEP: 'keep'>, "
-        "diffout=<built-in function print>, "
-        "verbose=True, "
-        "template_marker='MAKO TEMPLATE', "
-        "inplace_marker='GENERATE INPLACE', "
-        "cache_path=None)"
-    )
-    assert str(config) == text
-    assert repr(config) == text
+    assert config.inplace_eol_comment is None
+    assert config.comment_map == COMMENT_MAP

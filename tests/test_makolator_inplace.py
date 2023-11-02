@@ -165,3 +165,43 @@ def test_inplace_mako_broken2(tmp_path):
     with raises(CompileException, match=re.escape("Fragment")):
         mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
     assert filepath.read_text(encoding="utf-8") == inpfilepath.read_text(encoding="utf-8")
+
+
+def test_inplace_eol(tmp_path):
+    """Render File Inplace Indent."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-simple.txt", filepath)
+    mklt = Makolator()
+    mklt.config.inplace_eol_comment = "GENERATED"
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol", tmp_path=tmp_path)
+
+
+def test_inplace_eol_sv(tmp_path):
+    """Render File Inplace Indent - SystemVerilog."""
+    filepath = tmp_path / "inplace.sv"
+    copyfile(TESTDATA / "inplace-simple.txt", filepath)
+    mklt = Makolator()
+    mklt.config.inplace_eol_comment = "GENERATED"
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_sv", tmp_path=tmp_path)
+
+
+def test_inplace_eol_cpp(tmp_path):
+    """Render File Inplace Indent - C++."""
+    filepath = tmp_path / "inplace.cpp"
+    copyfile(TESTDATA / "inplace-simple.txt", filepath)
+    mklt = Makolator()
+    mklt.config.inplace_eol_comment = "GENERATED"
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_cpp", tmp_path=tmp_path)
+
+
+def test_inplace_eol_ini(tmp_path):
+    """Render File Inplace Indent - Ini."""
+    filepath = tmp_path / "inplace.ini"
+    copyfile(TESTDATA / "inplace-simple.txt", filepath)
+    mklt = Makolator()
+    mklt.config.inplace_eol_comment = "GENERATED"
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_ini", tmp_path=tmp_path)

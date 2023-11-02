@@ -169,7 +169,10 @@ class Makolator:
         templates = tuple(self._create_templates(tplfilepaths, lookup))
         config = self.config
         context = context or {}
-        inplace = InplaceRenderer(config.template_marker, config.inplace_marker, templates, ignore_unknown, context)
+        eol = self._get_eol(filepath, config.inplace_eol_comment)
+        inplace = InplaceRenderer(
+            config.template_marker, config.inplace_marker, templates, ignore_unknown, context, eol
+        )
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             context = self._get_render_context(filepath, context or {})
             inplace.render(lookup, filepath, outputfile, context)
@@ -232,6 +235,12 @@ class Makolator:
         }
         result.update(context)
         return result
+
+    def _get_eol(self, filepath: Path, eol_comment: Optional[str]):
+        if eol_comment:
+            sep = self.config.comment_map.get(filepath.suffix, "//")
+            return f"{sep} {eol_comment}"
+        return ""
 
 
 def _humanify(iterable):

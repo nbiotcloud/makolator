@@ -24,10 +24,24 @@
 """Configuration Handling."""
 
 from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from attrs import define
 from outputfile import Existing
+
+COMMENT_MAP_DEFAULT = {
+    ".c": "//",
+    ".c++": "//",
+    ".cpp": "//",
+    ".ini": "#",
+    ".py": "#",
+    ".sv": "//",
+    ".svh": "//",
+    ".tex": "%",
+    ".txt": "//",
+    ".v": "//",
+    ".vh": "//",
+}
 
 
 @define
@@ -36,6 +50,22 @@ class Config:
     Configuration.
 
     Container For All Customization Options.
+
+    The following file extensions are known:
+
+    >>> for suffix, comment in Config().comment_map.items():
+    ...     print(f"{suffix}: {comment}")
+    .c: //
+    .c++: //
+    .cpp: //
+    .ini: #
+    .py: #
+    .sv: //
+    .svh: //
+    .tex: %
+    .txt: //
+    .v: //
+    .vh: //
     """
 
     # pylint: disable=too-few-public-methods
@@ -65,3 +95,13 @@ class Config:
     Used to store converted templates. Use if you have many and/or large templates.
     Speeds up rendering. Share it between runs.
     """
+
+    comment_map: Dict[str, str] = COMMENT_MAP_DEFAULT
+    """
+    Line Comment Symbols.
+
+    File Suffix dependent comment starter.
+    """
+
+    inplace_eol_comment: Optional[str] = None
+    """End-Of-Line Comment Added On Every Inplace Generated Line """

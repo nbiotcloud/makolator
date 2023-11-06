@@ -62,6 +62,17 @@ Within the template the following symbols are available
      - :any:`Makolator.inplace` - update file
    * - ``makolator.info``
      - :any:`Makolator.info` - Information Container
+   * - ``run``
+     - :any:`run` - Identical to :any:`subprocess.run` and capture ``stdout``.
+       
+       Examples:
+       
+         * ``run(['echo', '"Hello World"'])``
+         * ``run('echo "Hello World"', shell=True)``
+         * ``run('mycmd --output file && cat file', shell=True)``
+
+       The variable ``${TMPDIR}`` in the arguments will be replaced by a temporary directory
+       path.
 
 File Generation
 ~~~~~~~~~~~~~~~

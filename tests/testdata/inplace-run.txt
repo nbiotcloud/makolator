@@ -1,0 +1,15 @@
+GENERATE INPLACE BEGIN run(["echo", "Hello World"])
+obsolete
+GENERATE INPLACE END run
+
+GENERATE INPLACE BEGIN run('echo "Hello World"', shell=True)
+obsolete
+GENERATE INPLACE END run
+
+GENERATE INPLACE BEGIN run(["test", "-d", "${TMPDIR}"])
+obsolete
+GENERATE INPLACE END run
+
+GENERATE INPLACE BEGIN run('test -d ${TMPDIR}', shell=True)
+obsolete
+GENERATE INPLACE END run

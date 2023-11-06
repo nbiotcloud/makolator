@@ -148,3 +148,19 @@ def test_gen_hier_impl(tmp_path):
     mklt.config.template_paths = [TESTDATA]
     mklt.gen([Path("impl.txt.mako")], tmp_path / "impl.txt")
     assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_hier_impl")
+
+
+def test_gen_run(tmp_path):
+    """Use run()."""
+    mklt = Makolator()
+    mklt.config.template_paths = [TESTDATA]
+    mklt.gen([Path("run.txt.mako")], tmp_path / "run.txt")
+    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_run")
+
+
+def test_gen_run_broken(tmp_path):
+    """Use run(), which fails."""
+    mklt = Makolator()
+    mklt.config.template_paths = [TESTDATA]
+    with raises(FileNotFoundError):
+        mklt.gen([Path("run-broken.txt.mako")], tmp_path / "run.txt")

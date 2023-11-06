@@ -43,6 +43,7 @@ from mako.template import Template
 from outputfile import Existing, open_
 from uniquer import uniquelist
 
+from . import helper
 from ._inplace import InplaceRenderer
 from ._util import Paths, norm_paths
 from .config import Config
@@ -51,6 +52,10 @@ from .exceptions import MakolatorError
 from .info import Info
 
 LOGGER = logging.getLogger("makolator")
+
+HELPER = {
+    "run": helper.run,
+}
 
 
 @define
@@ -170,9 +175,7 @@ class Makolator:
         config = self.config
         context = context or {}
         eol = self._get_eol(filepath, config.inplace_eol_comment)
-        inplace = InplaceRenderer(
-            config.template_marker, config.inplace_marker, templates, ignore_unknown, context, eol
-        )
+        inplace = InplaceRenderer(config.template_marker, config.inplace_marker, templates, ignore_unknown, eol)
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             context = self._get_render_context(filepath, context or {})
             inplace.render(lookup, filepath, outputfile, context)
@@ -181,6 +184,12 @@ class Makolator:
         for tplfilepath in tplfilepaths:
             LOGGER.info("Template '%s'", tplfilepath)
             yield lookup.get_template(tplfilepath.name)
+        yield Template(
+            """<%! from makolator import helper %>
+<%def name="run(*args, **kwargs)">\
+${helper.run(*args, **kwargs)}\
+</%def>"""
+        )
 
     def _create_template_lookup(
         self, template_filepaths: List[Path], searchpaths: List[Path], required: bool = False
@@ -230,10 +239,11 @@ class Makolator:
     def _get_render_context(self, output_filepath: Optional[Path], context: dict) -> dict:
         result = {
             "datamodel": self.datamodel,
-            "output_filepath": output_filepath,
             "makolator": self,
+            "output_filepath": output_filepath,
         }
         result.update(context)
+        result.update(HELPER)
         return result
 
     def _get_eol(self, filepath: Path, eol_comment: Optional[str]):

@@ -59,5 +59,6 @@ html_theme = "sphinx_rtd_theme"
 # html_static_path = ["static"]
 
 intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
     "outputfile": ("https://outputfile.readthedocs.io/en/latest/", None),
 }

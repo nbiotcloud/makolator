@@ -74,7 +74,6 @@ class InplaceRenderer:
     inplace_marker: str
     templates: Tuple[Template, ...]
     ignore_unknown: bool
-    context: dict
     eol: str
 
     def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):

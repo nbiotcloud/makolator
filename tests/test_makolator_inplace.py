@@ -205,3 +205,12 @@ def test_inplace_eol_ini(tmp_path):
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
     assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_ini", tmp_path=tmp_path)
+
+
+def test_inplace_run(tmp_path):
+    """Render File Inplace run."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-run.txt", filepath)
+    mklt = Makolator()
+    mklt.inplace([], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_run", tmp_path=tmp_path)

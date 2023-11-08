@@ -1,0 +1,9 @@
+Hello before
+// USER BEGIN a 
+kept a
+// USER END a 
+Hello middle
+// USER BEGIN b 
+kept b
+// USER END b
+Hello after

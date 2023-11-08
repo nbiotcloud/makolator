@@ -24,6 +24,7 @@
 """Makolator Testing."""
 import time
 from pathlib import Path
+from shutil import copyfile
 
 from pytest import raises
 
@@ -164,3 +165,14 @@ def test_gen_run_broken(tmp_path):
     mklt.config.template_paths = [TESTDATA]
     with raises(FileNotFoundError):
         mklt.gen([Path("run-broken.txt.mako")], tmp_path / "run.txt")
+
+
+def test_gen_user(tmp_path):
+    """User Marker."""
+    mklt = Makolator()
+    mklt.config.template_paths = [TESTDATA]
+    mklt.config.user_marker = "USER"
+    filepath = tmp_path / "user.txt"
+    copyfile(TESTDATA / "user.txt", filepath)
+    mklt.gen([Path("user.txt.mako")], filepath)
+    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_user")

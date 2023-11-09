@@ -1,0 +1,4 @@
+
+GENERATE INPLACE BEGIN helpme()
+obsolete
+GENERATE INPLACE END helpme

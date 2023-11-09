@@ -1,0 +1,3 @@
+GENERATE INPLACE BEGIN run(["echoo", "Hello World"])
+obsolete
+GENERATE INPLACE END run

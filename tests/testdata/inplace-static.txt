@@ -1,0 +1,5 @@
+Hello World
+
+-- GENERATE INPLACE BEGIN main()
+obsolete
+-- GENERATE INPLACE END main

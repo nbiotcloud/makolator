@@ -23,7 +23,6 @@
 #
 """Static Code Preservation."""
 import re
-from collections import deque
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional
@@ -117,7 +116,7 @@ def _read(filepath: Optional[Path], marker: str, staticcodemap: StaticCodeMap):
 def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter, begin, info: Info):
     # pylint: disable=too-many-arguments
     end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>.+?)\s*")
-    lines: deque[str] = deque()
+    lines: List[str] = list()
     while True:
         # search END
         lineno, line = next(fileiter)

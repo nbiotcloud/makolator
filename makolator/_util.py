@@ -24,10 +24,12 @@
 """
 Utilties.
 """
+import logging
 from pathlib import Path
 from typing import Iterable, List, Union
 
 Paths = Union[Path, Iterable[Path]]
+LOGGER = logging.getLogger("makolator")
 
 
 def norm_paths(paths: Paths) -> List[Path]:
@@ -36,3 +38,15 @@ def norm_paths(paths: Paths) -> List[Path]:
         return list(paths)  # type: ignore
     except TypeError:
         return [paths]  # type: ignore
+
+
+def check_indent(filepath: Path, lineno: int, beginindent, endindent):
+    """Check ``BEGIN``/``END`` indent."""
+    if endindent != beginindent:
+        LOGGER.warning(
+            "%s:%d Indent of END tag %r does not match indent of BEGIN tag %r.",
+            filepath,
+            lineno,
+            endindent,
+            beginindent,
+        )

@@ -1,9 +1,9 @@
 Hello before
 // USER BEGIN a 
-kept a
+obsolete
 // USER END a 
 Hello middle
 // USER BEGIN b 
-kept b
+obsolete
 // USER END b
 Hello after

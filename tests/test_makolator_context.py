@@ -28,7 +28,9 @@ from makolator import Makolator
 
 from .util import assert_gen
 
-TESTDATA = Path(__file__).parent / "testdata"
+FILEPATH = Path(__file__)
+TESTDATA = FILEPATH.parent / "testdata"
+REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 
 
 def test_makolator_main(tmp_path, caplog, capsys):
@@ -38,7 +40,7 @@ def test_makolator_main(tmp_path, caplog, capsys):
     mkl.gen(Path("main.txt.mako"), tmp_path / "main.txt")
     assert_gen(
         tmp_path,
-        TESTDATA / "test_makolator_context" / "test_makolator_main",
+        REFDATA / "test_makolator_main",
         capsys=capsys,
         caplog=caplog,
         tmp_path=tmp_path,

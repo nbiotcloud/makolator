@@ -23,7 +23,6 @@
 #
 """Inplace Generation."""
 import io
-import logging
 import re
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
@@ -35,11 +34,10 @@ from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from mako.template import Template
 
+from ._util import LOGGER, check_indent
 from .exceptions import MakolatorError
 
 # pylint: disable=too-many-arguments,too-few-public-methods
-
-LOGGER = logging.getLogger("makolator")
 
 
 @define
@@ -131,7 +129,7 @@ class InplaceRenderer:
 
     def _process_inplace(self, filepath: Path, outputfile, context: dict, inputiter, iinfo):
         while True:
-            # search for "INPLACE END <funcname>"
+            # search for "INPLACE END"
             lineno, line = next(inputiter)
 
             endmatch = iinfo.end.match(line)
@@ -140,7 +138,7 @@ class InplaceRenderer:
                 self._fill_inplace(filepath, outputfile, iinfo, context)
                 # propagate INPLACE END tag
                 outputfile.write(line)
-                self._check_indent(filepath, lineno, iinfo, endmatch.group("indent"))
+                check_indent(filepath, lineno, iinfo.indent, endmatch.group("indent"))
                 # consume INPLACE END
                 break
 
@@ -156,7 +154,7 @@ class InplaceRenderer:
             # search for "INPLACE END"
             endmatch = tend.match(line)
             if endmatch:
-                LOGGER.info("Template '%s:%d'", outputfile, tplinfo.lineno)
+                LOGGER.info("Template '%s:%d'", str(outputfile), tplinfo.lineno)
                 templates.append(Template("".join(tplinfo.lines), lookup=lookup))
                 break
             if line.startswith(pre):
@@ -177,19 +175,9 @@ class InplaceRenderer:
             raise MakolatorError(f"{filepath!s}:{lineno} Function '{funcname}' is not found in templates.")
         return None
 
-    def _check_indent(self, filepath: Path, lineno: int, inplace: InplaceInfo, endindent):
-        if endindent != inplace.indent:
-            LOGGER.warning(
-                "%s:%d Indent of END tag %r does not match indent of BEGIN tag %r.",
-                filepath,
-                lineno,
-                endindent,
-                inplace.indent,
-            )
-
     def _fill_inplace(self, filepath: Path, outputfile, inplace: InplaceInfo, context: dict):
         # pylint: disable=too-many-locals
-        LOGGER.info("Inplace '%s:%d'", filepath, inplace.lineno)
+        LOGGER.info("Inplace '%s:%d'", str(filepath), inplace.lineno)
         # determine args, kwargs
         try:
             # pylint: disable=eval-used

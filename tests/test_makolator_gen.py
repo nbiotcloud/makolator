@@ -32,7 +32,9 @@ from makolator import Config, Makolator, MakolatorError
 
 from .util import assert_gen, cmp_mtime
 
-TESTDATA = Path(__file__).parent / "testdata"
+FILEPATH = Path(__file__)
+TESTDATA = FILEPATH.parent / "testdata"
+REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 PAUSE = 0.1
 
 
@@ -40,9 +42,7 @@ def test_gen_abs(tmp_path, caplog, capsys):
     """Generate File With Absolute Path."""
     mklt = Makolator()
     mklt.gen([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(
-        tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_abs", capsys=capsys, caplog=caplog, tmp_path=tmp_path
-    )
+    assert_gen(tmp_path, REFDATA / "test_gen_abs", capsys=capsys, caplog=caplog, tmp_path=tmp_path)
 
 
 def test_gen_abs_template_not_found(tmp_path):
@@ -56,16 +56,14 @@ def test_gen_rel(tmp_path, caplog, capsys):
     """Generate File With Relative Path."""
     mklt = Makolator(config=Config(template_paths=[TESTDATA]))
     mklt.gen([Path("test.txt.mako")], tmp_path / "test.txt")
-    assert_gen(
-        tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_rel", capsys=capsys, caplog=caplog, tmp_path=tmp_path
-    )
+    assert_gen(tmp_path, REFDATA / "test_gen_rel", capsys=capsys, caplog=caplog, tmp_path=tmp_path)
 
 
 def test_gen_rel_sub(tmp_path):
     """Generate File With Relative Path Sub."""
     mklt = Makolator(config=Config(template_paths=[TESTDATA.parent]))
     mklt.gen([Path(TESTDATA.name) / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_rel_sub")
+    assert_gen(tmp_path, REFDATA / "test_gen_rel_sub")
 
 
 def test_gen_rel_sub_not_found(tmp_path):
@@ -80,7 +78,7 @@ def test_gen_datamodel(tmp_path):
     mklt = Makolator()
     mklt.datamodel.item = "myitem"
     mklt.gen([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_datamodel")
+    assert_gen(tmp_path, REFDATA / "test_gen_datamodel")
 
 
 def test_gen_datamodel_timestamp(tmp_path):
@@ -106,7 +104,7 @@ def test_gen_verbose(tmp_path, caplog, capsys):
     mklt.gen([Path("test.txt.mako")], tmp_path / "test.txt")
     assert_gen(
         tmp_path,
-        TESTDATA / "test_makolator_gen" / "test_gen_verbose",
+        REFDATA / "test_gen_verbose",
         caplog=caplog,
         capsys=capsys,
         tmp_path=tmp_path,
@@ -120,7 +118,7 @@ def test_gen_stdout(tmp_path, caplog, capsys):
     mklt.gen([Path("test.txt.mako")])
     assert_gen(
         tmp_path,
-        TESTDATA / "test_makolator_gen" / "test_gen_stdout",
+        REFDATA / "test_gen_stdout",
         caplog=caplog,
         capsys=capsys,
         tmp_path=tmp_path,
@@ -132,7 +130,7 @@ def test_gen_context(tmp_path):
     mklt = Makolator()
     context = {"myvar": "myvalue"}
     mklt.gen([TESTDATA / "context.txt.mako"], tmp_path / "context.txt", context=context)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_context")
+    assert_gen(tmp_path, REFDATA / "test_gen_context")
 
 
 def test_gen_hier_base(tmp_path):
@@ -140,7 +138,7 @@ def test_gen_hier_base(tmp_path):
     mklt = Makolator()
     mklt.config.template_paths = [TESTDATA]
     mklt.gen([Path("base.txt.mako")], tmp_path / "base.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_hier_base")
+    assert_gen(tmp_path, REFDATA / "test_gen_hier_base")
 
 
 def test_gen_hier_impl(tmp_path):
@@ -148,7 +146,7 @@ def test_gen_hier_impl(tmp_path):
     mklt = Makolator()
     mklt.config.template_paths = [TESTDATA]
     mklt.gen([Path("impl.txt.mako")], tmp_path / "impl.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_hier_impl")
+    assert_gen(tmp_path, REFDATA / "test_gen_hier_impl")
 
 
 def test_gen_run(tmp_path):
@@ -156,7 +154,7 @@ def test_gen_run(tmp_path):
     mklt = Makolator()
     mklt.config.template_paths = [TESTDATA]
     mklt.gen([Path("run.txt.mako")], tmp_path / "run.txt")
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_run")
+    assert_gen(tmp_path, REFDATA / "test_gen_run")
 
 
 def test_gen_run_broken(tmp_path):
@@ -175,4 +173,4 @@ def test_gen_user(tmp_path):
     filepath = tmp_path / "user.txt"
     copyfile(TESTDATA / "user.txt", filepath)
     mklt.gen([Path("user.txt.mako")], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_gen" / "test_gen_user")
+    assert_gen(tmp_path, REFDATA / "test_gen_user")

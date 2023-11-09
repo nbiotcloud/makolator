@@ -28,7 +28,8 @@ from makolator import Config, Datamodel, Existing, Makolator
 
 from .util import chdir
 
-TESTDATA = Path(__file__).parent / "testdata"
+FILEPATH = Path(__file__)
+TESTDATA = FILEPATH.parent / "testdata"
 
 
 def test_makolator():

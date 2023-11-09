@@ -33,7 +33,9 @@ from makolator import Makolator, MakolatorError
 
 from .util import assert_gen
 
-TESTDATA = Path(__file__).parent / "testdata"
+FILEPATH = Path(__file__)
+TESTDATA = FILEPATH.parent / "testdata"
+REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 
 
 def test_inplace(tmp_path, capsys, caplog):
@@ -42,9 +44,7 @@ def test_inplace(tmp_path, capsys, caplog):
     copyfile(TESTDATA / "inplace.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(
-        tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace", capsys=capsys, caplog=caplog, tmp_path=tmp_path
-    )
+    assert_gen(tmp_path, REFDATA / "test_inplace", capsys=capsys, caplog=caplog, tmp_path=tmp_path)
 
 
 def test_inplace_disabled(tmp_path, capsys, caplog):
@@ -56,7 +56,7 @@ def test_inplace_disabled(tmp_path, capsys, caplog):
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
     assert_gen(
         tmp_path,
-        TESTDATA / "test_makolator_inplace" / "test_inplace_disabled",
+        REFDATA / "test_inplace_disabled",
         capsys=capsys,
         caplog=caplog,
         tmp_path=tmp_path,
@@ -69,7 +69,7 @@ def test_inplace_indent(tmp_path, caplog):
     copyfile(TESTDATA / "inplace-indent.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_indent", caplog=caplog, tmp_path=tmp_path)
+    assert_gen(tmp_path, REFDATA / "test_inplace_indent", caplog=caplog, tmp_path=tmp_path)
 
 
 def test_inplace_broken_arg(tmp_path):
@@ -114,7 +114,7 @@ def test_inplace_unknown_ignore(tmp_path):
     copyfile(TESTDATA / "inplace-unknown.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath, ignore_unknown=True)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_unknown_ignore")
+    assert_gen(tmp_path, REFDATA / "test_inplace_unknown_ignore")
 
 
 def test_inplace_child(tmp_path):
@@ -123,7 +123,7 @@ def test_inplace_child(tmp_path):
     copyfile(TESTDATA / "inplace-child.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace-child.txt.mako"], filepath, ignore_unknown=True)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_child")
+    assert_gen(tmp_path, REFDATA / "test_inplace_child")
 
 
 def test_inplace_mako_only(tmp_path):
@@ -132,7 +132,7 @@ def test_inplace_mako_only(tmp_path):
     copyfile(TESTDATA / "inplace-tpl.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_mako_only")
+    assert_gen(tmp_path, REFDATA / "test_inplace_mako_only")
 
 
 def test_inplace_mako_disabled(tmp_path):
@@ -174,7 +174,7 @@ def test_inplace_eol(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol", tmp_path=tmp_path)
+    assert_gen(tmp_path, REFDATA / "test_inplace_eol", tmp_path=tmp_path)
 
 
 def test_inplace_eol_sv(tmp_path):
@@ -184,7 +184,7 @@ def test_inplace_eol_sv(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_sv", tmp_path=tmp_path)
+    assert_gen(tmp_path, REFDATA / "test_inplace_eol_sv", tmp_path=tmp_path)
 
 
 def test_inplace_eol_cpp(tmp_path):
@@ -194,7 +194,7 @@ def test_inplace_eol_cpp(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_cpp", tmp_path=tmp_path)
+    assert_gen(tmp_path, REFDATA / "test_inplace_eol_cpp", tmp_path=tmp_path)
 
 
 def test_inplace_eol_ini(tmp_path):
@@ -204,7 +204,7 @@ def test_inplace_eol_ini(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_eol_ini", tmp_path=tmp_path)
+    assert_gen(tmp_path, REFDATA / "test_inplace_eol_ini", tmp_path=tmp_path)
 
 
 def test_inplace_run(tmp_path):
@@ -213,4 +213,4 @@ def test_inplace_run(tmp_path):
     copyfile(TESTDATA / "inplace-run.txt", filepath)
     mklt = Makolator()
     mklt.inplace([], filepath)
-    assert_gen(tmp_path, TESTDATA / "test_makolator_inplace" / "test_inplace_run", tmp_path=tmp_path)
+    assert_gen(tmp_path, REFDATA / "test_inplace_run", tmp_path=tmp_path)

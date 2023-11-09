@@ -43,7 +43,7 @@ from mako.template import Template
 from outputfile import Existing, open_
 from uniquer import uniquelist
 
-from . import helper
+from . import escape, helper
 from ._inplace import InplaceRenderer
 from ._staticcode import StaticCode, read
 from ._util import Paths, humanify, norm_paths
@@ -55,7 +55,10 @@ from .info import Info
 LOGGER = logging.getLogger("makolator")
 
 HELPER = {
+    "indent": helper.indent,
+    "prefix": helper.prefix,
     "run": helper.run,
+    "tex": escape.tex,
 }
 
 
@@ -218,6 +221,7 @@ ${helper.run(*args, **kwargs)}\
             input_encoding="utf-8",
             output_encoding="utf-8",
             modulename_callable=get_module_filename,
+            strict_undefined=True,
         )
         return tplfilepaths, lookup
 

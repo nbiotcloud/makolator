@@ -241,3 +241,17 @@ def test_gen_static_corner(tmp_path, mklt, caplog):
     copyfile(TESTDATA / "static-corner.txt", filepath)
     mklt.gen([Path("static-corner.txt.mako")], filepath)
     assert_gen(tmp_path, REFDATA / "test_gen_static_corner", caplog=caplog, tmp_path=tmp_path)
+
+
+def test_gen_helper(tmp_path, mklt):
+    """Generate File with Helper."""
+    filepath = tmp_path / "helper.txt"
+    mklt.gen([Path("helper.txt.mako")], filepath)
+    assert_gen(tmp_path, REFDATA / "test_gen_helper")
+
+
+def test_gen_undefined(tmp_path, mklt):
+    """Generate File with Undefined."""
+    filepath = tmp_path / "undefined.txt"
+    with raises(NameError):
+        mklt.gen([Path("undefined.txt.mako")], filepath)

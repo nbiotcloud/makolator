@@ -25,6 +25,7 @@
 
 import subprocess
 import tempfile
+from typing import Any
 
 
 def run(args, **kwargs):
@@ -47,9 +48,11 @@ def run(args, **kwargs):
         return result.stdout.decode("utf-8")
 
 
-def indent(spaces: int = 2):
-    """Indent Lines by number of ``spaces``."""
-    return prefix(" " * spaces)
+def indent(text_or_int: Any):
+    """Indent Lines by number of ``text_or_int``."""
+    if isinstance(text_or_int, int):
+        return prefix(" " * text_or_int)
+    return "\n".join(f"  {line}" for line in str(text_or_int).splitlines())
 
 
 def prefix(pre: str):

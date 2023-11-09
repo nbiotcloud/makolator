@@ -1,0 +1,6 @@
+
+GENERATE INPLACE BEGIN afunc("foo")
+
+GENERATE INPLACE BEGIN simple("foo")
+
+GENERATE INPLACE END afunc

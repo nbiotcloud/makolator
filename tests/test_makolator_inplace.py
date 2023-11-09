@@ -236,6 +236,42 @@ def test_run_broken(tmp_path):
     assert_paths(TESTDATA / "inplace-run-broken.txt", filepath)
 
 
+def test_noend(tmp_path, mklt):
+    """Render File Inplace with no end."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-noend.txt", filepath)
+    with raises(MakolatorError, match=re.escape(f"'{filepath}:2' BEGIN afunc('foo')) without END.")):
+        mklt.inplace([Path("inplace.txt.mako")], filepath)
+    assert_paths(TESTDATA / "inplace-noend.txt", filepath)
+
+
+def test_mixend(tmp_path, mklt):
+    """Render File Inplace with mixed end."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-mixend.txt", filepath)
+    with raises(MakolatorError, match=re.escape(f"missing END tag 'afunc' for '{filepath!s}:2'")):
+        mklt.inplace([Path("inplace.txt.mako")], filepath)
+    assert_paths(TESTDATA / "inplace-mixend.txt", filepath)
+
+
+def test_mako_noend(tmp_path, mklt):
+    """Render File Mako with no end."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-mako-noend.txt", filepath)
+    with raises(MakolatorError, match=re.escape(f"'{filepath!s}:2' BEGIN without END.")):
+        mklt.inplace([Path("inplace.txt.mako")], filepath)
+    assert_paths(TESTDATA / "inplace-mako-noend.txt", filepath)
+
+
+def test_mako_mixend(tmp_path, mklt):
+    """Render File Mako with mixed end."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-mako-mixend.txt", filepath)
+    with raises(MakolatorError, match=re.escape(f"missing END tag for '{filepath!s}:2'")):
+        mklt.inplace([Path("inplace.txt.mako")], filepath)
+    assert_paths(TESTDATA / "inplace-mako-mixend.txt", filepath)
+
+
 def test_helper(tmp_path, mklt):
     """Generate File with Helper."""
     filepath = tmp_path / "helper.txt"

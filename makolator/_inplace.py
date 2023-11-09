@@ -82,7 +82,7 @@ class InplaceRenderer:
         iinfo = None
 
         template_marker = self.template_marker
-        tplinfo = None
+        tinfo = None
         tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN.*")
         templates = list(self.templates)
 
@@ -92,13 +92,13 @@ class InplaceRenderer:
                 while True:
                     if iinfo:
                         # GENERATE INPLACE
-                        self._process_inplace(filepath, outputfile, context, inputiter, iinfo)
+                        self._process_inplace(filepath, outputfile, context, inputiter, iinfo, ibegin)
                         iinfo = None
 
-                    elif tplinfo:
+                    elif tinfo:
                         # MAKO TEMPLATE
-                        self._process_template(lookup, outputfile, templates, inputiter, tplinfo)
-                        tplinfo = None
+                        self._process_template(filepath, lookup, outputfile, templates, inputiter, tinfo, tbegin)
+                        tinfo = None
 
                     else:
                         # normal lines
@@ -117,20 +117,25 @@ class InplaceRenderer:
                                 beginmatch = tbegin.match(line)
                                 if beginmatch:
                                     # consume TEMPLATE BEGIN
-                                    tplinfo = TplInfo(lineno, beginmatch.group("pre"))
+                                    tinfo = TplInfo(lineno, beginmatch.group("pre"))
                                     break
 
             except StopIteration:
                 pass
         if iinfo:
-            raise MakolatorError(f"{filepath!s}:{iinfo.lineno} BEGIN {iinfo.funcname}({iinfo.args})' without END.")
-        if tplinfo:
-            raise MakolatorError(f"{filepath!s}:{tplinfo.lineno} BEGIN without END.")
+            raise MakolatorError(f"'{filepath!s}:{iinfo.lineno}' BEGIN {iinfo.funcname}({iinfo.args}) without END.")
+        if tinfo:
+            raise MakolatorError(f"'{filepath!s}:{tinfo.lineno}' BEGIN without END.")
 
-    def _process_inplace(self, filepath: Path, outputfile, context: dict, inputiter, iinfo):
+    def _process_inplace(self, filepath: Path, outputfile, context: dict, inputiter, iinfo, ibegin):
         while True:
             # search for "INPLACE END"
             lineno, line = next(inputiter)
+
+            beginmatch = ibegin.match(line)
+            if beginmatch:
+                msg = f"missing END tag {iinfo.funcname!r} for '{filepath!s}:{iinfo.lineno}'"
+                raise MakolatorError(msg)
 
             endmatch = iinfo.end.match(line)
             if endmatch:
@@ -142,24 +147,32 @@ class InplaceRenderer:
                 # consume INPLACE END
                 break
 
-    def _process_template(self, lookup: TemplateLookup, outputfile, templates, inputiter, tplinfo):
+    def _process_template(
+        self, filepath: Path, lookup: TemplateLookup, outputfile, templates, inputiter, tinfo, tbegin
+    ):
         # capture TEMPLATE
-        pre = tplinfo.pre
+        pre = tinfo.pre
         prelen = len(pre)
         tend = re.compile(rf"(?P<pre>.*)\s*{self.template_marker}\s+END.*")
         while True:
             _, line = next(inputiter)
             # propagate
             outputfile.write(line)
+
+            beginmatch = tbegin.match(line)
+            if beginmatch:
+                msg = f"missing END tag for '{filepath!s}:{tinfo.lineno}'"
+                raise MakolatorError(msg)
+
             # search for "INPLACE END"
             endmatch = tend.match(line)
             if endmatch:
-                LOGGER.info("Template '%s:%d'", str(outputfile), tplinfo.lineno)
-                templates.append(Template("".join(tplinfo.lines), lookup=lookup))
+                LOGGER.info("Template '%s:%d'", str(outputfile), tinfo.lineno)
+                templates.append(Template("".join(tinfo.lines), lookup=lookup))
                 break
             if line.startswith(pre):
                 line = line[prelen:]
-            tplinfo.lines.append(line)
+            tinfo.lines.append(line)
 
     def _start_inplace(
         self, templates: List[Template], filepath: Path, lineno: int, indent: str, funcname: str, args: str

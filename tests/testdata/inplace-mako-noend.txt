@@ -1,0 +1,15 @@
+
+// MAKO TEMPLATE BEGIN
+// <%def name="repeat(num)">\
+// % for idx in range(num):
+// item${idx}
+// % endfor
+// </%def>
+
+
+GENERATE INPLACE BEGIN repeat(2)
+GENERATE INPLACE END repeat
+
+
+GENERATE INPLACE BEGIN repeat(5)
+GENERATE INPLACE END repeat

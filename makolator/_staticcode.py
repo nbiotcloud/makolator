@@ -116,7 +116,7 @@ def _read(filepath: Optional[Path], marker: str, staticcodemap: StaticCodeMap):
 def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter, begin, info: Info):
     # pylint: disable=too-many-arguments
     end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>.+?)\s*")
-    lines: List[str] = list()
+    lines: List[str] = []
     while True:
         # search END
         lineno, line = next(fileiter)

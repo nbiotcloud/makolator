@@ -85,6 +85,10 @@ Within the template the following symbols are available
      - Prefix single line or multiple lines by given text:
        
        ``${text | prefix('// ')}``
+   * - ``tex``
+     - Escape latex special characters:
+       
+       ``${text | tex}``
 
 File Generation
 ~~~~~~~~~~~~~~~

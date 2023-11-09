@@ -49,14 +49,39 @@ def run(args, **kwargs):
 
 
 def indent(text_or_int: Any):
-    """Indent Lines by number of ``text_or_int``."""
+    """
+    Indent Lines by number of ``text_or_int``.
+
+    >>> print(indent('''A
+    ... B
+    ... C'''))
+      A
+      B
+      C
+
+    >>> print(indent(4)('''A
+    ... B
+    ... C'''))
+        A
+        B
+        C
+    """
     if isinstance(text_or_int, int):
         return prefix(" " * text_or_int)
     return "\n".join(f"  {line}" for line in str(text_or_int).splitlines())
 
 
 def prefix(pre: str):
-    """Add ``pre`` In Front of Every Line."""
+    """
+    Add ``pre`` In Front of Every Line.
+
+    >>> print(prefix('PRE-')('''A
+    ... B
+    ... C'''))
+    PRE-A
+    PRE-B
+    PRE-C
+    """
 
     def func(text):
         return "\n".join(f"{pre}{line}" for line in text.splitlines())

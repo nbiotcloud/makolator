@@ -1,0 +1,8 @@
+Old before
+// STATIC BEGIN a 
+kept a
+Old middle
+// STATIC BEGIN b
+kept b
+// STATIC END b
+Old after

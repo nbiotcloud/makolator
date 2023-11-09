@@ -102,6 +102,11 @@ def assert_gen(genpath, refpath, capsys=None, caplog=None, tmp_path=None):
         logging.getLogger(__name__).warning("LEARNING %s", refpath)
         shutil.rmtree(refpath, ignore_errors=True)
         shutil.copytree(genpath, refpath)
+    assert_paths(refpath, genpath)
+
+
+def assert_paths(refpath, genpath):
+    """Diff Paths"""
     cmd = ["diff", "-r", "--exclude", "__pycache__", str(refpath), str(genpath)]
     try:
         subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

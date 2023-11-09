@@ -45,7 +45,8 @@ from uniquer import uniquelist
 
 from . import helper
 from ._inplace import InplaceRenderer
-from ._util import Paths, norm_paths
+from ._staticcode import StaticCode, read
+from ._util import Paths, humanify, norm_paths
 from .config import Config
 from .datamodel import Datamodel
 from .exceptions import MakolatorError
@@ -136,18 +137,22 @@ class Makolator:
         )
         templates = self._create_templates(tplfilepaths, lookup)
         context = context or {}
+        comment_sep = self._get_comment_sep(dest)
         if dest is None:
-            self._render(next(templates), sys.stdout, None, context)
+            with read(dest, comment_sep, self.config.static_marker) as staticcode:
+                self._render(next(templates), sys.stdout, None, context, staticcode)
         else:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".
             with self.open_outputfile(dest, newline="") as output:
-                template = next(templates)  # Load template
-                LOGGER.info("Generate '%s'", dest)
-                self._render(template, output, dest, context)
+                with read(dest, comment_sep, self.config.static_marker) as staticcode:
+                    template = next(templates)  # Load template
+                    LOGGER.info("Generate '%s'", dest)
+                    self._render(template, output, dest, context, staticcode)
 
-    def _render(self, template: Template, output, dest: Optional[Path], context: dict):
-        context = Context(output, **self._get_render_context(dest, context))
+    def _render(self, template: Template, output, dest: Optional[Path], context: dict, staticcode: StaticCode):
+        # pylint: disable=too-many-arguments
+        context = Context(output, **self._get_render_context(dest, context, staticcode))
         template.render_context(context)
 
     def inplace(
@@ -174,11 +179,13 @@ class Makolator:
         templates = tuple(self._create_templates(tplfilepaths, lookup))
         config = self.config
         context = context or {}
+        comment_sep = self._get_comment_sep(filepath)
         eol = self._get_eol(filepath, config.inplace_eol_comment)
         inplace = InplaceRenderer(config.template_marker, config.inplace_marker, templates, ignore_unknown, eol)
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
-            context = self._get_render_context(filepath, context or {})
-            inplace.render(lookup, filepath, outputfile, context)
+            with read(filepath, comment_sep, config.static_marker) as staticcode:
+                context = self._get_render_context(filepath, context, staticcode)
+                inplace.render(lookup, filepath, outputfile, context)
 
     def _create_templates(self, tplfilepaths: List[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
         for tplfilepath in tplfilepaths:
@@ -234,26 +241,24 @@ ${helper.run(*args, **kwargs)}\
                         yield joined
                         found = True
         if not found and required:
-            raise MakolatorError(f"None of the templates {_humanify(filepaths)} found at {_humanify(searchpaths)}.")
+            raise MakolatorError(f"None of the templates {humanify(filepaths)} found at {humanify(searchpaths)}.")
 
-    def _get_render_context(self, output_filepath: Optional[Path], context: dict) -> dict:
-        result = {
-            "datamodel": self.datamodel,
-            "makolator": self,
-            "output_filepath": output_filepath,
-        }
-        result.update(context)
+    def _get_render_context(self, output_filepath: Optional[Path], context: dict, staticcode: StaticCode) -> dict:
+        result = dict(context)
         result.update(HELPER)
+        result["datamodel"] = self.datamodel
+        result["makolator"] = self
+        result["output_filepath"] = output_filepath
+        result["staticcode"] = staticcode
         return result
+
+    def _get_comment_sep(self, filepath: Optional[Path], default="//"):
+        if not filepath:
+            return default
+        return self.config.comment_map.get(filepath.suffix, default)
 
     def _get_eol(self, filepath: Path, eol_comment: Optional[str]):
         if eol_comment:
-            sep = self.config.comment_map.get(filepath.suffix, "//")
+            sep = self._get_comment_sep(filepath)
             return f"{sep} {eol_comment}"
         return ""
-
-
-def _humanify(iterable):
-    if iterable:
-        return ", ".join(repr(str(item)) for item in iterable)
-    return "''"

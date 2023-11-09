@@ -52,11 +52,22 @@ def test_config():
     assert config.verbose is False
     assert config.inplace_eol_comment is None
     assert config.comment_map == COMMENT_MAP
+    assert config.inplace_marker == "GENERATE INPLACE"
+    assert config.template_marker == "MAKO TEMPLATE"
+    assert config.static_marker == "STATIC"
 
 
 def test_config_modified():
     """Modified Configuration"""
-    config = Config(template_paths=[Path("foo"), Path("bar")], existing=Existing.KEEP, diffout=print, verbose=True)
+    config = Config(
+        template_paths=[Path("foo"), Path("bar")],
+        existing=Existing.KEEP,
+        diffout=print,
+        verbose=True,
+        inplace_marker="INP",
+        template_marker="TPL",
+        static_marker="STAT",
+    )
 
     assert config.template_paths == [Path("foo"), Path("bar")]
     assert config.existing == Existing.KEEP
@@ -64,3 +75,6 @@ def test_config_modified():
     assert config.verbose is True
     assert config.inplace_eol_comment is None
     assert config.comment_map == COMMENT_MAP
+    assert config.inplace_marker == "INP"
+    assert config.template_marker == "TPL"
+    assert config.static_marker == "STAT"

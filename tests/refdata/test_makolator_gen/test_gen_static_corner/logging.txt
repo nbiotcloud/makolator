@@ -1,0 +1,7 @@
+DEBUG   makolator gen(['static-corner.txt.mako'], PosixPath('TMP/static.txt'))
+INFO    makolator Static Code 'a' at 'TMP/static.txt:2'
+WARNING makolator 'TMP/static.txt:4' Indent of END tag '' does not match indent of BEGIN tag '    '.
+INFO    makolator Static Code 'b' at 'TMP/static.txt:6'
+WARNING makolator 'TMP/static.txt:8' Indent of END tag '    ' does not match indent of BEGIN tag ''.
+INFO    makolator Template 'PRJROOT/tests/testdata/static-corner.txt.mako'
+INFO    makolator Generate 'TMP/static.txt'

@@ -1,0 +1,9 @@
+Hello before
+    // STATIC BEGIN a
+obsolete a
+// STATIC END a
+Hello middle
+// STATIC BEGIN b
+  also keep me
+    // STATIC END b
+Hello after

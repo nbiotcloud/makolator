@@ -44,9 +44,16 @@ def check_indent(filepath: Path, lineno: int, beginindent, endindent):
     """Check ``BEGIN``/``END`` indent."""
     if endindent != beginindent:
         LOGGER.warning(
-            "%s:%d Indent of END tag %r does not match indent of BEGIN tag %r.",
+            "'%s:%d' Indent of END tag %r does not match indent of BEGIN tag %r.",
             filepath,
             lineno,
             endindent,
             beginindent,
         )
+
+
+def humanify(iterable):
+    """Just join names from `iterable`."""
+    if iterable:
+        return ", ".join(repr(str(item)) for item in iterable)
+    return "''"

@@ -45,3 +45,17 @@ def run(args, **kwargs):
         kwargs["stdout"] = subprocess.PIPE
         result = subprocess.run(args, check=True, **kwargs)
         return result.stdout.decode("utf-8")
+
+
+def indent(spaces: int = 2):
+    """Indent Lines by number of ``spaces``."""
+    return prefix(" " * spaces)
+
+
+def prefix(pre: str):
+    """Add ``pre`` In Front of Every Line."""
+
+    def func(text):
+        return "\n".join(f"{pre}{line}" for line in text.splitlines())
+
+    return func

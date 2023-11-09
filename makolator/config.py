@@ -88,8 +88,8 @@ class Config:
     inplace_marker: str = "GENERATE INPLACE"
     """Search marker for output code within output file."""
 
-    user_marker: str = ""
-    """Marker for User Code."""
+    static_marker: str = "STATIC"
+    """Marker for Static Code."""
 
     cache_path: Optional[Path] = None
     """

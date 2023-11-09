@@ -1,0 +1,15 @@
+
+Hello before
+
+// STATIC BEGIN a
+kept a
+// STATIC END a
+
+Hello middle
+
+// STATIC BEGIN b
+kept b
+// STATIC END b
+
+Hello after
+

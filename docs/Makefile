@@ -36,3 +36,4 @@ gen:
 	cd static && cp inplace-pre.txt inplace.txt && makolator inplace inplace.txt.mako inplace.txt
 	cd static && cp inplace-mako-pre.txt inplace-mako.txt && makolator inplace inplace-mako.txt
 	cd static && makolator gen test.txt.mako test.txt
+	cd static && cp static-pre.txt static.txt && makolator gen static.txt.mako static.txt

@@ -73,6 +73,18 @@ Within the template the following symbols are available
 
        The variable ``${TMPDIR}`` in the arguments will be replaced by a temporary directory
        path.
+   * - ``indent``
+     - Indent single line or multiple lines by two spaces:
+       
+       ``${text | indent}``
+   * - ``indent(spaces)``
+     - Indent single line or multiple lines by given number of spaces:
+       
+       ``${text | indent(4)}``
+   * - ``prefix(text)``
+     - Prefix single line or multiple lines by given text:
+       
+       ``${text | prefix('// ')}``
 
 File Generation
 ~~~~~~~~~~~~~~~
@@ -122,6 +134,28 @@ The inplace update (``makolator inplace file.txt``) will result in:
 .. literalinclude:: static/inplace-mako.txt
    :language: text
 
+Static Code
+~~~~~~~~~~~
+
+Fully and inplace generated files might want to leave space
+for user manipulation, which is kept even on update.
+These locations need to be prepared by ``${staticcode('name')}``, where
+``name`` is a unique identifier within the target file.
+
+Assume the following template:
+
+.. literalinclude:: static/static.txt.mako
+   :language: text
+
+and an outdated generated file: 
+
+.. literalinclude:: static/static-pre.txt
+   :language: text
+
+An update (``makolator gen file.txt.mako file.txt``) will result in:
+
+.. literalinclude:: static/static.txt
+   :language: text
 
 Indices and tables
 ==================

@@ -1,0 +1,15 @@
+
+Outdated before
+
+// STATIC BEGIN a
+kept a
+// STATIC END a
+
+Outdated middle
+
+// STATIC BEGIN b
+kept b
+// STATIC END b
+
+Outdated after
+

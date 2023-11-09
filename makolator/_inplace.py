@@ -74,7 +74,7 @@ class InplaceRenderer:
     ignore_unknown: bool
     eol: str
 
-    def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):
+    def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):  # noqa: C901
         """Render."""
         # pylint: disable=too-many-locals,too-many-nested-blocks
         inplace_marker = self.inplace_marker

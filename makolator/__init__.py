@@ -190,11 +190,11 @@ That's it.
 """
 
 # pylint: disable=unused-import
-from outputfile import Existing
+from outputfile import Existing  # noqa
 
-from .config import Config
-from .datamodel import Datamodel
-from .escape import tex
-from .exceptions import MakolatorError
-from .info import Info, get_cli
-from .makolator import Makolator
+from .config import Config  # noqa
+from .datamodel import Datamodel  # noqa
+from .escape import tex  # noqa
+from .exceptions import MakolatorError  # noqa
+from .info import Info, get_cli  # noqa
+from .makolator import Makolator  # noqa

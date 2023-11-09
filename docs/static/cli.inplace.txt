@@ -1,5 +1,4 @@
-usage: makolator inplace [-h] [--ignore-unknown] [--eol EOL] [--verbose] [--show-diff]
-                         [--existing {error,keep,overwrite,keep_timestamp}]
+usage: makolator inplace [-h] [--ignore-unknown] [--eol EOL] [--verbose] [--show-diff] [--existing {error,keep,overwrite,keep_timestamp}]
                          [--template-path TEMPLATE_PATH]
                          [templates ...] inplace
 

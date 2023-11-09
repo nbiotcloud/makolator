@@ -38,8 +38,8 @@ coverage = '^6.4.4'
 isort = '^5.9'
 mypy = "^1.3.0"
 nbcpychecker = '^1.0.0'
-pylint = '^2.15'
 pytest = '^7.3'
+pylama = {extras = ["all"], version = "^8.4.1"}
 
 [tool.poetry.group.doc.dependencies]
 sphinx = '^5.1.1'
@@ -80,7 +80,6 @@ exclude_lines = [
 
 
 [tool.pylint.'MESSAGES CONTROL']
-max-line-length = 120
 extension-pkg-whitelist = "pydantic"
 disable = [
 ]
@@ -111,7 +110,7 @@ commands =
     poetry run coverage report
     poetry run coverage html
     poetry run coverage xml
-    poetry run pylint makolator tests
+    poetry run pylama makolator tests --max-line-length 120
     poetry run mypy makolator
     poetry run make html -C docs
     poetry run nbcpychecker check

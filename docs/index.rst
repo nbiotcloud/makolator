@@ -113,7 +113,7 @@ Assume the following file:
 .. literalinclude:: static/inplace-pre.txt
    :language: text
 
-The lines between ``GENERATE INLINE BEGIN`` and ``GENERATE INLINE END`` can be
+The lines between ``GENERATE INPLACE BEGIN`` and ``GENERATE INPLACE END`` can be
 filled via a template like:
 
 .. literalinclude:: static/inplace.txt.mako

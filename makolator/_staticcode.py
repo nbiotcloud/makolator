@@ -85,7 +85,7 @@ def read(filepath: Optional[Path], comment_sep: str, marker: str) -> Iterator[St
 
 def _read(filepath: Optional[Path], marker: str, staticcodemap: StaticCodeMap):
     if filepath and marker:
-        begin = re.compile(rf"(?P<indent>\s*).*{marker}\s+BEGIN\s+(?P<name>.+?)\s*")
+        begin = re.compile(rf"(?P<indent>\s*).*{marker}\s+BEGIN\s+(?P<name>\S+)\s*")
         info = None
 
         try:
@@ -115,7 +115,7 @@ def _read(filepath: Optional[Path], marker: str, staticcodemap: StaticCodeMap):
 
 def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter, begin, info: Info):
     # pylint: disable=too-many-arguments
-    end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>.+?)\s*")
+    end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>\S+)\s*")
     lines: List[str] = []
     while True:
         # search END

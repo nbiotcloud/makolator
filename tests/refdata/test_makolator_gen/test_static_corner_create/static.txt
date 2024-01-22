@@ -1,8 +1,8 @@
 Hello before
-// STATIC BEGIN a
+// STATIC BEGIN one
 obsolete a
-// STATIC END a
+// STATIC END one
 Hello middle
-  # STATIC BEGIN b
-# STATIC END b
+  # STATIC BEGIN two
+# STATIC END two
 Hello after

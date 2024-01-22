@@ -1,6 +1,6 @@
 <% greet = "Hello" %>\
 ${greet} before
-${staticcode('a', default='obsolete a')}
+${staticcode('one', default='obsolete a')}
 ${greet} middle
-  ${staticcode('b', comment_sep='#')}
+  ${staticcode('two', comment_sep='#')}
 ${greet} after

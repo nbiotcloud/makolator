@@ -27,18 +27,16 @@ import time
 from pathlib import Path
 from shutil import copyfile
 
-from pytest import fixture, raises
+from pytest import approx, fixture, raises
+from test2ref import assert_paths, assert_refdata
 
 from makolator import Config, Makolator, MakolatorError
-
-from .util import assert_gen, assert_paths, cmp_mtime
 
 # pylint: disable=redefined-outer-name
 
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
-REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 PAUSE = 0.1
 
 
@@ -54,7 +52,7 @@ def test_abs(tmp_path, caplog, capsys):
     """Generate File With Absolute Path."""
     mklt = Makolator()
     mklt.gen([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(tmp_path, REFDATA / "test_abs", capsys=capsys, caplog=caplog, tmp_path=tmp_path)
+    assert_refdata(test_abs, tmp_path, capsys=capsys, caplog=caplog)
 
 
 def test_abs_template_not_found(tmp_path):
@@ -68,14 +66,14 @@ def test_rel(tmp_path, caplog, capsys):
     """Generate File With Relative Path."""
     mklt = Makolator(config=Config(template_paths=[TESTDATA]))
     mklt.gen([Path("test.txt.mako")], tmp_path / "test.txt")
-    assert_gen(tmp_path, REFDATA / "test_rel", capsys=capsys, caplog=caplog, tmp_path=tmp_path)
+    assert_refdata(test_rel, tmp_path, capsys=capsys, caplog=caplog)
 
 
 def test_rel_sub(tmp_path):
     """Generate File With Relative Path Sub."""
     mklt = Makolator(config=Config(template_paths=[TESTDATA.parent]))
     mklt.gen([Path(TESTDATA.name) / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(tmp_path, REFDATA / "test_rel_sub")
+    assert_refdata(test_rel_sub, tmp_path)
 
 
 def test_rel_sub_not_found(tmp_path):
@@ -90,7 +88,7 @@ def test_datamodel(tmp_path):
     mklt = Makolator()
     mklt.datamodel.item = "myitem"
     mklt.gen([TESTDATA / "test.txt.mako"], tmp_path / "test.txt")
-    assert_gen(tmp_path, REFDATA / "test_datamodel")
+    assert_refdata(test_datamodel, tmp_path)
 
 
 def test_datamodel_timestamp(tmp_path):
@@ -104,7 +102,7 @@ def test_datamodel_timestamp(tmp_path):
     time.sleep(PAUSE)
     mklt.gen([TESTDATA / "test.txt.mako"], outfile)
 
-    assert cmp_mtime(mtime, outfile.stat().st_mtime)
+    assert mtime == approx(outfile.stat().st_mtime)
 
 
 def test_verbose(tmp_path, mklt, caplog, capsys):
@@ -112,50 +110,38 @@ def test_verbose(tmp_path, mklt, caplog, capsys):
     mklt.config.verbose = True
     mklt.gen([Path("test.txt.mako")], tmp_path / "test.txt")
     mklt.gen([Path("test.txt.mako")], tmp_path / "test.txt")
-    assert_gen(
-        tmp_path,
-        REFDATA / "test_verbose",
-        caplog=caplog,
-        capsys=capsys,
-        tmp_path=tmp_path,
-    )
+    assert_refdata(test_verbose, tmp_path, caplog=caplog, capsys=capsys)
 
 
 def test_stdout(tmp_path, mklt, caplog, capsys):
     """Generate File stdout."""
     mklt.gen([Path("test.txt.mako")])
-    assert_gen(
-        tmp_path,
-        REFDATA / "test_stdout",
-        caplog=caplog,
-        capsys=capsys,
-        tmp_path=tmp_path,
-    )
+    assert_refdata(test_stdout, tmp_path, caplog=caplog, capsys=capsys)
 
 
 def test_context(tmp_path, mklt):
     """Generate File with Context."""
     context = {"myvar": "myvalue"}
     mklt.gen([Path("context.txt.mako")], tmp_path / "context.txt", context=context)
-    assert_gen(tmp_path, REFDATA / "test_context")
+    assert_refdata(test_context, tmp_path)
 
 
 def test_hier_base(tmp_path, mklt):
     """Generate File Hierarchy - base."""
     mklt.gen([Path("base.txt.mako")], tmp_path / "base.txt")
-    assert_gen(tmp_path, REFDATA / "test_hier_base")
+    assert_refdata(test_hier_base, tmp_path)
 
 
 def test_hier_impl(tmp_path, mklt):
     """Generate File Hierarchy - impl."""
     mklt.gen([Path("impl.txt.mako")], tmp_path / "impl.txt")
-    assert_gen(tmp_path, REFDATA / "test_hier_impl")
+    assert_refdata(test_hier_impl, tmp_path)
 
 
 def test_run(tmp_path, mklt):
     """Use run()."""
     mklt.gen([Path("run.txt.mako")], tmp_path / "run.txt")
-    assert_gen(tmp_path, REFDATA / "test_run")
+    assert_refdata(test_run, tmp_path)
 
 
 def test_run_broken(tmp_path, mklt):
@@ -168,7 +154,7 @@ def test_static_create(tmp_path, mklt):
     """Static Code Handling."""
     filepath = tmp_path / "static.txt"
     mklt.gen([Path("static.txt.mako")], filepath)
-    assert_gen(tmp_path, REFDATA / "test_static_create")
+    assert_refdata(test_static_create, tmp_path)
 
 
 def test_static(tmp_path, mklt):
@@ -176,7 +162,7 @@ def test_static(tmp_path, mklt):
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static.txt", filepath)
     mklt.gen([Path("static.txt.mako")], filepath)
-    assert_gen(tmp_path, REFDATA / "test_static")
+    assert_refdata(test_static, tmp_path)
 
 
 def test_static_duplicate_tpl(tmp_path, mklt):
@@ -232,7 +218,7 @@ def test_static_corner_create(tmp_path, mklt, caplog):
     """Generate File with Corner Cases."""
     filepath = tmp_path / "static.txt"
     mklt.gen([Path("static-corner.txt.mako")], filepath)
-    assert_gen(tmp_path, REFDATA / "test_static_corner_create", caplog=caplog, tmp_path=tmp_path)
+    assert_refdata(test_static_corner_create, tmp_path, caplog=caplog)
 
 
 def test_static_corner(tmp_path, mklt, caplog):
@@ -240,14 +226,14 @@ def test_static_corner(tmp_path, mklt, caplog):
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static-corner.txt", filepath)
     mklt.gen([Path("static-corner.txt.mako")], filepath)
-    assert_gen(tmp_path, REFDATA / "test_static_corner", caplog=caplog, tmp_path=tmp_path)
+    assert_refdata(test_static_corner, tmp_path, caplog=caplog)
 
 
 def test_helper(tmp_path, mklt):
     """Generate File with Helper."""
     filepath = tmp_path / "helper.txt"
     mklt.gen([Path("helper.txt.mako")], filepath)
-    assert_gen(tmp_path, REFDATA / "test_helper")
+    assert_refdata(test_helper, tmp_path)
 
 
 def test_undefined(tmp_path, mklt):

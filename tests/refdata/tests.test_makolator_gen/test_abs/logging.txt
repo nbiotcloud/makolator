@@ -1,0 +1,3 @@
+DEBUG    makolator  gen(['$PRJ/tests/testdata/test.txt.mako'], $GEN/test.txt)
+INFO     makolator  Template '$PRJ/tests/testdata/test.txt.mako'
+INFO     makolator  Generate '$GEN/test.txt'

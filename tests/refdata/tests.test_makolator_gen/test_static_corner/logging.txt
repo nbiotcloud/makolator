@@ -1,0 +1,7 @@
+DEBUG    makolator  gen(['static-corner.txt.mako'], $GEN/static.txt)
+INFO     makolator  Static Code 'one' at '$GEN/static.txt:2'
+WARNING  makolator  '$GEN/static.txt:4' Indent of END tag '' does not match indent of BEGIN tag '    '.
+INFO     makolator  Static Code 'two' at '$GEN/static.txt:6'
+WARNING  makolator  '$GEN/static.txt:8' Indent of END tag '    ' does not match indent of BEGIN tag ''.
+INFO     makolator  Template '$PRJ/tests/testdata/static-corner.txt.mako'
+INFO     makolator  Generate '$GEN/static.txt'

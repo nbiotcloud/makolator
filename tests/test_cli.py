@@ -26,9 +26,9 @@
 from pathlib import Path
 from shutil import copyfile
 
-from makolator.cli import main
+from test2ref import assert_refdata
 
-from .util import assert_gen
+from makolator.cli import main
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
@@ -38,7 +38,7 @@ REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 def test_gen(tmp_path):
     """Gen."""
     main(["gen", str(TESTDATA / "test.txt.mako"), str(tmp_path / "test.txt")])
-    assert_gen(tmp_path, REFDATA / "test_gen")
+    assert_refdata(test_gen, tmp_path)
 
 
 def test_inplace(tmp_path):
@@ -46,4 +46,4 @@ def test_inplace(tmp_path):
     filepath = tmp_path / "inplace.txt"
     copyfile(TESTDATA / "inplace.txt", filepath)
     main(["inplace", str(TESTDATA / "inplace.txt.mako"), str(filepath)])
-    assert_gen(tmp_path, REFDATA / "test_inplace")
+    assert_refdata(test_inplace, tmp_path)

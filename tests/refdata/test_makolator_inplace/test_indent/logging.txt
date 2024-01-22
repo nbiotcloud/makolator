@@ -1,4 +1,0 @@
-DEBUG   makolator inplace(['PRJROOT/tests/testdata/inplace.txt.mako'], PosixPath('TMP/inplace.txt'))
-INFO    makolator Template 'PRJROOT/tests/testdata/inplace.txt.mako'
-INFO    makolator Inplace 'TMP/inplace.txt:1'
-WARNING makolator 'TMP/inplace.txt:3' Indent of END tag '  ' does not match indent of BEGIN tag ''.

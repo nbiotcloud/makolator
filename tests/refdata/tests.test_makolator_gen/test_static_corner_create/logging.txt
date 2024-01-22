@@ -1,0 +1,3 @@
+DEBUG    makolator  gen(['static-corner.txt.mako'], $GEN/static.txt)
+INFO     makolator  Template '$PRJ/tests/testdata/static-corner.txt.mako'
+INFO     makolator  Generate '$GEN/static.txt'

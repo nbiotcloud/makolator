@@ -28,10 +28,9 @@ from shutil import copyfile
 
 from mako.exceptions import CompileException
 from pytest import fixture, raises
+from test2ref import assert_paths, assert_refdata
 
 from makolator import Makolator, MakolatorError
-
-from .util import assert_gen, assert_paths
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
@@ -54,7 +53,7 @@ def test_inplace(tmp_path, capsys, caplog):
     copyfile(TESTDATA / "inplace.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_inplace", capsys=capsys, caplog=caplog, tmp_path=tmp_path)
+    assert_refdata(test_inplace, tmp_path, capsys=capsys, caplog=caplog)
 
 
 def test_disabled(tmp_path, capsys, caplog):
@@ -64,13 +63,7 @@ def test_disabled(tmp_path, capsys, caplog):
     mklt = Makolator()
     mklt.config.template_marker = None
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(
-        tmp_path,
-        REFDATA / "test_disabled",
-        capsys=capsys,
-        caplog=caplog,
-        tmp_path=tmp_path,
-    )
+    assert_refdata(test_disabled, tmp_path, capsys=capsys, caplog=caplog)
 
 
 def test_indent(tmp_path, caplog):
@@ -79,7 +72,7 @@ def test_indent(tmp_path, caplog):
     copyfile(TESTDATA / "inplace-indent.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_indent", caplog=caplog, tmp_path=tmp_path)
+    assert_refdata(test_indent, tmp_path, caplog=caplog)
 
 
 def test_broken_arg(tmp_path):
@@ -124,7 +117,7 @@ def test_unknown_ignore(tmp_path):
     copyfile(TESTDATA / "inplace-unknown.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath, ignore_unknown=True)
-    assert_gen(tmp_path, REFDATA / "test_unknown_ignore")
+    assert_refdata(test_unknown_ignore, tmp_path)
 
 
 def test_child(tmp_path):
@@ -133,7 +126,7 @@ def test_child(tmp_path):
     copyfile(TESTDATA / "inplace-child.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace-child.txt.mako"], filepath, ignore_unknown=True)
-    assert_gen(tmp_path, REFDATA / "test_child")
+    assert_refdata(test_child, tmp_path)
 
 
 def test_mako_only(tmp_path):
@@ -142,7 +135,7 @@ def test_mako_only(tmp_path):
     copyfile(TESTDATA / "inplace-tpl.txt", filepath)
     mklt = Makolator()
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_mako_only")
+    assert_refdata(test_mako_only, tmp_path)
 
 
 def test_mako_disabled(tmp_path):
@@ -184,7 +177,7 @@ def test_eol(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_eol", tmp_path=tmp_path)
+    assert_refdata(test_eol, tmp_path)
 
 
 def test_eol_sv(tmp_path):
@@ -194,7 +187,7 @@ def test_eol_sv(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_eol_sv", tmp_path=tmp_path)
+    assert_refdata(test_eol_sv, tmp_path)
 
 
 def test_eol_cpp(tmp_path):
@@ -204,7 +197,7 @@ def test_eol_cpp(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_eol_cpp", tmp_path=tmp_path)
+    assert_refdata(test_eol_cpp, tmp_path)
 
 
 def test_eol_ini(tmp_path):
@@ -214,7 +207,7 @@ def test_eol_ini(tmp_path):
     mklt = Makolator()
     mklt.config.inplace_eol_comment = "GENERATED"
     mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
-    assert_gen(tmp_path, REFDATA / "test_eol_ini", tmp_path=tmp_path)
+    assert_refdata(test_eol_ini, tmp_path)
 
 
 def test_run(tmp_path):
@@ -223,7 +216,7 @@ def test_run(tmp_path):
     copyfile(TESTDATA / "inplace-run.txt", filepath)
     mklt = Makolator()
     mklt.inplace([], filepath)
-    assert_gen(tmp_path, REFDATA / "test_run", tmp_path=tmp_path)
+    assert_refdata(test_run, tmp_path)
 
 
 def test_run_broken(tmp_path):
@@ -277,4 +270,4 @@ def test_helper(tmp_path, mklt):
     filepath = tmp_path / "helper.txt"
     copyfile(TESTDATA / "helper.txt", filepath)
     mklt.inplace([Path("helper.txt.mako")], filepath)
-    assert_gen(tmp_path, REFDATA / "test_helper")
+    assert_refdata(test_helper, tmp_path)

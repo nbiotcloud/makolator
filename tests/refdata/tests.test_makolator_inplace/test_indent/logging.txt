@@ -1,0 +1,4 @@
+DEBUG    makolator  inplace(['$PRJ/tests/testdata/inplace.txt.mako'], $GEN/inplace.txt)
+INFO     makolator  Template '$PRJ/tests/testdata/inplace.txt.mako'
+INFO     makolator  Inplace '$GEN/inplace.txt:1'
+WARNING  makolator  '$GEN/inplace.txt:3' Indent of END tag '  ' does not match indent of BEGIN tag ''.

@@ -1,3 +1,0 @@
-DEBUG   makolator gen(['static-corner.txt.mako'], PosixPath('TMP/static.txt'))
-INFO    makolator Template 'PRJROOT/tests/testdata/static-corner.txt.mako'
-INFO    makolator Generate 'TMP/static.txt'

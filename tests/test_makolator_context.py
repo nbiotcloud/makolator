@@ -24,13 +24,12 @@
 """Makolator Testing."""
 from pathlib import Path
 
-from makolator import Makolator
+from test2ref import assert_refdata
 
-from .util import assert_gen
+from makolator import Makolator
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
-REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 
 
 def test_makolator_main(tmp_path, caplog, capsys):
@@ -38,10 +37,4 @@ def test_makolator_main(tmp_path, caplog, capsys):
     mkl = Makolator()
     mkl.config.template_paths = [TESTDATA]
     mkl.gen(Path("main.txt.mako"), tmp_path / "main.txt")
-    assert_gen(
-        tmp_path,
-        REFDATA / "test_makolator_main",
-        capsys=capsys,
-        caplog=caplog,
-        tmp_path=tmp_path,
-    )
+    assert_refdata(test_makolator_main, tmp_path, capsys=capsys, caplog=caplog)

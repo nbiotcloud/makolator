@@ -4,6 +4,7 @@
 .tox
 .venv
 .mypy_cache
+.test2ref
 /.vscode
 /docs/api
 __pycache__

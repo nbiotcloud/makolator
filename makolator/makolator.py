@@ -134,7 +134,7 @@ class Makolator:
             context: Key-Value Pairs pairs forwarded to the template.
         """
         template_filepaths = norm_paths(template_filepaths)
-        LOGGER.debug("gen(%r, %r)", [str(filepath) for filepath in template_filepaths], dest)
+        LOGGER.debug("gen(%r, %s)", [str(filepath) for filepath in template_filepaths], dest)
         tplfilepaths, lookup = self._create_template_lookup(
             template_filepaths, self.config.template_paths, required=True
         )
@@ -177,7 +177,7 @@ class Makolator:
             ignore_unknown: Ignore unknown inplace markers, instead of raising an error.
         """
         template_filepaths = norm_paths(template_filepaths)
-        LOGGER.debug("inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], filepath)
+        LOGGER.debug("inplace(%r, %s)", [str(filepath) for filepath in template_filepaths], filepath)
         tplfilepaths, lookup = self._create_template_lookup(template_filepaths, self.config.template_paths)
         templates = tuple(self._create_templates(tplfilepaths, lookup))
         config = self.config

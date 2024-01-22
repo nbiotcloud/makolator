@@ -24,9 +24,9 @@
 """Makolator Testing."""
 from pathlib import Path
 
-from makolator import Config, Datamodel, Existing, Makolator
+from contextlib_chdir import chdir
 
-from .util import chdir
+from makolator import Config, Datamodel, Existing, Makolator
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"

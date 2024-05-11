@@ -3,7 +3,7 @@ Old before
 kept a
 // STATIC END  a
 Old middle
-// STATIC BEGIN b
+// STATIC BEGIN b ignored
 kept b
 // STATIC END b
 Old after

@@ -1,4 +1,7 @@
-usage: makolator inplace [-h] [--ignore-unknown] [--eol EOL] [--verbose] [--show-diff] [--existing {error,keep,overwrite,keep_timestamp}] [--template-path TEMPLATE_PATH]
+usage: makolator inplace [-h] [--ignore-unknown] [--eol EOL] [--verbose] [--show-diff]
+                         [--existing {error,keep,overwrite,keep_timestamp}]
+                         [--template-path TEMPLATE_PATH] [--marker-fill MARKER_FILL]
+                         [--marker-linelength MARKER_LINELENGTH]
                          [templates ...] inplace
 
 positional arguments:
@@ -15,6 +18,10 @@ options:
                         What if the file exists. Default is 'keep_timestamp'
   --template-path TEMPLATE_PATH, -T TEMPLATE_PATH
                         Directories with templates referred by include/inherit/...
+  --marker-fill MARKER_FILL
+                        Static Code, Inplace and Template Marker are filled with this given value until reaching line length of --marker-linelength.
+  --marker-linelength MARKER_LINELENGTH
+                        Static Code, Inplace and Template Marker are filled until --marker-linelength.
 
 Update with inplace template only:
 

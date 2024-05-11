@@ -7,7 +7,7 @@ kept a
 
 Outdated middle
 
-// STATIC BEGIN b
+// STATIC BEGIN b ignored
 kept b
 // STATIC END b
 

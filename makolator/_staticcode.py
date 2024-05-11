@@ -29,7 +29,8 @@ from typing import Dict, Iterator, List, Optional
 
 from attrs import define, field
 
-from ._util import LOGGER, check_indent, humanify
+from ._util import LOGGER, check_indent, fill_marker, humanify
+from .config import Config
 from .exceptions import MakolatorError
 
 StaticCodeMap = Dict[str, str]
@@ -53,8 +54,10 @@ class StaticCode:
     """Static Code Manager."""
 
     comment_sep: str
-    marker: str
     staticcodemap: StaticCodeMap
+    marker: str
+    marker_fill: str = ""
+    marker_linelength: int = 0
 
     _names: List[str] = field(factory=list)
 
@@ -66,18 +69,24 @@ class StaticCode:
             comment_sep = self.comment_sep or ""
         code = self.staticcodemap.pop(name, default) or ""
         cpre = f"{comment_sep} " if comment_sep else ""
-        lines = [f"{cpre}{self.marker} BEGIN {name}"]
+        begin = f"{cpre}{self.marker} BEGIN {name}"
+        end = f"{cpre}{self.marker} END {name}"
+        if self.marker_fill and self.marker_linelength:
+            begin = fill_marker(begin, self.marker_fill, self.marker_linelength)
+            end = fill_marker(end, self.marker_fill, self.marker_linelength)
+        lines = [begin]
         lines.extend(code.splitlines())
-        lines.append(f"{cpre}{self.marker} END {name}")
+        lines.append(end)
         return "\n".join(lines)
 
 
 @contextmanager
-def read(filepath: Optional[Path], comment_sep: str, marker: str) -> Iterator[StaticCode]:
+def read(filepath: Optional[Path], comment_sep: str, config: Config) -> Iterator[StaticCode]:
     """Read from ``filepath``."""
     staticcodemap: StaticCodeMap = {}
+    marker = config.static_marker
     _read(filepath, marker, staticcodemap)
-    yield StaticCode(comment_sep, marker, staticcodemap)
+    yield StaticCode(comment_sep, staticcodemap, marker, config.marker_fill, config.marker_linelength)
     if staticcodemap:
         names = humanify(staticcodemap)
         raise MakolatorError(f"'{filepath!s}': unknown static code {names}")

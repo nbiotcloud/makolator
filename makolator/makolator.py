@@ -142,13 +142,13 @@ class Makolator:
         context = context or {}
         comment_sep = self._get_comment_sep(dest)
         if dest is None:
-            with read(dest, comment_sep, self.config.static_marker) as staticcode:
+            with read(dest, comment_sep, self.config) as staticcode:
                 self._render(next(templates), sys.stdout, None, context, staticcode)
         else:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".
             with self.open_outputfile(dest, newline="") as output:
-                with read(dest, comment_sep, self.config.static_marker) as staticcode:
+                with read(dest, comment_sep, self.config) as staticcode:
                     template = next(templates)  # Load template
                     LOGGER.info("Generate '%s'", dest)
                     self._render(template, output, dest, context, staticcode)
@@ -184,9 +184,9 @@ class Makolator:
         context = context or {}
         comment_sep = self._get_comment_sep(filepath)
         eol = self._get_eol(filepath, config.inplace_eol_comment)
-        inplace = InplaceRenderer(config.template_marker, config.inplace_marker, templates, ignore_unknown, eol)
+        inplace = InplaceRenderer(config, templates, ignore_unknown, eol)
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
-            with read(filepath, comment_sep, config.static_marker) as staticcode:
+            with read(filepath, comment_sep, config) as staticcode:
                 context = self._get_render_context(filepath, context, staticcode)
                 inplace.render(lookup, filepath, outputfile, context)
 
@@ -245,6 +245,8 @@ ${helper.run(*args, **kwargs)}\
                         yield joined
                         found = True
         if not found and required:
+            if not searchpaths:
+                raise MakolatorError(f"None of the templates {humanify(filepaths)}.")
             raise MakolatorError(f"None of the templates {humanify(filepaths)} found at {humanify(searchpaths)}.")
 
     def _get_render_context(self, output_filepath: Optional[Path], context: dict, staticcode: StaticCode) -> dict:

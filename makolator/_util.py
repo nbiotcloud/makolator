@@ -57,3 +57,13 @@ def humanify(iterable):
     if iterable:
         return ", ".join(repr(str(item)) for item in iterable)
     return "''"
+
+
+def fill_marker(line: str, fill: str, length: int):
+    filllen = len(fill)
+    linelen = len(line) + 1
+    if linelen >= length:
+        return line
+    count = (length - linelen) // filllen
+    filling = fill * count
+    return f"{line} {filling}"

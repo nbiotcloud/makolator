@@ -271,3 +271,63 @@ def test_helper(tmp_path, mklt):
     copyfile(TESTDATA / "helper.txt", filepath)
     mklt.inplace([Path("helper.txt.mako")], filepath)
     assert_refdata(test_helper, tmp_path)
+
+
+def test_inplace_nofill(tmp_path):
+    """Render File Inplace with ffill."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-fill.txt", filepath)
+    mklt = Makolator()
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_refdata(test_inplace_nofill, tmp_path)
+
+
+def test_inplace_fill(tmp_path):
+    """Render File Inplace with ffill."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-fill.txt", filepath)
+    mklt = Makolator()
+    mklt.config.marker_linelength = 80
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_refdata(test_inplace_fill, tmp_path)
+
+
+def test_inplace_fillstar(tmp_path):
+    """Render File Inplace with ffill."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-fill.txt", filepath)
+    mklt = Makolator()
+    mklt.config.marker_fill = "*"
+    mklt.config.marker_linelength = 40
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_refdata(test_inplace_fillstar, tmp_path)
+
+
+def test_mako_only_nofill(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-tpl-fill.txt", filepath)
+    mklt = Makolator()
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_refdata(test_mako_only_nofill, tmp_path)
+
+
+def test_mako_only_fill(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-tpl-fill.txt", filepath)
+    mklt = Makolator()
+    mklt.config.marker_linelength = 80
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_refdata(test_mako_only_fill, tmp_path)
+
+
+def test_mako_only_fillstar(tmp_path):
+    """Render File Inplace with mako."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace-tpl-fill.txt", filepath)
+    mklt = Makolator()
+    mklt.config.marker_fill = "*"
+    mklt.config.marker_linelength = 40
+    mklt.inplace([TESTDATA / "inplace.txt.mako"], filepath)
+    assert_refdata(test_mako_only_fillstar, tmp_path)

@@ -34,7 +34,8 @@ from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from mako.template import Template
 
-from ._util import LOGGER, check_indent
+from ._util import LOGGER, check_indent, fill_marker
+from .config import Config
 from .exceptions import MakolatorError
 
 # pylint: disable=too-many-arguments,too-few-public-methods
@@ -68,8 +69,7 @@ class InplaceRenderer:
 
     """Inplace Renderer."""
 
-    template_marker: str
-    inplace_marker: str
+    config: Config
     templates: Tuple[Template, ...]
     ignore_unknown: bool
     eol: str
@@ -77,13 +77,13 @@ class InplaceRenderer:
     def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):  # noqa: C901
         """Render."""
         # pylint: disable=too-many-locals,too-many-nested-blocks
-        inplace_marker = self.inplace_marker
-        ibegin = re.compile(rf"(?P<indent>\s*).*{inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\).*")
+        inplace_marker = self.config.inplace_marker
+        ibegin = re.compile(rf"(?P<indent>\s*).*{inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\)")
         iinfo = None
 
-        template_marker = self.template_marker
+        template_marker = self.config.template_marker
         tinfo = None
-        tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN.*")
+        tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN")
         templates = list(self.templates)
 
         with open(filepath, encoding="utf-8") as inputfile:
@@ -104,11 +104,11 @@ class InplaceRenderer:
                         # normal lines
                         while True:
                             lineno, line = next(inputiter)
-                            outputfile.write(line)
                             if inplace_marker:
                                 # search for "INPLACE BEGIN <funcname>(<args>)"
                                 beginmatch = ibegin.match(line)
                                 if beginmatch:
+                                    outputfile.write(self._fill_marker(beginmatch))
                                     # consume INPLACE BEGIN
                                     iinfo = self._start_inplace(templates, filepath, lineno, **beginmatch.groupdict())
                                     break
@@ -116,9 +116,11 @@ class InplaceRenderer:
                                 # search for "TEMPLATE BEGIN"
                                 beginmatch = tbegin.match(line)
                                 if beginmatch:
+                                    outputfile.write(self._fill_marker(beginmatch))
                                     # consume TEMPLATE BEGIN
                                     tinfo = TplInfo(lineno, beginmatch.group("pre"))
                                     break
+                            outputfile.write(line)
 
             except StopIteration:
                 pass
@@ -142,7 +144,7 @@ class InplaceRenderer:
                 # fill
                 self._fill_inplace(filepath, outputfile, iinfo, context)
                 # propagate INPLACE END tag
-                outputfile.write(line)
+                outputfile.write(self._fill_marker(endmatch))
                 check_indent(filepath, lineno, iinfo.indent, endmatch.group("indent"))
                 # consume INPLACE END
                 break
@@ -153,11 +155,9 @@ class InplaceRenderer:
         # capture TEMPLATE
         pre = tinfo.pre
         prelen = len(pre)
-        tend = re.compile(rf"(?P<pre>.*)\s*{self.template_marker}\s+END.*")
+        tend = re.compile(rf"(?P<pre>.*)\s*{self.config.template_marker}\s+END")
         while True:
             _, line = next(inputiter)
-            # propagate
-            outputfile.write(line)
 
             beginmatch = tbegin.match(line)
             if beginmatch:
@@ -167,9 +167,14 @@ class InplaceRenderer:
             # search for "INPLACE END"
             endmatch = tend.match(line)
             if endmatch:
+                outputfile.write(self._fill_marker(endmatch))
                 LOGGER.info("Template '%s:%d'", str(outputfile), tinfo.lineno)
                 templates.append(Template("".join(tinfo.lines), lookup=lookup))
                 break
+            else:
+                # propagate
+                outputfile.write(line)
+
             if line.startswith(pre):
                 line = line[prelen:]
             tinfo.lines.append(line)
@@ -182,7 +187,7 @@ class InplaceRenderer:
                 func = template.get_def(funcname)
             except AttributeError:
                 continue
-            end = re.compile(rf"(?P<indent>\s*).*{self.inplace_marker}\s+END\s{funcname}.*")
+            end = re.compile(rf"(?P<indent>\s*).*{self.config.inplace_marker}\s+END\s{funcname}")
             return InplaceInfo(lineno, indent, funcname, args, func, end)
         if not self.ignore_unknown:
             raise MakolatorError(f"{filepath!s}:{lineno} Function '{funcname}' is not found in templates.")
@@ -228,6 +233,15 @@ class InplaceRenderer:
                     outputfile.write("\n")
 
         buffer.close()
+
+    def _fill_marker(self, mat: re.Match) -> str:
+        marker_fill = self.config.marker_fill
+        marker_linelength = self.config.marker_linelength
+        if marker_fill and marker_linelength:
+            line = mat.string[mat.start() : mat.end()]  # noqa
+            return fill_marker(line, marker_fill, marker_linelength) + "\n"
+        else:
+            return mat.string
 
 
 def _extract(*args, **kwargs):

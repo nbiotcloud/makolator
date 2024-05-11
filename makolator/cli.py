@@ -102,6 +102,19 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             action="append",
             help="Directories with templates referred by include/inherit/...",
         )
+        sub.add_argument(
+            "--marker-fill",
+            type=str,
+            help=(
+                "Static Code, Inplace and Template Marker are filled with "
+                "this given value until reaching line length of --marker-linelength."
+            ),
+        )
+        sub.add_argument(
+            "--marker-linelength",
+            type=int,
+            help=("Static Code, Inplace and Template Marker are filled until " "--marker-linelength."),
+        )
 
     args = parser.parse_args(args=args)
     if args.cmd:
@@ -110,6 +123,8 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             diffout=print if args.show_diff else None,
             existing=args.existing,
             template_paths=args.template_path + [Path(".")],
+            marker_fill=args.marker_fill,
+            marker_linelength=args.marker_linelength,
         )
         info = Info(cli=get_cli())
         mklt = Makolator(config=config, info=info)

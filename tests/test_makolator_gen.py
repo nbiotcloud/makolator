@@ -48,6 +48,15 @@ def mklt():
     yield mklt
 
 
+@fixture
+def mklt_fill():
+    """Default :any:`Makolator` instance with proper ``template_paths``."""
+    mklt = Makolator()
+    mklt.config.template_paths = [TESTDATA]
+    mklt.config.marker_linelength = 94
+    yield mklt
+
+
 def test_abs(tmp_path, caplog, capsys):
     """Generate File With Absolute Path."""
     mklt = Makolator()
@@ -157,12 +166,28 @@ def test_static_create(tmp_path, mklt):
     assert_refdata(test_static_create, tmp_path)
 
 
+def test_static_create_fill(tmp_path, mklt_fill):
+    """Static Code Handling."""
+    filepath = tmp_path / "static.txt"
+    mklt_fill.gen([Path("static.txt.mako")], filepath)
+    assert_refdata(test_static_create_fill, tmp_path)
+
+
 def test_static(tmp_path, mklt):
     """Static Code Handling."""
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static.txt", filepath)
     mklt.gen([Path("static.txt.mako")], filepath)
     assert_refdata(test_static, tmp_path)
+
+
+def test_static_fill(tmp_path, mklt_fill):
+    """Static Code Handling."""
+    filepath = tmp_path / "static.txt"
+    mklt_fill.config.marker_fill = "****"
+    copyfile(TESTDATA / "static.txt", filepath)
+    mklt_fill.gen([Path("static.txt.mako")], filepath)
+    assert_refdata(test_static_fill, tmp_path)
 
 
 def test_static_duplicate_tpl(tmp_path, mklt):

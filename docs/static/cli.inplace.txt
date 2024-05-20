@@ -1,6 +1,5 @@
 usage: makolator inplace [-h] [--ignore-unknown] [--eol EOL] [--verbose] [--show-diff]
-                         [--existing {error,keep,overwrite,keep_timestamp}]
-                         [--template-path TEMPLATE_PATH] [--marker-fill MARKER_FILL]
+                         [--existing {error,keep,overwrite,keep_timestamp}] [--template-path TEMPLATE_PATH] [--marker-fill MARKER_FILL]
                          [--marker-linelength MARKER_LINELENGTH]
                          [templates ...] inplace
 

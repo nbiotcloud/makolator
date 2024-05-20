@@ -138,7 +138,7 @@ def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter
         endmatch = end.match(line)
         if endmatch:
             # consume END
-            LOGGER.info("Static Code %r at '%s:%d'", info.name, str(filepath), info.lineno)
+            LOGGER.debug("Static Code %r at '%s:%d'", info.name, str(filepath), info.lineno)
             if info.name not in staticcodemap:
                 staticcodemap[info.name] = "".join(lines)
             else:

@@ -28,7 +28,6 @@ A simple API to an improved Mako.
 """
 
 import hashlib
-import logging
 import sys
 import tempfile
 from contextlib import contextmanager
@@ -46,13 +45,11 @@ from uniquer import uniquelist
 from . import escape, helper
 from ._inplace import InplaceRenderer
 from ._staticcode import StaticCode, read
-from ._util import Paths, humanify, norm_paths
+from ._util import LOGGER, Paths, humanify, norm_paths
 from .config import Config
 from .datamodel import Datamodel
 from .exceptions import MakolatorError
 from .info import Info
-
-LOGGER = logging.getLogger("makolator")
 
 HELPER = {
     "indent": helper.indent,
@@ -134,7 +131,7 @@ class Makolator:
             context: Key-Value Pairs pairs forwarded to the template.
         """
         template_filepaths = norm_paths(template_filepaths)
-        LOGGER.debug("gen(%r, %s)", [str(filepath) for filepath in template_filepaths], dest)
+        LOGGER.debug("_gen(%r, %r)", [str(filepath) for filepath in template_filepaths], str(dest or "STDOUT"))
         tplfilepaths, lookup = self._create_template_lookup(
             template_filepaths, self.config.template_paths, required=True
         )
@@ -143,14 +140,16 @@ class Makolator:
         comment_sep = self._get_comment_sep(dest)
         if dest is None:
             with read(dest, comment_sep, self.config) as staticcode:
-                self._render(next(templates), sys.stdout, None, context, staticcode)
+                template = next(templates)  # Load template
+                LOGGER.info("gen(%r, STDOUT)", template.filename)
+                self._render(template, sys.stdout, None, context, staticcode)
         else:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".
             with self.open_outputfile(dest, newline="") as output:
                 with read(dest, comment_sep, self.config) as staticcode:
                     template = next(templates)  # Load template
-                    LOGGER.info("Generate '%s'", dest)
+                    LOGGER.info("gen(%r, %r)", template.filename, str(dest))
                     self._render(template, output, dest, context, staticcode)
 
     def _render(self, template: Template, output, dest: Optional[Path], context: dict, staticcode: StaticCode):
@@ -177,7 +176,7 @@ class Makolator:
             ignore_unknown: Ignore unknown inplace markers, instead of raising an error.
         """
         template_filepaths = norm_paths(template_filepaths)
-        LOGGER.debug("inplace(%r, %s)", [str(filepath) for filepath in template_filepaths], filepath)
+        LOGGER.debug("_inplace(%r, %r)", [str(filepath) for filepath in template_filepaths], str(filepath))
         tplfilepaths, lookup = self._create_template_lookup(template_filepaths, self.config.template_paths)
         templates = tuple(self._create_templates(tplfilepaths, lookup))
         config = self.config
@@ -187,12 +186,12 @@ class Makolator:
         inplace = InplaceRenderer(config, templates, ignore_unknown, eol)
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             with read(filepath, comment_sep, config) as staticcode:
+                LOGGER.info("inplace(%r, %r)", str(tplfilepaths[0]) if tplfilepaths else None, str(filepath))
                 context = self._get_render_context(filepath, context, staticcode)
                 inplace.render(lookup, filepath, outputfile, context)
 
     def _create_templates(self, tplfilepaths: List[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
         for tplfilepath in tplfilepaths:
-            LOGGER.info("Template '%s'", tplfilepath)
             yield lookup.get_template(tplfilepath.name)
         yield Template(
             """<%! from makolator import helper %>

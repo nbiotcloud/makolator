@@ -168,7 +168,7 @@ class InplaceRenderer:
             endmatch = tend.match(line)
             if endmatch:
                 outputfile.write(self._fill_marker(endmatch))
-                LOGGER.info("Template '%s:%d'", str(outputfile), tinfo.lineno)
+                LOGGER.debug("Template '%s:%d'", str(outputfile), tinfo.lineno)
                 templates.append(Template("".join(tinfo.lines), lookup=lookup))
                 break
             else:
@@ -195,7 +195,7 @@ class InplaceRenderer:
 
     def _fill_inplace(self, filepath: Path, outputfile, inplace: InplaceInfo, context: dict):
         # pylint: disable=too-many-locals
-        LOGGER.info("Inplace '%s:%d'", str(filepath), inplace.lineno)
+        LOGGER.debug("Inplace '%s:%d'", str(filepath), inplace.lineno)
         # determine args, kwargs
         try:
             # pylint: disable=eval-used

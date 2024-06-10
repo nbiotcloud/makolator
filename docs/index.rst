@@ -85,6 +85,10 @@ Within the template the following symbols are available
      - Prefix single line or multiple lines by given text:
        
        ``${text | prefix('// ')}``
+   * - ``comment(text)``
+     - Prefix single line or multiple lines by comment separator from ``Config``:
+       
+       ``${text | comment('Text set as comment')}``
    * - ``tex``
      - Escape latex special characters:
        

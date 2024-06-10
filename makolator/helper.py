@@ -48,7 +48,7 @@ def run(args, **kwargs):
         return result.stdout.decode("utf-8")
 
 
-def indent(text_or_int: Any):
+def indent(text_or_int: Any, rstrip: bool = False):
     """
     Indent Lines by number of ``text_or_int``.
 
@@ -67,11 +67,11 @@ def indent(text_or_int: Any):
         C
     """
     if isinstance(text_or_int, int):
-        return prefix(" " * text_or_int)
-    return "\n".join(f"  {line}" for line in str(text_or_int).splitlines())
+        return prefix(" " * text_or_int, rstrip=rstrip)
+    return prefix("  ", rstrip=rstrip)(text_or_int)
 
 
-def prefix(pre: str):
+def prefix(pre: str, rstrip: bool = False):
     """
     Add ``pre`` In Front of Every Line.
 
@@ -83,7 +83,14 @@ def prefix(pre: str):
     PRE-C
     """
 
-    def func(text):
-        return "\n".join(f"{pre}{line}" for line in text.splitlines())
+    if rstrip:
+
+        def func(text):
+            return "\n".join(f"{pre}{line}".rstrip() for line in text.splitlines())
+
+    else:
+
+        def func(text):
+            return "\n".join(f"{pre}{line}" for line in text.splitlines())
 
     return func

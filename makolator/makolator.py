@@ -142,7 +142,7 @@ class Makolator:
             with read(dest, comment_sep, self.config) as staticcode:
                 template = next(templates)  # Load template
                 LOGGER.info("gen(%r, STDOUT)", template.filename)
-                self._render(template, sys.stdout, None, context, staticcode)
+                self._render(template, sys.stdout, None, context, staticcode, comment_sep)
         else:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".
@@ -150,11 +150,13 @@ class Makolator:
                 with read(dest, comment_sep, self.config) as staticcode:
                     template = next(templates)  # Load template
                     LOGGER.info("gen(%r, %r)", template.filename, str(dest))
-                    self._render(template, output, dest, context, staticcode)
+                    self._render(template, output, dest, context, staticcode, comment_sep)
 
-    def _render(self, template: Template, output, dest: Optional[Path], context: dict, staticcode: StaticCode):
+    def _render(
+        self, template: Template, output, dest: Optional[Path], context: dict, staticcode: StaticCode, comment_sep: str
+    ):
         # pylint: disable=too-many-arguments
-        context = Context(output, **self._get_render_context(dest, context, staticcode))
+        context = Context(output, **self._get_render_context(dest, context, staticcode, comment_sep))
         template.render_context(context)
 
     def inplace(
@@ -187,7 +189,7 @@ class Makolator:
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             with read(filepath, comment_sep, config) as staticcode:
                 LOGGER.info("inplace(%r, %r)", str(tplfilepaths[0]) if tplfilepaths else None, str(filepath))
-                context = self._get_render_context(filepath, context, staticcode)
+                context = self._get_render_context(filepath, context, staticcode, comment_sep)
                 inplace.render(lookup, filepath, outputfile, context)
 
     def _create_templates(self, tplfilepaths: List[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
@@ -248,16 +250,19 @@ ${helper.run(*args, **kwargs)}\
                 raise MakolatorError(f"None of the templates {humanify(filepaths)}.")
             raise MakolatorError(f"None of the templates {humanify(filepaths)} found at {humanify(searchpaths)}.")
 
-    def _get_render_context(self, output_filepath: Optional[Path], context: dict, staticcode: StaticCode) -> dict:
+    def _get_render_context(
+        self, output_filepath: Optional[Path], context: dict, staticcode: StaticCode, comment_sep: str
+    ) -> dict:
         result = dict(context)
         result.update(HELPER)
         result["datamodel"] = self.datamodel
         result["makolator"] = self
         result["output_filepath"] = output_filepath
         result["staticcode"] = staticcode
+        result["comment"] = helper.prefix(f"{comment_sep} ", rstrip=True)
         return result
 
-    def _get_comment_sep(self, filepath: Optional[Path], default="//"):
+    def _get_comment_sep(self, filepath: Optional[Path], default: str = "//") -> str:
         if not filepath:
             return default
         return self.config.comment_map.get(filepath.suffix, default)

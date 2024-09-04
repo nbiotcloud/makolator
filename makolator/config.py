@@ -91,6 +91,12 @@ class Config:
     static_marker: str = "STATIC"
     """Marker for Static Code."""
 
+    marker_fill: str = "="
+    """Marker Filling."""
+
+    marker_linelength: int = 0
+    """Marker Line Length for Filling."""
+
     cache_path: Optional[Path] = None
     """
     Cache Directory.
@@ -109,8 +115,5 @@ class Config:
     inplace_eol_comment: Optional[str] = None
     """End-Of-Line Comment Added On Every Inplace Generated Line """
 
-    marker_fill: str = "="
-    """Marker Filling."""
-
-    marker_linelength: int = 0
-    """Marker Line Length for Filling."""
+    track: bool = False
+    """Track Changes."""

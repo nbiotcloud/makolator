@@ -35,15 +35,29 @@ TESTDATA = FILEPATH.parent / "testdata"
 REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 
 
-def test_gen(tmp_path):
+def test_gen(tmp_path, capsys):
     """Gen."""
     main(["gen", str(TESTDATA / "test.txt.mako"), str(tmp_path / "test.txt")])
-    assert_refdata(test_gen, tmp_path)
+    assert_refdata(test_gen, tmp_path, capsys=capsys)
 
 
-def test_inplace(tmp_path):
+def test_gen_stat(tmp_path, capsys):
+    """Gen."""
+    main(["gen", str(TESTDATA / "test.txt.mako"), str(tmp_path / "test.txt"), "--stat"])
+    assert_refdata(test_gen_stat, tmp_path, capsys=capsys)
+
+
+def test_inplace(tmp_path, capsys):
     """Inplace."""
     filepath = tmp_path / "inplace.txt"
     copyfile(TESTDATA / "inplace.txt", filepath)
     main(["inplace", str(TESTDATA / "inplace.txt.mako"), str(filepath)])
-    assert_refdata(test_inplace, tmp_path)
+    assert_refdata(test_inplace, tmp_path, capsys=capsys)
+
+
+def test_inplace_stat(tmp_path, capsys):
+    """Inplace."""
+    filepath = tmp_path / "inplace.txt"
+    copyfile(TESTDATA / "inplace.txt", filepath)
+    main(["inplace", "--stat", str(TESTDATA / "inplace.txt.mako"), str(filepath)])
+    assert_refdata(test_inplace_stat, tmp_path, capsys=capsys)

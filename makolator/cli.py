@@ -82,7 +82,6 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
         action="store_true",
         help="Ignore unknown template function calls.",
     )
-    inplace.add_argument("--eol", "-E", help="EOL comment on generated lines")
 
     for sub in (gen, inplace):
         sub.add_argument("--verbose", "-v", action="store_true", help="Tell what happens to the file.")
@@ -115,6 +114,8 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             type=int,
             help=("Static Code, Inplace and Template Marker are filled until " "--marker-linelength."),
         )
+        sub.add_argument("--eol", "-E", help="EOL comment on generated lines")
+        sub.add_argument("--stat", "-S", action="store_true", help="Print Statistics")
 
     args = parser.parse_args(args=args)
     if args.cmd:
@@ -125,13 +126,16 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             template_paths=args.template_path + [Path(".")],
             marker_fill=args.marker_fill,
             marker_linelength=args.marker_linelength,
+            inplace_eol_comment=args.eol,
+            track=args.stat,
         )
         info = Info(cli=get_cli())
         mklt = Makolator(config=config, info=info)
         if args.cmd == "gen":
             mklt.gen(args.templates, args.output)
         else:
-            mklt.config.inplace_eol_comment = args.eol
             mklt.inplace(args.templates, args.inplace, ignore_unknown=args.ignore_unknown)
+        if config.track:
+            print(mklt.tracker.stat)
     else:
         parser.print_help()

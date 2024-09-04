@@ -1,0 +1,28 @@
+Hello World
+
+-- GENERATE INPLACE BEGIN afunc("foo")
+THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+inplace.txt
+pos=foo
+
+-- GENERATE INPLACE END afunc
+inbetween
+        // GENERATE INPLACE BEGIN afunc("foo", "bar")
+        THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+        inplace.txt
+        pos=foo
+        options: bar
+
+        // GENERATE INPLACE END afunc
+
+    inbetween
+
+    GENERATE INPLACE BEGIN afunc("foo", opt="sally")
+    THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+    inplace.txt
+    pos=foo
+    options: sally
+
+    GENERATE INPLACE END afunc
+
+Hello Mars

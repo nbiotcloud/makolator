@@ -26,7 +26,7 @@ from pathlib import Path
 
 from contextlib_chdir import chdir
 
-from makolator import Config, Datamodel, Existing, Makolator
+from makolator import Config, Datamodel, Existing, Makolator, Tracker
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
@@ -37,6 +37,7 @@ def test_makolator():
     mkl = Makolator()
     assert mkl.config == Config()
     assert mkl.datamodel == Datamodel()
+    assert mkl.tracker == Tracker()
 
 
 def test_outputfile(tmp_path, capsys):
@@ -53,6 +54,7 @@ def test_outputfile(tmp_path, capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == ""
+    assert mkl.tracker.total == 0
 
 
 def test_outputfile_keep(tmp_path, capsys):
@@ -65,11 +67,12 @@ def test_outputfile_keep(tmp_path, capsys):
         assert file.state.name == "CREATED"
         with mkl.open_outputfile("file.txt") as file:
             file.write("change")
-        assert file.state.name == "UPDATED"
+        assert file.state.name == "EXISTING"
 
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == ""
+    assert mkl.tracker.total == 0
 
 
 def test_create_dir(tmp_path):

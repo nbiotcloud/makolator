@@ -1,0 +1,4 @@
+'file.txt'... CREATED.
+'file.txt'... identical. untouched.
+'exc.txt'... FAILED.
+3 files. 1 identical. untouched. 1 CREATED. 1 FAILED.

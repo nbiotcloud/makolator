@@ -39,7 +39,7 @@ from attrs import define, field
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from mako.template import Template
-from outputfile import Existing, open_
+from outputfile import Existing, State, open_
 from uniquer import uniquelist
 
 from . import escape, helper
@@ -50,6 +50,7 @@ from .config import Config
 from .datamodel import Datamodel
 from .exceptions import MakolatorError
 from .info import Info
+from .tracker import Tracker
 
 HELPER = {
     "indent": helper.indent,
@@ -75,6 +76,9 @@ class Makolator:
 
     info: Info = field(factory=Info)
     """Makolator Information."""
+
+    tracker: Tracker = field(factory=Tracker)
+    """File Change Tracker."""
 
     __cache_path: Optional[Path] = None
 
@@ -114,10 +118,18 @@ class Makolator:
         ...     file.write("data")
         'myfile.txt'... identical. untouched.
         """
-        with open_(filepath, encoding=encoding, mkdir=True, diffout=self.config.diffout, **kwargs) as file:
-            yield file
-        if self.config.verbose:
-            print(f"'{filepath!s}'... {file.state.value}")
+        config = self.config
+        kwargs.setdefault("existing", config.existing)
+        state = State.FAILED
+        try:
+            with open_(filepath, encoding=encoding, mkdir=True, diffout=self.config.diffout, **kwargs) as file:
+                yield file
+            state = file.state
+        finally:
+            if config.track:
+                self.tracker.add(filepath, state)
+            if config.verbose:
+                print(f"'{filepath!s}'... {state.value}")
 
     def gen(self, template_filepaths: Paths, dest: Optional[Path] = None, context: Optional[dict] = None):
         """

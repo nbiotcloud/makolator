@@ -1,0 +1,4 @@
+'file.txt'... CREATED.
+'file.txt'... OVERWRITTEN.
+'exc.txt'... FAILED.
+3 files. 1 CREATED. 1 OVERWRITTEN. 1 FAILED.

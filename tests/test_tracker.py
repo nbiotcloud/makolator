@@ -51,7 +51,17 @@ def test_tracker(tmp_path, capsys, existing, update):
             with mkl.open_outputfile("exc.txt"):
                 raise RuntimeError()
 
-    print(mkl.tracker.stat)
+    tracker = mkl.tracker
+    assert tracker.total == 3
+    assert tracker.created == 1
+    assert tracker.updated == (1 if update == "change" and existing == Existing.KEEP_TIMESTAMP else 0)
+    assert tracker.identical == (1 if update == "content" and existing == Existing.KEEP_TIMESTAMP else 0)
+    assert tracker.overwritten == (1 if existing == Existing.OVERWRITE else 0)
+    assert tracker.identical == (1 if update == "content" and existing == Existing.KEEP_TIMESTAMP else 0)
+    assert tracker.existing == (1 if existing == Existing.KEEP else 0)
+    assert tracker.failed == (2 if existing == Existing.ERROR else 1)
+
+    print(tracker.stat)
 
     assert_refdata(test_tracker, tmp_path, capsys=capsys, flavor=f"{existing.value}-{update}")
 

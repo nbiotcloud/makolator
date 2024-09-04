@@ -65,3 +65,33 @@ class Tracker:
     def stat(self) -> str:
         counts = (f"{count} {state.value}" for state, count in self._stat.items() if count)
         return " ".join((f"{self.total} files.", *counts))
+
+    @property
+    def updated(self) -> int:
+        """Files Updated."""
+        return self._stat[State.UPDATED]
+
+    @property
+    def identical(self) -> int:
+        """Files Identical."""
+        return self._stat[State.IDENTICAL]
+
+    @property
+    def created(self) -> int:
+        """Files Created."""
+        return self._stat[State.CREATED]
+
+    @property
+    def overwritten(self) -> int:
+        """Files Overwritten."""
+        return self._stat[State.OVERWRITTEN]
+
+    @property
+    def existing(self) -> int:
+        """Files Existing."""
+        return self._stat[State.EXISTING]
+
+    @property
+    def failed(self) -> int:
+        """Files Failed."""
+        return self._stat[State.FAILED]

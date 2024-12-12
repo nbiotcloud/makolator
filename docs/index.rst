@@ -52,6 +52,8 @@ Within the template the following symbols are available
      - :any:`Datamodel` - the data container
    * - ``output_filepath``
      - ``pathlib.Path`` with outputfile path
+   * - ``output_tags``
+     - ``tuple[str, ...]`` with tags about code-generation type
    * - ``makolator``
      - :any:`Makolator` - Makolator Engine
    * - ``makolator.open_outputfile``

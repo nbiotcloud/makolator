@@ -1,6 +1,7 @@
 <%def name="afunc(pos, opt=None)">\
 ${makolator.info.inplacewarning}
 ${output_filepath.name}
+${output_tags}
 pos=${pos}
 % if opt:
 options: ${opt}

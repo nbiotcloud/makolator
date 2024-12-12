@@ -78,6 +78,11 @@ class StaticCode:
         lines.append(end)
         return "\n".join(lines)
 
+    @property
+    def is_volatile(self) -> bool:
+        """Static Code is Empty."""
+        return not self.staticcodemap
+
 
 @contextmanager
 def read(filepath: Path | None, comment_sep: str, config: Config) -> Iterator[StaticCode]:

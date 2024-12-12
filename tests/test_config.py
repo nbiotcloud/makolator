@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+
 from pathlib import Path
 
 from makolator import Config, Existing
@@ -58,7 +59,7 @@ def test_config():
 
 
 def test_config_modified():
-    """Modified Configuration"""
+    """Modified Configuration."""
     config = Config(
         template_paths=[Path("foo"), Path("bar")],
         existing=Existing.KEEP,

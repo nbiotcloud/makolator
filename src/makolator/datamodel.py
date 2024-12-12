@@ -21,44 +21,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Escape reserved characters."""
-
-import re
-from typing import Optional
-
-__TEX_CONV = {
-    "&": r"\&",
-    "%": r"\%",
-    "$": r"\$",
-    "#": r"\#",
-    "_": r"\_",
-    "{": r"\{",
-    "}": r"\}",
-    "~": r"\textasciitilde{}",
-    "^": r"\^{}",
-    "\\": r"\textbackslash{}",
-    "<": r"\textless{}",
-    ">": r"\textgreater{}",
-    "®": r"\textsuperscript{\textregistered}",
-    "©": r"\textcopyright{}",
-    "™": r"\textsuperscript{\texttrademark}",
-}
-__TEX_REGEX = re.compile("|".join(re.escape(key) for key in sorted(__TEX_CONV.keys(), key=lambda item: -len(item))))
+"""Data Model."""
 
 
-def tex(text: Optional[str]):
-    r"""
-    Escape (La)Tex.
-
-    >>> tex("Foo & Bar")
-    'Foo \\& Bar'
-    >>> tex(None)
-
-    Args:
-        text: tex
-    Returns:
-        escaped string.
+class Datamodel:
+    # pylint: disable=too-few-public-methods
     """
-    if text is None:
-        return None
-    return __TEX_REGEX.sub(lambda match: __TEX_CONV[match.group()], str(text))
+    Datamodel.
+
+    A simple container for all data attributes.
+    Add attributes on your needs. That's it.
+
+    >>> Datamodel()
+    Datamodel()
+    >>> Datamodel(abc='def', item=4)
+    Datamodel(abc='def', item=4)
+    >>> datamodel = Datamodel(abc='def')
+    >>> datamodel
+    Datamodel(abc='def')
+    >>> datamodel.item=4
+    >>> datamodel
+    Datamodel(abc='def', item=4)
+    """
+
+    def __init__(self, **kwargs):
+        """Datamodel."""
+        self.__dict__.update(kwargs)
+
+    def __repr__(self):
+        kwargs = ", ".join(f"{key}={value!r}" for key, value in self.__dict__.items())
+        return f"{self.__class__.__name__}({kwargs})"
+
+    def __eq__(self, other):
+        if self.__class__ == other.__class__:
+            return self.__dict__ == other.__dict__
+        return NotImplemented

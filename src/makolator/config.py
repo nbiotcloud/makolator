@@ -23,8 +23,8 @@
 #
 """Configuration Handling."""
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
 
 from attrs import define
 from outputfile import Existing
@@ -70,13 +70,13 @@ class Config:
 
     # pylint: disable=too-few-public-methods
 
-    template_paths: List[Path] = []
+    template_paths: list[Path] = []  # noqa: RUF012
     """Default Search Paths for Templates."""
 
     existing: Existing = Existing.KEEP_TIMESTAMP
     """Behaviour in case of existing files."""
 
-    diffout: Optional[Callable[[str], None]] = None
+    diffout: Callable[[str], None] | None = None
     """``print`` function to handle differential output on changed files."""
 
     verbose: bool = False
@@ -97,7 +97,7 @@ class Config:
     marker_linelength: int = 0
     """Marker Line Length for Filling."""
 
-    cache_path: Optional[Path] = None
+    cache_path: Path | None = None
     """
     Cache Directory.
 
@@ -105,14 +105,14 @@ class Config:
     Speeds up rendering. Share it between runs.
     """
 
-    comment_map: Dict[str, str] = COMMENT_MAP_DEFAULT
+    comment_map: dict[str, str] = COMMENT_MAP_DEFAULT
     """
     Line Comment Symbols.
 
     File Suffix dependent comment starter.
     """
 
-    inplace_eol_comment: Optional[str] = None
+    inplace_eol_comment: str | None = None
     """End-Of-Line Comment Added On Every Inplace Generated Line """
 
     track: bool = False

@@ -30,10 +30,10 @@ A simple API to an improved Mako.
 import hashlib
 import sys
 import tempfile
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
-from typing import Generator, List, Optional, Tuple
 
 from attrs import define, field
 from mako.lookup import TemplateLookup
@@ -80,7 +80,7 @@ class Makolator:
     tracker: Tracker = field(factory=Tracker)
     """File Change Tracker."""
 
-    __cache_path: Optional[Path] = None
+    __cache_path: Path | None = None
 
     def __del__(self):
         if self.__cache_path:
@@ -109,6 +109,7 @@ class Makolator:
 
         Keyword Args:
             encoding: Charset.
+            kwargs: Additional arguments are forwarded to open.
 
         >>> mklt = Makolator(config=Config(verbose=True))
         >>> with mklt.open_outputfile("myfile.txt") as file:
@@ -131,7 +132,7 @@ class Makolator:
             if config.verbose:
                 print(f"'{filepath!s}'... {state.value}")
 
-    def gen(self, template_filepaths: Paths, dest: Optional[Path] = None, context: Optional[dict] = None):
+    def gen(self, template_filepaths: Paths, dest: Path | None = None, context: dict | None = None):
         """
         Render template file.
 
@@ -165,7 +166,7 @@ class Makolator:
                     self._render(template, output, dest, context, staticcode, comment_sep)
 
     def _render(
-        self, template: Template, output, dest: Optional[Path], context: dict, staticcode: StaticCode, comment_sep: str
+        self, template: Template, output, dest: Path | None, context: dict, staticcode: StaticCode, comment_sep: str
     ):
         # pylint: disable=too-many-arguments
         context = Context(output, **self._get_render_context(dest, context, staticcode, comment_sep))
@@ -175,7 +176,7 @@ class Makolator:
         self,
         template_filepaths: Paths,
         filepath: Path,
-        context: Optional[dict] = None,
+        context: dict | None = None,
         ignore_unknown: bool = False,
     ):
         """
@@ -183,7 +184,7 @@ class Makolator:
 
         Args:
             template_filepaths: Templates.
-            dest: File to update.
+            filepath: File to update.
 
         Keyword Args:
             context: Key-Value Pairs pairs forwarded to the template.
@@ -204,7 +205,7 @@ class Makolator:
                 context = self._get_render_context(filepath, context, staticcode, comment_sep)
                 inplace.render(lookup, filepath, outputfile, context)
 
-    def _create_templates(self, tplfilepaths: List[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
+    def _create_templates(self, tplfilepaths: list[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
         for tplfilepath in tplfilepaths:
             yield lookup.get_template(tplfilepath.name)
         yield Template(
@@ -215,8 +216,8 @@ ${helper.run(*args, **kwargs)}\
         )
 
     def _create_template_lookup(
-        self, template_filepaths: List[Path], searchpaths: List[Path], required: bool = False
-    ) -> Tuple[List[Path], TemplateLookup]:
+        self, template_filepaths: list[Path], searchpaths: list[Path], required: bool = False
+    ) -> tuple[list[Path], TemplateLookup]:
         cache_path = self.cache_path
         tplfilepaths = list(self._find_files(template_filepaths, searchpaths, required=required))
         lookuppaths = uniquelist([tplfilepath.parent for tplfilepath in tplfilepaths] + searchpaths)
@@ -240,7 +241,7 @@ ${helper.run(*args, **kwargs)}\
 
     @staticmethod
     def _find_files(
-        filepaths: List[Path], searchpaths: List[Path], required: bool = False
+        filepaths: list[Path], searchpaths: list[Path], required: bool = False
     ) -> Generator[Path, None, None]:
         """Find `filepath` in `searchpaths` and return first match."""
         found = False
@@ -263,7 +264,7 @@ ${helper.run(*args, **kwargs)}\
             raise MakolatorError(f"None of the templates {humanify(filepaths)} found at {humanify(searchpaths)}.")
 
     def _get_render_context(
-        self, output_filepath: Optional[Path], context: dict, staticcode: StaticCode, comment_sep: str
+        self, output_filepath: Path | None, context: dict, staticcode: StaticCode, comment_sep: str
     ) -> dict:
         result = dict(context)
         result.update(HELPER)
@@ -274,12 +275,12 @@ ${helper.run(*args, **kwargs)}\
         result["comment"] = helper.prefix(f"{comment_sep} ", rstrip=True)
         return result
 
-    def _get_comment_sep(self, filepath: Optional[Path], default: str = "//") -> str:
+    def _get_comment_sep(self, filepath: Path | None, default: str = "//") -> str:
         if not filepath:
             return default
         return self.config.comment_map.get(filepath.suffix, default)
 
-    def _get_eol(self, filepath: Path, eol_comment: Optional[str]):
+    def _get_eol(self, filepath: Path, eol_comment: str | None):
         if eol_comment:
             sep = self._get_comment_sep(filepath)
             return f"{sep} {eol_comment}"

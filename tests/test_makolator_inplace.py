@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+
 import re
 from pathlib import Path
 from shutil import copyfile

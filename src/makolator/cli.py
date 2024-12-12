@@ -24,6 +24,7 @@
 """
 Command Line Interface.
 """
+
 import argparse
 from pathlib import Path
 
@@ -112,7 +113,7 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
         sub.add_argument(
             "--marker-linelength",
             type=int,
-            help=("Static Code, Inplace and Template Marker are filled until " "--marker-linelength."),
+            help=("Static Code, Inplace and Template Marker are filled until --marker-linelength."),
         )
         sub.add_argument("--eol", "-E", help="EOL comment on generated lines")
         sub.add_argument("--stat", "-S", action="store_true", help="Print Statistics")
@@ -123,7 +124,7 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             verbose=args.verbose,
             diffout=print if args.show_diff else None,
             existing=args.existing,
-            template_paths=args.template_path + [Path(".")],
+            template_paths=[*args.template_path, Path()],
             marker_fill=args.marker_fill,
             marker_linelength=args.marker_linelength,
             inplace_eol_comment=args.eol,

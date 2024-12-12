@@ -5,7 +5,7 @@ inplace.sv // GENERATED
 pos=foo    // GENERATED
            // GENERATED
 -- GENERATE INPLACE END simple
-inbetween
+in between
         // GENERATE INPLACE BEGIN simple("foo", "bar")
         inplace.sv   // GENERATED
         pos=foo      // GENERATED
@@ -13,7 +13,7 @@ inbetween
                      // GENERATED
         // GENERATE INPLACE END simple
 
-    inbetween
+    in between
 
     GENERATE INPLACE BEGIN simple("foo", opt="sally")
     inplace.sv     // GENERATED

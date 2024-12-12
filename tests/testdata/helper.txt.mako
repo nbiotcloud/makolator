@@ -1,5 +1,5 @@
 <%def name="helpme()">\
-<% 
+<%
 lines = """\
 A
 &

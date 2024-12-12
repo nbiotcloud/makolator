@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+
 from pathlib import Path
 
 from contextlib_chdir import chdir
@@ -41,7 +42,7 @@ def test_makolator():
 
 
 def test_outputfile(tmp_path, capsys):
-    """Test Outputfile"""
+    """Test Outputfile."""
     mkl = Makolator()
     with chdir(tmp_path):
         with mkl.open_outputfile("file.txt") as file:
@@ -58,7 +59,7 @@ def test_outputfile(tmp_path, capsys):
 
 
 def test_outputfile_keep(tmp_path, capsys):
-    """Test Outputfile With Keep"""
+    """Test Outputfile With Keep."""
     mkl = Makolator()
     mkl.config.existing = Existing.KEEP
     with chdir(tmp_path):

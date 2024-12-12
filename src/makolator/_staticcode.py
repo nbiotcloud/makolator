@@ -22,10 +22,11 @@
 # SOFTWARE.
 #
 """Static Code Preservation."""
+
 import re
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Iterator, List, Optional
 
 from attrs import define, field
 
@@ -33,14 +34,13 @@ from ._util import LOGGER, check_indent, fill_marker, humanify
 from .config import Config
 from .exceptions import MakolatorError
 
-StaticCodeMap = Dict[str, str]
+StaticCodeMap = dict[str, str]
 
 # pylint: disable=too-few-public-methods
 
 
 @define
 class Info:
-
     """Static Code Context Information."""
 
     lineno: int
@@ -50,7 +50,6 @@ class Info:
 
 @define
 class StaticCode:
-
     """Static Code Manager."""
 
     comment_sep: str
@@ -59,7 +58,7 @@ class StaticCode:
     marker_fill: str = ""
     marker_linelength: int = 0
 
-    _names: List[str] = field(factory=list)
+    _names: list[str] = field(factory=list)
 
     def __call__(self, name, default=None, comment_sep=None):
         if name in self._names:
@@ -81,7 +80,7 @@ class StaticCode:
 
 
 @contextmanager
-def read(filepath: Optional[Path], comment_sep: str, config: Config) -> Iterator[StaticCode]:
+def read(filepath: Path | None, comment_sep: str, config: Config) -> Iterator[StaticCode]:
     """Read from ``filepath``."""
     staticcodemap: StaticCodeMap = {}
     marker = config.static_marker
@@ -92,13 +91,13 @@ def read(filepath: Optional[Path], comment_sep: str, config: Config) -> Iterator
         raise MakolatorError(f"'{filepath!s}': unknown static code {names}")
 
 
-def _read(filepath: Optional[Path], marker: str, staticcodemap: StaticCodeMap):
+def _read(filepath: Path | None, marker: str, staticcodemap: StaticCodeMap):
     if filepath and marker:
         begin = re.compile(rf"(?P<indent>\s*).*{marker}\s+BEGIN\s+(?P<name>\S+)\s*")
         info = None
 
         try:
-            with open(filepath, encoding="utf-8") as file:
+            with filepath.open(encoding="utf-8") as file:
                 fileiter = enumerate(file, 1)
                 while True:
                     if info:
@@ -125,7 +124,7 @@ def _read(filepath: Optional[Path], marker: str, staticcodemap: StaticCodeMap):
 def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter, begin, info: Info):
     # pylint: disable=too-many-arguments
     end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>\S+)\s*")
-    lines: List[str] = []
+    lines: list[str] = []
     while True:
         # search END
         lineno, line = next(fileiter)

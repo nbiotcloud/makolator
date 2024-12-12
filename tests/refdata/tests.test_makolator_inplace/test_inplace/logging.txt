@@ -1,5 +1,1 @@
-DEBUG    makolator  _inplace(['$PRJ/tests/testdata/inplace.txt.mako'], '$GEN/inplace.txt')
 INFO     makolator  inplace('$PRJ/tests/testdata/inplace.txt.mako', '$GEN/inplace.txt')
-DEBUG    makolator  Inplace '$GEN/inplace.txt:3'
-DEBUG    makolator  Inplace '$GEN/inplace.txt:7'
-DEBUG    makolator  Inplace '$GEN/inplace.txt:13'

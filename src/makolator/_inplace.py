@@ -22,10 +22,11 @@
 # SOFTWARE.
 #
 """Inplace Generation."""
+
 import io
 import re
 from pathlib import Path
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 from aligntext import Align
 from attrs import define, field
@@ -43,7 +44,6 @@ from .exceptions import MakolatorError
 
 @define
 class InplaceInfo:
-
     """Inplace Rendering Context Information."""
 
     lineno: int
@@ -56,21 +56,19 @@ class InplaceInfo:
 
 @define
 class TplInfo:
-
     """Template Context Information."""
 
     lineno: int
     pre: str
-    lines: List[str] = field(factory=list)
+    lines: list[str] = field(factory=list)
 
 
 @define
 class InplaceRenderer:
-
     """Inplace Renderer."""
 
     config: Config
-    templates: Tuple[Template, ...]
+    templates: tuple[Template, ...]
     ignore_unknown: bool
     eol: str
 
@@ -86,7 +84,7 @@ class InplaceRenderer:
         tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN")
         templates = list(self.templates)
 
-        with open(filepath, encoding="utf-8") as inputfile:
+        with filepath.open(encoding="utf-8") as inputfile:
             inputiter = enumerate(inputfile.readlines(), 1)
             try:
                 while True:
@@ -171,17 +169,16 @@ class InplaceRenderer:
                 LOGGER.debug("Template '%s:%d'", str(outputfile), tinfo.lineno)
                 templates.append(Template("".join(tinfo.lines), lookup=lookup))
                 break
-            else:
-                # propagate
-                outputfile.write(line)
+            # propagate
+            outputfile.write(line)
 
             if line.startswith(pre):
                 line = line[prelen:]
             tinfo.lines.append(line)
 
     def _start_inplace(
-        self, templates: List[Template], filepath: Path, lineno: int, indent: str, funcname: str, args: str
-    ) -> Optional[InplaceInfo]:
+        self, templates: list[Template], filepath: Path, lineno: int, indent: str, funcname: str, args: str
+    ) -> InplaceInfo | None:
         for template in templates:
             try:
                 func = template.get_def(funcname)
@@ -223,8 +220,8 @@ class InplaceRenderer:
             align = Align()
             for line in lines:
                 align.add_row(line, eol)
-            for aline in align:
-                outputfile.write(f"{indent}{aline}\n")
+            for item in align:
+                outputfile.write(f"{indent}{item}\n")
         else:
             for line in lines:
                 if line:
@@ -238,10 +235,9 @@ class InplaceRenderer:
         marker_fill = self.config.marker_fill
         marker_linelength = self.config.marker_linelength
         if marker_fill and marker_linelength:
-            line = mat.string[mat.start() : mat.end()]  # noqa
+            line = mat.string[mat.start() : mat.end()]
             return fill_marker(line, marker_fill, marker_linelength) + "\n"
-        else:
-            return mat.string
+        return mat.string
 
 
 def _extract(*args, **kwargs):

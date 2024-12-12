@@ -22,22 +22,24 @@
 # SOFTWARE.
 #
 """
-Utilties.
+Utilities.
 """
-import logging
-from pathlib import Path
-from typing import Iterable, List, Union
 
-Paths = Union[Path, Iterable[Path]]
+import logging
+from collections.abc import Iterable
+from pathlib import Path
+from typing import TypeAlias
+
+Paths: TypeAlias = Path | Iterable[Path]
 LOGGER = logging.getLogger("makolator")
 
 
-def norm_paths(paths: Paths) -> List[Path]:
+def norm_paths(paths: Paths) -> list[Path]:
     """Normalize Single Path or List of Paths to List of Paths."""
     try:
-        return list(paths)  # type: ignore
+        return list(paths)  # type: ignore[arg-type]
     except TypeError:
-        return [paths]  # type: ignore
+        return [paths]  # type: ignore[list-item]
 
 
 def check_indent(filepath: Path, lineno: int, beginindent, endindent):

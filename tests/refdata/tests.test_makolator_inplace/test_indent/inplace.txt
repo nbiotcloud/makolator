@@ -4,4 +4,4 @@ inplace.txt
 pos=foo
 
   -- GENERATE INPLACE END afunc
-inbetween
+in between

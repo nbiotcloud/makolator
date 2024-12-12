@@ -8,3 +8,4 @@ Hello middle
 kept b
 // STATIC END b
 Hello after
+

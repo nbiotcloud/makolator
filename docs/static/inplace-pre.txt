@@ -4,7 +4,7 @@ This is just some handwritten text.
 obsolete
     GENERATE INPLACE END afunc
 
-This is also something inbetween.
+This is also something in between.
 
 // ==== GENERATE INPLACE BEGIN afunc("foo", "bar") ====
     will be updated

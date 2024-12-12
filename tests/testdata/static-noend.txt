@@ -1,4 +1,4 @@
 Old before
-// STATIC BEGIN a 
+// STATIC BEGIN a
 kept a
 Old middle

@@ -6,7 +6,7 @@ This is just some handwritten text.
 
     GENERATE INPLACE END afunc
 
-This is also something inbetween.
+This is also something in between.
 
 // ==== GENERATE INPLACE BEGIN afunc("foo", "bar") ====
 inplace.txt

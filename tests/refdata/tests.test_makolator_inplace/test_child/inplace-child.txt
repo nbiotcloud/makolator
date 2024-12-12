@@ -6,6 +6,7 @@ GENERATE INPLACE BEGIN bfunc("foo")
 bfunc - start
 THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 inplace-child.txt
+('@generated', '@inplace-generated')
 pos=foo
 
 

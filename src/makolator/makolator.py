@@ -202,7 +202,7 @@ class Makolator:
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             with read(filepath, comment_sep, config) as staticcode:
                 LOGGER.info("inplace(%r, %r)", str(tplfilepaths[0]) if tplfilepaths else None, str(filepath))
-                context = self._get_render_context(filepath, context, staticcode, comment_sep)
+                context = self._get_render_context(filepath, context, staticcode, comment_sep, inplace=True)
                 inplace.render(lookup, filepath, outputfile, context)
 
     def _create_templates(self, tplfilepaths: list[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
@@ -264,13 +264,24 @@ ${helper.run(*args, **kwargs)}\
             raise MakolatorError(f"None of the templates {humanify(filepaths)} found at {humanify(searchpaths)}.")
 
     def _get_render_context(
-        self, output_filepath: Path | None, context: dict, staticcode: StaticCode, comment_sep: str
+        self,
+        output_filepath: Path | None,
+        context: dict,
+        staticcode: StaticCode,
+        comment_sep: str,
+        inplace: bool = False,
     ) -> dict:
         result = dict(context)
         result.update(HELPER)
+        tags = ["@generated"]
+        if inplace:
+            tags.append("@inplace-generated")
+        elif not staticcode.is_volatile:
+            tags.append("@fully-generated")
         result["datamodel"] = self.datamodel
         result["makolator"] = self
         result["output_filepath"] = output_filepath
+        result["output_tags"] = tuple(tags)
         result["staticcode"] = staticcode
         result["comment"] = helper.prefix(f"{comment_sep} ", rstrip=True)
         return result

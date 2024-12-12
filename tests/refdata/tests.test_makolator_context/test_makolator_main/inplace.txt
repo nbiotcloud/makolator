@@ -3,6 +3,7 @@
 GENERATE INPLACE BEGIN afunc('abc')
 THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 inplace.txt
+('@generated', '@inplace-generated')
 pos=abc
 
 GENERATE INPLACE END afunc
@@ -10,6 +11,7 @@ GENERATE INPLACE END afunc
 GENERATE INPLACE BEGIN afunc('def')
 THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 inplace.txt
+('@generated', '@inplace-generated')
 pos=def
 
 GENERATE INPLACE END afunc

@@ -1,6 +1,7 @@
 -- GENERATE INPLACE BEGIN afunc("foo")
 THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 inplace.txt
+('@generated', '@inplace-generated')
 pos=foo
 
   -- GENERATE INPLACE END afunc

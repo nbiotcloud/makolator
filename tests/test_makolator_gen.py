@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+
 import re
 import time
 from pathlib import Path
@@ -203,7 +204,7 @@ def test_static_duplicate(tmp_path, mklt):
     """Static Code Handling With Duplicate In File."""
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static-duplicate.txt", filepath)
-    match = match = re.escape(f"duplicate static code 'a' at '{filepath!s}:6'")
+    match = re.escape(f"duplicate static code 'a' at '{filepath!s}:6'")
     with raises(MakolatorError, match=match):
         mklt.gen([Path("static.txt.mako")], filepath)
     assert_paths(TESTDATA / "static-duplicate.txt", filepath)
@@ -213,7 +214,7 @@ def test_static_noend(tmp_path, mklt):
     """Static Code Handling Without End."""
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static-noend.txt", filepath)
-    match = match = re.escape(f"'{filepath!s}:2' BEGIN without END.")
+    match = re.escape(f"'{filepath!s}:2' BEGIN without END.")
     with raises(MakolatorError, match=match):
         mklt.gen([Path("static.txt.mako")], filepath)
     assert_paths(TESTDATA / "static-noend.txt", filepath)
@@ -223,7 +224,7 @@ def test_static_mixend(tmp_path, mklt):
     """Static Code Handling With Mixed End."""
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static-mixend.txt", filepath)
-    match = match = re.escape(f"missing END tag 'a' for '{filepath!s}:2'")
+    match = re.escape(f"missing END tag 'a' for '{filepath!s}:2'")
     with raises(MakolatorError, match=match):
         mklt.gen([Path("static.txt.mako")], filepath)
     assert_paths(TESTDATA / "static-mixend.txt", filepath)
@@ -233,7 +234,7 @@ def test_static_unknown(tmp_path, mklt):
     """Static Code Handling With Unknown."""
     filepath = tmp_path / "static.txt"
     copyfile(TESTDATA / "static-unknown.txt", filepath)
-    match = match = re.escape(f"'{filepath!s}': unknown static code 'c'")
+    match = re.escape(f"'{filepath!s}': unknown static code 'c'")
     with raises(MakolatorError, match=match):
         mklt.gen([Path("static.txt.mako")], filepath)
     assert_paths(TESTDATA / "static-unknown.txt", filepath)

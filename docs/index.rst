@@ -64,9 +64,9 @@ Within the template the following symbols are available
      - :any:`Makolator.info` - Information Container
    * - ``run``
      - :any:`run` - Identical to :any:`subprocess.run` and capture ``stdout``.
-       
+
        Examples:
-       
+
          * ``run(['echo', '"Hello World"'])``
          * ``run('echo "Hello World"', shell=True)``
          * ``run('mycmd --output file && cat file', shell=True)``
@@ -75,23 +75,23 @@ Within the template the following symbols are available
        path.
    * - ``indent``
      - Indent single line or multiple lines by two spaces:
-       
+
        ``${text | indent}``
    * - ``indent(spaces)``
      - Indent single line or multiple lines by given number of spaces:
-       
+
        ``${text | indent(4)}``
    * - ``prefix(text)``
      - Prefix single line or multiple lines by given text:
-       
+
        ``${text | prefix('// ')}``
    * - ``comment(text)``
      - Prefix single line or multiple lines by comment separator from ``Config``:
-       
+
        ``${text | comment('Text set as comment')}``
    * - ``tex``
      - Escape latex special characters:
-       
+
        ``${text | tex}``
 
 File Generation
@@ -155,7 +155,7 @@ Assume the following template:
 .. literalinclude:: static/static.txt.mako
    :language: text
 
-and an outdated generated file: 
+and an outdated generated file:
 
 .. literalinclude:: static/static-pre.txt
    :language: text

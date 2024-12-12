@@ -1,5 +1,9 @@
-usage: makolator gen [-h] [--verbose] [--show-diff] [--existing {error,keep,overwrite,keep_timestamp}] [--template-path TEMPLATE_PATH] [--marker-fill MARKER_FILL]
-                     [--marker-linelength MARKER_LINELENGTH] [--eol EOL] [--stat]
+usage: makolator gen [-h] [--verbose] [--show-diff]
+                     [--existing {error,keep,overwrite,keep_timestamp}]
+                     [--template-path TEMPLATE_PATH]
+                     [--marker-fill MARKER_FILL]
+                     [--marker-linelength MARKER_LINELENGTH] [--eol EOL]
+                     [--stat]
                      templates [templates ...] output
 
 positional arguments:

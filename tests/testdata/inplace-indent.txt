@@ -1,4 +1,4 @@
 -- GENERATE INPLACE BEGIN afunc("foo")
 obsolete
   -- GENERATE INPLACE END afunc
-inbetween
+in between

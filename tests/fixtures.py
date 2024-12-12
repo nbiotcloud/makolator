@@ -29,7 +29,6 @@ from pytest import fixture
 @fixture()
 def myfixture(tmp_path):
     """Example Fixture."""
-
     mytmp_path = tmp_path / "mysub"
     mytmp_path.mkdir(parents=True)
     (mytmp_path / "myfile.txt").write_text("filecontent")

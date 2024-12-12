@@ -82,7 +82,6 @@ def prefix(pre: str, rstrip: bool = False):
     PRE-B
     PRE-C
     """
-
     if rstrip:
 
         def func(text):

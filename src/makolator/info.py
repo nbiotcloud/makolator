@@ -21,11 +21,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""
-Command Line Interface.
-"""
+"""Makolator Information."""
+
+import pathlib
+import shlex
+import sys
+
+from attrs import define
 
 
-from makolator.cli import main
+def get_cli() -> str:
+    """Determine Command Line Invocation."""
+    argv = sys.argv[:]
+    argv[0] = pathlib.Path(argv[0]).name
+    return " ".join(shlex.quote(arg) for arg in argv)
 
-main()
+
+@define
+class Info:
+    """
+    Makolator Information.
+    """
+
+    # pylint: disable=too-few-public-methods
+
+    cli: str | None = None
+    """
+    Actual Command Line Interface Call.
+    """
+
+    genwarning: str = "THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
+    """
+    Generated Code Warning.
+    """
+
+    inplacewarning: str = "THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
+    """
+    Generated Inplace Code Warning.
+    """

@@ -24,7 +24,6 @@
 """Update Tracker."""
 
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 from attrs import define, field
 from outputfile import State
@@ -43,8 +42,8 @@ _STAT_INIT = {
 class Tracker:
     """Update Tracker."""
 
-    _items: List[Tuple[Path, State]] = field(factory=list)
-    _stat: Dict[State, int] = field(factory=lambda: dict(_STAT_INIT))
+    _items: list[tuple[Path, State]] = field(factory=list)
+    _stat: dict[State, int] = field(factory=lambda: dict(_STAT_INIT))
 
     def add(self, path: Path, state: State) -> None:
         """Add Information."""
@@ -63,6 +62,7 @@ class Tracker:
 
     @property
     def stat(self) -> str:
+        """Status Summary."""
         counts = (f"{count} {state.value}" for state, count in self._stat.items() if count)
         return " ".join((f"{self.total} files.", *counts))
 

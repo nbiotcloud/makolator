@@ -22,6 +22,7 @@
 # SOFTWARE.
 #
 """Makolator Testing."""
+
 from pathlib import Path
 
 from test2ref import assert_refdata

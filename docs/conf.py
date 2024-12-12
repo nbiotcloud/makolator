@@ -30,6 +30,8 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+"""Documentation Configuration."""
+
 project = "makolator"
 copyright = "2023, nbiotcloud"
 author = "nbiotcloud"

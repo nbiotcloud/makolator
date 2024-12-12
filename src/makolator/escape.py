@@ -21,42 +21,43 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""Makolator Information."""
+"""Escape reserved characters."""
 
-import pathlib
-import shlex
-import sys
-from typing import Optional
+import re
 
-from attrs import define
+__TEX_CONV = {
+    "&": r"\&",
+    "%": r"\%",
+    "$": r"\$",
+    "#": r"\#",
+    "_": r"\_",
+    "{": r"\{",
+    "}": r"\}",
+    "~": r"\textasciitilde{}",
+    "^": r"\^{}",
+    "\\": r"\textbackslash{}",
+    "<": r"\textless{}",
+    ">": r"\textgreater{}",
+    "®": r"\textsuperscript{\textregistered}",
+    "©": r"\textcopyright{}",
+    "™": r"\textsuperscript{\texttrademark}",
+}
+__TEX_REGEX = re.compile("|".join(re.escape(key) for key in sorted(__TEX_CONV.keys(), key=lambda item: -len(item))))
 
 
-def get_cli() -> str:
-    """Determine Command Line Invocation."""
-    argv = sys.argv[:]
-    argv[0] = pathlib.Path(argv[0]).name
-    return " ".join(shlex.quote(arg) for arg in argv)
+def tex(text: str | None):
+    r"""
+    Escape (La)Tex.
 
+    >>> tex("Foo & Bar")
+    'Foo \\& Bar'
+    >>> tex(None)
 
-@define
-class Info:
+    Args:
+        text: tex
+    Returns:
+        escaped string.
     """
-    Makolator Information.
-    """
-
-    # pylint: disable=too-few-public-methods
-
-    cli: Optional[str] = None
-    """
-    Actual Command Line Interface Call.
-    """
-
-    genwarning: str = "THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
-    """
-    Generated Code Warning.
-    """
-
-    inplacewarning: str = "THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST."
-    """
-    Generated Inplace Code Warning.
-    """
+    if text is None:
+        return None
+    return __TEX_REGEX.sub(lambda match: __TEX_CONV[match.group()], str(text))

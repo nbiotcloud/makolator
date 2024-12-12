@@ -33,7 +33,7 @@ from makolator import Config, Existing, Makolator
 @mark.parametrize("existing", [Existing.KEEP, Existing.KEEP_TIMESTAMP, Existing.OVERWRITE, Existing.ERROR])
 @mark.parametrize("update", ["content", "change"])
 def test_tracker(tmp_path, capsys, existing, update):
-    """Test Tracker"""
+    """Test Tracker."""
     mkl = Makolator(config=Config(verbose=True, existing=existing, track=True))
     with chdir(tmp_path):
         with mkl.open_outputfile("file.txt") as file:
@@ -49,7 +49,7 @@ def test_tracker(tmp_path, capsys, existing, update):
 
         with raises(RuntimeError):
             with mkl.open_outputfile("exc.txt"):
-                raise RuntimeError()
+                raise RuntimeError
 
     tracker = mkl.tracker
     assert tracker.total == 3
@@ -67,6 +67,7 @@ def test_tracker(tmp_path, capsys, existing, update):
 
 
 def test_clear(tmp_path):
+    """Explicit Tracker Clear."""
     mkl = Makolator()
     mkl.config.track = True
     with chdir(tmp_path):

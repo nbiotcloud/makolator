@@ -1,7 +1,7 @@
 Old before
-// STATIC BEGIN a 
+// STATIC BEGIN a
 kept a
-// STATIC END a 
+// STATIC END a
 Old middle
 // STATIC BEGIN a
 kept b

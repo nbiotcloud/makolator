@@ -6,7 +6,7 @@ inplace.txt
 pos=foo
 
 -- GENERATE INPLACE END afunc ==================================================
-inbetween
+in between
         // GENERATE INPLACE BEGIN afunc("foo", "bar") ==========================
         THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
         inplace.txt
@@ -15,7 +15,7 @@ inbetween
 
         // GENERATE INPLACE END afunc ==========================================
 
-    inbetween
+    in between
 
     GENERATE INPLACE BEGIN afunc("foo", opt="sally") ===========================
     THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.

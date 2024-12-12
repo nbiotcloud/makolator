@@ -3,12 +3,12 @@ Hello World
 -- GENERATE INPLACE BEGIN simple("foo")
 obsolete
 -- GENERATE INPLACE END simple
-inbetween
+in between
         // GENERATE INPLACE BEGIN simple("foo", "bar")
     obsolete
         // GENERATE INPLACE END simple
 
-    inbetween
+    in between
 
     GENERATE INPLACE BEGIN simple("foo", opt="sally")
         obsolete

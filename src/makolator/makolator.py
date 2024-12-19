@@ -276,7 +276,7 @@ ${helper.run(*args, **kwargs)}\
         tags = ["@generated"]
         if inplace:
             tags.append("@inplace-generated")
-        elif not staticcode.is_volatile:
+        elif staticcode.is_volatile:
             tags.append("@fully-generated")
         result["datamodel"] = self.datamodel
         result["makolator"] = self

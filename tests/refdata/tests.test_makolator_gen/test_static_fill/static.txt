@@ -1,5 +1,5 @@
 
-('@generated', '@fully-generated')
+('@generated',)
 Hello before
 // STATIC BEGIN a ****************************************************************************
 kept a

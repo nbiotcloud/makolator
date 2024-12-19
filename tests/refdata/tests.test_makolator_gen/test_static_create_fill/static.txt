@@ -1,5 +1,5 @@
 
-('@generated',)
+('@generated', '@fully-generated')
 Hello before
 // STATIC BEGIN a ============================================================================
 obsolete a

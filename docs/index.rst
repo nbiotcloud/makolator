@@ -83,10 +83,20 @@ Within the template the following symbols are available
      - Indent single line or multiple lines by given number of spaces:
 
        ``${text | indent(4)}``
+   * - ``indent(spaces, rstrip=True)``
+     - Indent single line or multiple lines by given number of spaces,
+       but avoid end-line whitespaces:
+
+       ``${text | indent(4, rstrip=True)}``
    * - ``prefix(text)``
      - Prefix single line or multiple lines by given text:
 
        ``${text | prefix('// ')}``
+   * - ``prefix(text, rstrip=True)``
+     - Prefix single line or multiple lines by given text,
+       but avoid end-line whitespaces:
+
+       ``${text | prefix('// ', rstrip=True)}``
    * - ``comment(text)``
      - Prefix single line or multiple lines by comment separator from ``Config``:
 

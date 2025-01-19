@@ -196,6 +196,7 @@ from .config import Config
 from .datamodel import Datamodel
 from .escape import tex
 from .exceptions import MakolatorError
+from .helper import indent, prefix, run
 from .info import Info, get_cli
 from .makolator import Makolator
 from .tracker import Tracker
@@ -205,9 +206,12 @@ __all__ = [
     "Datamodel",
     "Existing",
     "get_cli",
+    "indent",
     "Info",
     "Makolator",
     "MakolatorError",
+    "prefix",
+    "run",
     "tex",
     "Tracker",
 ]

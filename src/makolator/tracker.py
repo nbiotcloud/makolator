@@ -23,10 +23,19 @@
 #
 """Update Tracker."""
 
+from enum import Enum
 from pathlib import Path
+from typing import TypeAlias
 
 from attrs import define, field
 from outputfile import State
+
+
+class AddState(Enum):
+    """Additional States."""
+
+    REMOVED = "REMOVED."
+
 
 _STAT_INIT = {
     State.UPDATED: 0,
@@ -35,17 +44,20 @@ _STAT_INIT = {
     State.OVERWRITTEN: 0,
     State.EXISTING: 0,
     State.FAILED: 0,
+    AddState.REMOVED: 0,
 }
+
+FileState: TypeAlias = State | AddState
 
 
 @define
 class Tracker:
     """Update Tracker."""
 
-    _items: list[tuple[Path, State]] = field(factory=list)
-    _stat: dict[State, int] = field(factory=lambda: dict(_STAT_INIT))
+    _items: list[tuple[Path, FileState]] = field(factory=list)
+    _stat: dict[FileState, int] = field(factory=lambda: dict(_STAT_INIT))
 
-    def add(self, path: Path, state: State) -> None:
+    def add(self, path: Path, state: FileState) -> None:
         """Add Information."""
         self._items.append((path, state))
         self._stat[state] += 1
@@ -95,3 +107,8 @@ class Tracker:
     def failed(self) -> int:
         """Files Failed."""
         return self._stat[State.FAILED]
+
+    @property
+    def removed(self) -> int:
+        """Files Removed."""
+        return self._stat["rm"]

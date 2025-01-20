@@ -39,6 +39,7 @@ def main(args=None):
         formatter_class=argparse.RawTextHelpFormatter,
     )
     subparsers = parser.add_subparsers(dest="cmd")
+    default_config = Config()
 
     gen = subparsers.add_parser(
         "gen",
@@ -84,9 +85,30 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
         help="Ignore unknown template function calls.",
     )
 
-    for sub in (gen, inplace):
+    clean = subparsers.add_parser(
+        "clean",
+        help="Remove Fully-Generated Files",
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog="""\
+Remove all files with '@fully-generated' in header.
+The number of inspected lines at the top of a file is defined by --tag_lines.
+
+    makolator clean .
+
+""",
+    )
+    clean.add_argument("paths", nargs="+", type=Path, help="Paths to look for files.")
+
+    for sub in (gen, inplace, clean):
         sub.add_argument("--verbose", "-v", action="store_true", help="Tell what happens to the file.")
         sub.add_argument("--show-diff", "-s", action="store_true", help="Show what lines changed.")
+        sub.add_argument(
+            "--tag_lines",
+            default=default_config.tag_lines,
+            help=f"Number of Inspected Lines on 'clean'. Default is {default_config.tag_lines}.",
+        )
+        sub.add_argument("--stat", "-S", action="store_true", help="Print Statistics")
+    for sub in (gen, inplace):
         sub.add_argument(
             "--existing",
             "-e",
@@ -116,7 +138,6 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             help=("Static Code, Inplace and Template Marker are filled until --marker-linelength."),
         )
         sub.add_argument("--eol", "-E", help="EOL comment on generated lines")
-        sub.add_argument("--stat", "-S", action="store_true", help="Print Statistics")
 
     args = parser.parse_args(args=args)
     if args.cmd:
@@ -128,14 +149,17 @@ Update a file from a template and fallback to 'default.txt.mako' if 'test.txt.ma
             marker_fill=args.marker_fill,
             marker_linelength=args.marker_linelength,
             inplace_eol_comment=args.eol,
+            tag_lines=args.tag_lines,
             track=args.stat,
         )
         info = Info(cli=get_cli())
         mklt = Makolator(config=config, info=info)
         if args.cmd == "gen":
             mklt.gen(args.templates, args.output)
-        else:
+        elif args.cmd == "inplace":
             mklt.inplace(args.templates, args.inplace, ignore_unknown=args.ignore_unknown)
+        elif args.cmd == "clean":
+            mklt.clean(args.paths)
         if config.track:
             print(mklt.tracker.stat)
     else:

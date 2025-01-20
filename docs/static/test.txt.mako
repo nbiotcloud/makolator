@@ -1,5 +1,6 @@
 <%def name="afunc(pos, opt=None)">\
-${output_filepath.name}
+output_filepath.name=${output_filepath.name}
+output_tags=${" ".join(output_tags)}
 pos=${pos}
 % if opt:
 options: ${opt}

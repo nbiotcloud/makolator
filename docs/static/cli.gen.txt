@@ -1,9 +1,9 @@
-usage: makolator gen [-h] [--verbose] [--show-diff]
+usage: makolator gen [-h] [--verbose] [--show-diff] [--tag_lines TAG_LINES]
+                     [--stat]
                      [--existing {error,keep,overwrite,keep_timestamp}]
                      [--template-path TEMPLATE_PATH]
                      [--marker-fill MARKER_FILL]
                      [--marker-linelength MARKER_LINELENGTH] [--eol EOL]
-                     [--stat]
                      templates [templates ...] output
 
 positional arguments:
@@ -14,6 +14,9 @@ options:
   -h, --help            show this help message and exit
   --verbose, -v         Tell what happens to the file.
   --show-diff, -s       Show what lines changed.
+  --tag_lines TAG_LINES
+                        Number of Inspected Lines on 'clean'. Default is 50.
+  --stat, -S            Print Statistics
   --existing {error,keep,overwrite,keep_timestamp}, -e {error,keep,overwrite,keep_timestamp}
                         What if the file exists. Default is 'keep_timestamp'
   --template-path TEMPLATE_PATH, -T TEMPLATE_PATH
@@ -23,7 +26,6 @@ options:
   --marker-linelength MARKER_LINELENGTH
                         Static Code, Inplace and Template Marker are filled until --marker-linelength.
   --eol EOL, -E EOL     EOL comment on generated lines
-  --stat, -S            Print Statistics
 
 Generate a file from a template:
 

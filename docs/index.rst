@@ -19,7 +19,7 @@ Programming Interface
 Command Line
 ------------
 
-`makolator` has two sub-commands `gen` and `inplace`:
+`makolator` has three sub-commands `gen`, `inplace` and clean:
 
 .. literalinclude:: static/cli.txt
    :language: text
@@ -34,6 +34,12 @@ Inplace
 ~~~~~~~
 
 .. literalinclude:: static/cli.inplace.txt
+   :language: text
+
+Clean
+~~~~~
+
+.. literalinclude:: static/cli.clean.txt
    :language: text
 
 Template Writing
@@ -53,7 +59,11 @@ Within the template the following symbols are available
    * - ``output_filepath``
      - ``pathlib.Path`` with outputfile path
    * - ``output_tags``
-     - ``tuple[str, ...]`` with tags about code-generation type
+     - ``tuple[str, ...]`` with tags about code-generation type.
+       `@generated` is always included.
+       `@fully-generated` is included if the file is generated via :any:`Makolator.gen` and
+       does not include any static-code which must be kept.
+       `@inplace-generated` is included if the file is created via :any:`Makolator.inplace`.
    * - ``makolator``
      - :any:`Makolator` - Makolator Engine
    * - ``makolator.open_outputfile``
@@ -62,6 +72,8 @@ Within the template the following symbols are available
      - :any:`Makolator.gen` - generate file
    * - ``makolator.inplace``
      - :any:`Makolator.inplace` - update file
+   * - ``makolator.clean``
+     - :any:`Makolator.clean` - remove fully-generated files.
    * - ``makolator.info``
      - :any:`Makolator.info` - Information Container
    * - ``run``
@@ -106,6 +118,7 @@ Within the template the following symbols are available
 
        ``${text | tex}``
 
+
 File Generation
 ~~~~~~~~~~~~~~~
 
@@ -118,7 +131,6 @@ A generate (``makolator gen test.txt.mako test.txt``) will result in:
 
 .. literalinclude:: static/test.txt
    :language: text
-
 
 
 Inplace Code Generation
@@ -135,7 +147,7 @@ filled via a template like:
 .. literalinclude:: static/inplace.txt.mako
    :language: text
 
-An inplace update (``makolator inplace test.txt.mako file.txt``) will result in:
+An inplace update (``makolator inplace inplace.txt.mako file.txt``) will result in:
 
 .. literalinclude:: static/inplace.txt
    :language: text
@@ -153,6 +165,7 @@ The inplace update (``makolator inplace file.txt``) will result in:
 
 .. literalinclude:: static/inplace-mako.txt
    :language: text
+
 
 Static Code
 ~~~~~~~~~~~
@@ -176,6 +189,7 @@ An update (``makolator gen file.txt.mako file.txt``) will result in:
 
 .. literalinclude:: static/static.txt
    :language: text
+
 
 Indices and tables
 ==================

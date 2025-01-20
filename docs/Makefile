@@ -29,6 +29,7 @@ gen:
 	makolator --help > static/cli.txt
 	makolator gen --help > static/cli.gen.txt
 	makolator inplace --help > static/cli.inplace.txt
+	makolator clean --help > static/cli.clean.txt
 	cd static && cp inplace-pre.txt inplace.txt && makolator inplace inplace.txt.mako inplace.txt
 	cd static && cp inplace-mako-pre.txt inplace-mako.txt && makolator inplace inplace-mako.txt
 	cd static && makolator gen test.txt.mako test.txt

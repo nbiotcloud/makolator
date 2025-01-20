@@ -45,12 +45,13 @@ from uniquer import uniquelist
 from . import escape, helper
 from ._inplace import InplaceRenderer
 from ._staticcode import StaticCode, read
-from ._util import LOGGER, Paths, humanify, norm_paths
+from ._util import LOGGER, Paths, humanify, iter_files, norm_paths
 from .config import Config
 from .datamodel import Datamodel
 from .exceptions import MakolatorError
 from .info import Info
-from .tracker import Tracker
+from .tags import Tag
+from .tracker import AddState, Tracker
 
 HELPER = {
     "indent": helper.indent,
@@ -98,6 +99,19 @@ class Makolator:
         if not self.__cache_path:
             self.__cache_path = Path(tempfile.mkdtemp(prefix="makolator"))
         return self.__cache_path
+
+    def remove(self, filepaths: Paths):
+        """Remove files or files in given directories."""
+        for filepath in iter_files(norm_paths(filepaths)):
+            self._remove_file(filepath)
+
+    def _remove_file(self, filepath: Path):
+        try:
+            filepath.unlink()
+            self.tracker.add(filepath, AddState.REMOVED)
+
+        except (PermissionError, FileNotFoundError):
+            self.tracker.add(filepath, State.FAILED)
 
     @contextmanager
     def open_outputfile(self, filepath: Path, encoding: str = "utf-8", **kwargs):
@@ -273,11 +287,11 @@ ${helper.run(*args, **kwargs)}\
     ) -> dict:
         result = dict(context)
         result.update(HELPER)
-        tags = ["@generated"]
+        tags = [Tag.GENERATED.value]
         if inplace:
-            tags.append("@inplace-generated")
+            tags.append(Tag.INPLACE_GENERATED.value)
         elif staticcode.is_volatile:
-            tags.append("@fully-generated")
+            tags.append(Tag.FULLY_GENERATED.value)
         result["datamodel"] = self.datamodel
         result["makolator"] = self
         result["output_filepath"] = output_filepath
@@ -296,3 +310,19 @@ ${helper.run(*args, **kwargs)}\
             sep = self._get_comment_sep(filepath)
             return f"{sep} {eol_comment}"
         return ""
+
+    def clean(self, filepaths: Paths):
+        """Remove Fully-Generated Files from Filepaths."""
+        for filepath in iter_files(norm_paths(filepaths)):
+            if self.is_fully_generated(filepath):
+                self._remove_file(filepath)
+            else:
+                self.tracker.add(filepath, State.IDENTICAL)
+
+    def is_fully_generated(self, filepath: Path) -> bool:
+        """Check If File Is Fully Generated."""
+        with filepath.open("r") as file:
+            for _, line in zip(range(self.config.tag_lines), file, strict=False):
+                if Tag.FULLY_GENERATED.value in line:
+                    return True
+        return False

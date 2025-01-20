@@ -117,3 +117,6 @@ class Config:
 
     track: bool = False
     """Track Changes."""
+
+    tag_lines: int = 50
+    """Number Of Lines Within A Files to look for Tags."""

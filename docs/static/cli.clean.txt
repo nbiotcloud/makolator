@@ -1,0 +1,19 @@
+usage: makolator clean [-h] [--verbose] [--show-diff] [--tag_lines TAG_LINES]
+                       [--stat]
+                       paths [paths ...]
+
+positional arguments:
+  paths                 Paths to look for files.
+
+options:
+  -h, --help            show this help message and exit
+  --verbose, -v         Tell what happens to the file.
+  --show-diff, -s       Show what lines changed.
+  --tag_lines TAG_LINES
+                        Number of Inspected Lines on 'clean'. Default is 50.
+  --stat, -S            Print Statistics
+
+Remove all files with '@fully-generated' in header.
+The number of inspected lines at the top of a file is defined by --tag_lines.
+
+    makolator clean .

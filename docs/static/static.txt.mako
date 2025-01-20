@@ -1,4 +1,5 @@
 <%def name="example(greet='Hello')">\
+output_tags=${" ".join(output_tags)}
 ${greet} before
 
 ${staticcode('a', default='obsolete a')}

@@ -42,6 +42,14 @@ def norm_paths(paths: Paths) -> list[Path]:
         return [paths]  # type: ignore[list-item]
 
 
+def iter_files(paths: Iterable[Path]) -> Iterable[Path]:
+    for path in paths:
+        if path.is_file():
+            yield path
+        elif path.is_dir():
+            yield from iter_files(sorted(path.iterdir()))
+
+
 def check_indent(filepath: Path, lineno: int, beginindent, endindent):
     """Check ``BEGIN``/``END`` indent."""
     if endindent != beginindent:

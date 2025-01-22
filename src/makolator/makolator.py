@@ -314,15 +314,19 @@ ${helper.run(*args, **kwargs)}\
     def clean(self, filepaths: Paths):
         """Remove Fully-Generated Files from Filepaths."""
         for filepath in iter_files(norm_paths(filepaths)):
-            if self.is_fully_generated(filepath):
+            is_fully_generated = self.is_fully_generated(filepath)
+            if is_fully_generated:
                 self._remove_file(filepath)
-            else:
+            elif is_fully_generated is False:
                 self.tracker.add(filepath, State.IDENTICAL)
 
-    def is_fully_generated(self, filepath: Path) -> bool:
+    def is_fully_generated(self, filepath: Path) -> bool | None:
         """Check If File Is Fully Generated."""
-        with filepath.open("r") as file:
-            for _, line in zip(range(self.config.tag_lines), file, strict=False):
-                if Tag.FULLY_GENERATED.value in line:
-                    return True
-        return False
+        try:
+            with filepath.open("r") as file:
+                for _, line in zip(range(self.config.tag_lines), file, strict=False):
+                    if Tag.FULLY_GENERATED.value in line:
+                        return True
+            return False
+        except UnicodeDecodeError:  # binary files
+            return None

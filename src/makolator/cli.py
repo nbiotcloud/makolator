@@ -141,17 +141,25 @@ The number of inspected lines at the top of a file is defined by --tag_lines.
 
     args = parser.parse_args(args=args)
     if args.cmd:
-        config = Config(
-            verbose=args.verbose,
-            diffout=print if args.show_diff else None,
-            existing=args.existing,
-            template_paths=[*args.template_path, Path()],
-            marker_fill=args.marker_fill,
-            marker_linelength=args.marker_linelength,
-            inplace_eol_comment=args.eol,
-            tag_lines=args.tag_lines,
-            track=args.stat,
-        )
+        if args.cmd == "clean":
+            config = Config(
+                verbose=args.verbose,
+                diffout=print if args.show_diff else None,
+                tag_lines=args.tag_lines,
+                track=args.stat,
+            )
+        else:
+            config = Config(
+                verbose=args.verbose,
+                diffout=print if args.show_diff else None,
+                existing=args.existing,
+                template_paths=[*args.template_path, Path()],
+                marker_fill=args.marker_fill,
+                marker_linelength=args.marker_linelength,
+                inplace_eol_comment=args.eol,
+                tag_lines=args.tag_lines,
+                track=args.stat,
+            )
         info = Info(cli=get_cli())
         mklt = Makolator(config=config, info=info)
         if args.cmd == "gen":

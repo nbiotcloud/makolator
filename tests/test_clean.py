@@ -51,12 +51,14 @@ Hello World
     with (twodir / "four.txt").open("w") as file:
         for _ in range(100):
             file.write("@fully-generated")
+    (onedir / "file.bin").write_bytes(bytes(range(256)))
     yield tmp_path
 
 
 def test_find_files(example):
     """Find Files."""
     assert tuple(iter_files((example,))) == (
+        example / "one" / "file.bin",
         example / "one" / "one.txt",
         example / "one" / "two" / "four.txt",
         example / "sec.txt",
@@ -115,7 +117,7 @@ def test_remove(example):
     assert thirdfile.exists()
     assert not fourfile.exists()
 
-    assert mklt.tracker.stat == "2 files. 2 REMOVED."
+    assert mklt.tracker.stat == "3 files. 3 REMOVED."
 
 
 def test_remove_failed(example):

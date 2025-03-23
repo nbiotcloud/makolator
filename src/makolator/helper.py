@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ def run(args, **kwargs):
         else:
             args = [arg.replace("${TMPDIR}", tmpdir) for arg in args]
         kwargs["stdout"] = subprocess.PIPE
-        result = subprocess.run(args, check=True, **kwargs)
+        result = subprocess.run(args, check=True, **kwargs)  # noqa: S603
         return result.stdout.decode("utf-8")
 
 
@@ -52,19 +52,19 @@ def indent(text_or_int: Any, rstrip: bool = False):
     """
     Indent Lines by number of ``text_or_int``.
 
-    >>> print(indent('''A
-    ... B
-    ... C'''))
-      A
-      B
-      C
+        >>> print(indent('''A
+        ... B
+        ... C'''))
+          A
+          B
+          C
 
-    >>> print(indent(4)('''A
-    ... B
-    ... C'''))
-        A
-        B
-        C
+        >>> print(indent(4)('''A
+        ... B
+        ... C'''))
+            A
+            B
+            C
     """
     if isinstance(text_or_int, int):
         return prefix(" " * text_or_int, rstrip=rstrip)
@@ -75,12 +75,12 @@ def prefix(pre: str, rstrip: bool = False):
     """
     Add ``pre`` In Front of Every Line.
 
-    >>> print(prefix('PRE-')('''A
-    ... B
-    ... C'''))
-    PRE-A
-    PRE-B
-    PRE-C
+        >>> print(prefix('PRE-')('''A
+        ... B
+        ... C'''))
+        PRE-A
+        PRE-B
+        PRE-C
     """
     if rstrip:
 

@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -49,14 +49,14 @@ def tex(text: str | None):
     r"""
     Escape (La)Tex.
 
-    >>> tex("Foo & Bar")
-    'Foo \\& Bar'
-    >>> tex(None)
-
     Args:
         text: tex
     Returns:
         escaped string.
+
+        >>> tex("Foo & Bar")
+        'Foo \\& Bar'
+        >>> tex(None)
     """
     if text is None:
         return None

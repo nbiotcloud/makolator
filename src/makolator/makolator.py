@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -125,13 +125,15 @@ class Makolator:
             encoding: Charset.
             kwargs: Additional arguments are forwarded to open.
 
-        >>> mklt = Makolator(config=Config(verbose=True))
-        >>> with mklt.open_outputfile("myfile.txt") as file:
-        ...     file.write("data")
-        'myfile.txt'... CREATED.
-        >>> with mklt.open_outputfile("myfile.txt") as file:
-        ...     file.write("data")
-        'myfile.txt'... identical. untouched.
+        Example:
+
+            >>> mklt = Makolator(config=Config(verbose=True))
+            >>> with mklt.open_outputfile("myfile.txt") as file:
+            ...     file.write("data")
+            'myfile.txt'... CREATED.
+            >>> with mklt.open_outputfile("myfile.txt") as file:
+            ...     file.write("data")
+            'myfile.txt'... identical. untouched.
         """
         config = self.config
         kwargs.setdefault("existing", config.existing)

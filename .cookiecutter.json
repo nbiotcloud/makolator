@@ -1,0 +1,13 @@
+{
+    "cookiecutter": {
+    "_checkout": null,
+    "_output_dir": "/Users/iccode17/projects",
+    "_repo_dir": "python-template",
+    "_template": "python-template",
+    "name": "makolator",
+    "snake_name": "makolator",
+    "title": "Extended Mako Templates for Python",
+    "user": "nbiotcloud",
+    "year": "2023"
+}
+}

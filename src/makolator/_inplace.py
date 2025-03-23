@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -196,7 +196,7 @@ class InplaceRenderer:
         # determine args, kwargs
         try:
             # pylint: disable=eval-used
-            args, kwargs = eval(f"_extract({inplace.args})", {"_extract": _extract})
+            args, kwargs = eval(f"_extract({inplace.args})", {"_extract": _extract})  # noqa: S307
         except Exception as exc:
             raise MakolatorError(
                 f"{filepath!s}:{inplace.lineno} Function invocation failed. "

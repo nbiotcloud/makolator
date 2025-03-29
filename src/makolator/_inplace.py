@@ -39,8 +39,6 @@ from ._util import LOGGER, check_indent, fill_marker
 from .config import Config
 from .exceptions import MakolatorError
 
-# pylint: disable=too-many-arguments,too-few-public-methods
-
 
 @define
 class InplaceInfo:
@@ -74,7 +72,6 @@ class InplaceRenderer:
 
     def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):  # noqa: C901
         """Render."""
-        # pylint: disable=too-many-locals,too-many-nested-blocks
         inplace_marker = self.config.inplace_marker
         ibegin = re.compile(rf"(?P<indent>\s*).*{inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\)")
         iinfo = None
@@ -191,11 +188,9 @@ class InplaceRenderer:
         return None
 
     def _fill_inplace(self, filepath: Path, outputfile, inplace: InplaceInfo, context: dict):
-        # pylint: disable=too-many-locals
         LOGGER.debug("Inplace '%s:%d'", str(filepath), inplace.lineno)
         # determine args, kwargs
         try:
-            # pylint: disable=eval-used
             args, kwargs = eval(f"_extract({inplace.args})", {"_extract": _extract})  # noqa: S307
         except Exception as exc:
             raise MakolatorError(

@@ -36,8 +36,6 @@ from .exceptions import MakolatorError
 
 StaticCodeMap = dict[str, str]
 
-# pylint: disable=too-few-public-methods
-
 
 @define
 class Info:
@@ -127,7 +125,6 @@ def _read(filepath: Path | None, marker: str, staticcodemap: StaticCodeMap):
 
 
 def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter, begin, info: Info):
-    # pylint: disable=too-many-arguments
     end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>\S+)\s*")
     lines: list[str] = []
     while True:

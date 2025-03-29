@@ -27,7 +27,6 @@ from pathlib import Path
 
 from makolator import Config, Existing
 
-# pylint: disable=duplicate-code
 COMMENT_MAP = {
     ".c": "//",
     ".c++": "//",

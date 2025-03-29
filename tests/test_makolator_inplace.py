@@ -37,8 +37,6 @@ FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
 REFDATA = FILEPATH.parent / "refdata" / FILEPATH.stem
 
-# pylint: disable=redefined-outer-name
-
 
 @fixture
 def mklt():

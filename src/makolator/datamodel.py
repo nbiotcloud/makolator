@@ -25,7 +25,6 @@
 
 
 class Datamodel:
-    # pylint: disable=too-few-public-methods
     """
     Datamodel.
 

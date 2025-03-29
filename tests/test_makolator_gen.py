@@ -33,9 +33,6 @@ from test2ref import assert_paths, assert_refdata
 
 from makolator import Config, Makolator, MakolatorError
 
-# pylint: disable=redefined-outer-name
-
-
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"
 PAUSE = 0.1

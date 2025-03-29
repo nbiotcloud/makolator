@@ -25,8 +25,6 @@
 
 from makolator import Datamodel
 
-# pylint: disable=use-implicit-booleaness-not-comparison
-
 
 def test_datamodel():
     """Basic Testing on Datamodel."""

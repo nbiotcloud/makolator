@@ -43,8 +43,6 @@ class Info:
     Makolator Information.
     """
 
-    # pylint: disable=too-few-public-methods
-
     cli: str | None = None
     """
     Actual Command Line Interface Call.

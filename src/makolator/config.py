@@ -68,8 +68,6 @@ class Config:
         .vh: //
     """
 
-    # pylint: disable=too-few-public-methods
-
     template_paths: list[Path] = []  # noqa: RUF008
     """Default Search Paths for Templates."""
 

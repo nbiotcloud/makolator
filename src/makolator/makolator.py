@@ -184,7 +184,6 @@ class Makolator:
     def _render(
         self, template: Template, output, dest: Path | None, context: dict, staticcode: StaticCode, comment_sep: str
     ):
-        # pylint: disable=too-many-arguments
         context = Context(output, **self._get_render_context(dest, context, staticcode, comment_sep))
         template.render_context(context)
 
@@ -239,7 +238,6 @@ ${helper.run(*args, **kwargs)}\
         lookuppaths = uniquelist([tplfilepath.parent for tplfilepath in tplfilepaths] + searchpaths)
 
         def get_module_filename(filepath: str, uri: str):
-            # pylint: disable=unused-argument
             hash_ = hashlib.sha256()
             hash_.update(bytes(filepath, encoding="utf-8"))
             ident = hash_.hexdigest()

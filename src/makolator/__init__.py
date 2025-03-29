@@ -184,7 +184,6 @@ If you like to warn your users about generated sections even more, you can add a
 That's it.
 """
 
-# pylint: disable=unused-import
 from outputfile import Existing
 
 from .config import Config

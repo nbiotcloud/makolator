@@ -1,14 +1,6 @@
 
 GENERATE INPLACE BEGIN helpme()
 ----
-A
-&
-B
-
-%
-C
-
-----
   A
   &
   B

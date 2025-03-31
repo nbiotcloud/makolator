@@ -24,6 +24,7 @@
 """Inplace Generation."""
 
 import io
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -81,7 +82,7 @@ class InplaceRenderer:
         tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN")
         templates = list(self.templates)
 
-        with filepath.open(encoding="utf-8") as inputfile:
+        with filepath.open(encoding="utf-8", newline="") as inputfile:
             inputiter = enumerate(inputfile.readlines(), 1)
             try:
                 while True:
@@ -211,18 +212,19 @@ class InplaceRenderer:
             ) from exc
         eol = self.eol
         lines = buffer.getvalue().splitlines()
+        linesep = os.linesep
         if eol:
             align = Align()
             for line in lines:
                 align.add_row(line, eol)
             for item in align:
-                outputfile.write(f"{indent}{item}\n")
+                outputfile.write(f"{indent}{item}{linesep}")
         else:
             for line in lines:
                 if line:
-                    outputfile.write(f"{indent}{line}\n")
+                    outputfile.write(f"{indent}{line}{linesep}")
                 else:
-                    outputfile.write("\n")
+                    outputfile.write(linesep)
 
         buffer.close()
 
@@ -231,7 +233,7 @@ class InplaceRenderer:
         marker_linelength = self.config.marker_linelength
         if marker_fill and marker_linelength:
             line = mat.string[mat.start() : mat.end()]
-            return fill_marker(line, marker_fill, marker_linelength) + "\n"
+            return fill_marker(line, marker_fill, marker_linelength) + os.linesep
         return mat.string
 
 

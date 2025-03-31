@@ -28,12 +28,12 @@ A simple API to an improved Mako.
 """
 
 import hashlib
-import sys
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
+from tempfile import TemporaryFile
 
 from attrs import define, field
 from mako.lookup import TemplateLookup
@@ -168,10 +168,15 @@ class Makolator:
         context = context or {}
         comment_sep = self._get_comment_sep(dest)
         if dest is None:
-            with read(dest, comment_sep, self.config) as staticcode:
-                template = next(templates)  # Load template
-                LOGGER.info("gen(%r, STDOUT)", template.filename)
-                self._render(template, sys.stdout, None, context, staticcode, comment_sep)
+            # newlines may be broken on STDOUT under windows - WON'T FIX
+            with TemporaryFile(mode="w+", newline="") as out:
+                with read(dest, comment_sep, self.config) as staticcode:
+                    template = next(templates)  # Load template
+                    LOGGER.info("gen(%r, STDOUT)", template.filename)
+                    self._render(template, out, None, context, staticcode, comment_sep)
+                out.seek(0)
+                for line in out:
+                    print(line.rstrip())
         else:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".

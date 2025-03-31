@@ -23,6 +23,7 @@
 #
 """Makolator Helper."""
 
+import os
 import subprocess
 import tempfile
 from typing import Any
@@ -45,21 +46,21 @@ def run(args, **kwargs):
             args = [arg.replace("${TMPDIR}", tmpdir) for arg in args]
         kwargs["stdout"] = subprocess.PIPE
         result = subprocess.run(args, check=True, **kwargs)  # noqa: S603
-        return result.stdout.decode("utf-8")
+        return result.stdout.decode("utf-8").rstrip()
 
 
 def indent(text_or_int: Any, rstrip: bool = False):
     """
     Indent Lines by number of ``text_or_int``.
 
-        >>> print(indent('''A
+        >>> print(indent('''A # doctest: +SKIP
         ... B
         ... C'''))
           A
           B
           C
 
-        >>> print(indent(4)('''A
+        >>> print(indent(4)('''A # doctest: +SKIP
         ... B
         ... C'''))
             A
@@ -75,7 +76,7 @@ def prefix(pre: str, rstrip: bool = False):
     """
     Add ``pre`` In Front of Every Line.
 
-        >>> print(prefix('PRE-')('''A
+        >>> print(prefix('PRE-')('''A # doctest: +SKIP
         ... B
         ... C'''))
         PRE-A
@@ -85,11 +86,11 @@ def prefix(pre: str, rstrip: bool = False):
     if rstrip:
 
         def func(text):
-            return "\n".join(f"{pre}{line}".rstrip() for line in text.splitlines())
+            return os.linesep.join(f"{pre}{line}".rstrip() for line in text.splitlines())
 
     else:
 
         def func(text):
-            return "\n".join(f"{pre}{line}" for line in text.splitlines())
+            return os.linesep.join(f"{pre}{line}" for line in text.splitlines())
 
     return func

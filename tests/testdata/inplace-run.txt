@@ -1,8 +1,8 @@
-GENERATE INPLACE BEGIN run(["echo", "Hello World"])
+GENERATE INPLACE BEGIN run(["echo", "Hello-World"])
 obsolete
 GENERATE INPLACE END run
 
-GENERATE INPLACE BEGIN run('echo "Hello World"', shell=True)
+GENERATE INPLACE BEGIN run('echo Hello-World', shell=True)
 obsolete
 GENERATE INPLACE END run
 

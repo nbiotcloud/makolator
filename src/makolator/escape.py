@@ -23,6 +23,7 @@
 #
 """Escape reserved characters."""
 
+import os
 import re
 
 __TEX_CONV = {
@@ -60,4 +61,7 @@ def tex(text: str | None):
     """
     if text is None:
         return None
-    return __TEX_REGEX.sub(lambda match: __TEX_CONV[match.group()], str(text))
+    result = __TEX_REGEX.sub(lambda match: __TEX_CONV[match.group()], str(text))
+    if os.linesep != "\n":
+        return result.replace("\n", os.linesep)
+    return result

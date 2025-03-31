@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 #
 """Escape reserved characters."""
 
+import os
 import re
 
 __TEX_CONV = {
@@ -49,15 +50,18 @@ def tex(text: str | None):
     r"""
     Escape (La)Tex.
 
-    >>> tex("Foo & Bar")
-    'Foo \\& Bar'
-    >>> tex(None)
-
     Args:
         text: tex
     Returns:
         escaped string.
+
+        >>> tex("Foo & Bar")
+        'Foo \\& Bar'
+        >>> tex(None)
     """
     if text is None:
         return None
-    return __TEX_REGEX.sub(lambda match: __TEX_CONV[match.group()], str(text))
+    result = __TEX_REGEX.sub(lambda match: __TEX_CONV[match.group()], str(text))
+    if os.linesep != "\n":
+        return result.replace("\n", os.linesep)
+    return result

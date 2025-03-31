@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,9 +32,6 @@ from pytest import approx, fixture, raises
 from test2ref import assert_paths, assert_refdata
 
 from makolator import Config, Makolator, MakolatorError
-
-# pylint: disable=redefined-outer-name
-
 
 FILEPATH = Path(__file__)
 TESTDATA = FILEPATH.parent / "testdata"

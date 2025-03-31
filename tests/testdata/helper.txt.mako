@@ -10,8 +10,6 @@ C
 """
 %>\
 ----
-${lines}
-----
 ${lines | indent}
 ----
 ${lines | indent(2)}

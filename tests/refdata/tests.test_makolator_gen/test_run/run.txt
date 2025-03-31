@@ -1,5 +1,5 @@
 A
-Hello World
+HelloWorld
 B
-Hello World
+HelloWorld
 C

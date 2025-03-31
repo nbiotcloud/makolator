@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,6 @@
 """Datamodel Testing."""
 
 from makolator import Datamodel
-
-# pylint: disable=use-implicit-booleaness-not-comparison
 
 
 def test_datamodel():

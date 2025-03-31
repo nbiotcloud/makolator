@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -53,24 +53,22 @@ class Config:
 
     The following file extensions are known:
 
-    >>> for suffix, comment in Config().comment_map.items():
-    ...     print(f"{suffix}: {comment}")
-    .c: //
-    .c++: //
-    .cpp: //
-    .ini: #
-    .py: #
-    .sv: //
-    .svh: //
-    .tex: %
-    .txt: //
-    .v: //
-    .vh: //
+        >>> for suffix, comment in Config().comment_map.items():
+        ...     print(f"{suffix}: {comment}")
+        .c: //
+        .c++: //
+        .cpp: //
+        .ini: #
+        .py: #
+        .sv: //
+        .svh: //
+        .tex: %
+        .txt: //
+        .v: //
+        .vh: //
     """
 
-    # pylint: disable=too-few-public-methods
-
-    template_paths: list[Path] = []  # noqa: RUF012
+    template_paths: list[Path] = []  # noqa: RUF008
     """Default Search Paths for Templates."""
 
     existing: Existing = Existing.KEEP_TIMESTAMP

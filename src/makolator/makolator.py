@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,12 +28,12 @@ A simple API to an improved Mako.
 """
 
 import hashlib
-import sys
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
+from tempfile import TemporaryFile
 
 from attrs import define, field
 from mako.lookup import TemplateLookup
@@ -125,13 +125,15 @@ class Makolator:
             encoding: Charset.
             kwargs: Additional arguments are forwarded to open.
 
-        >>> mklt = Makolator(config=Config(verbose=True))
-        >>> with mklt.open_outputfile("myfile.txt") as file:
-        ...     file.write("data")
-        'myfile.txt'... CREATED.
-        >>> with mklt.open_outputfile("myfile.txt") as file:
-        ...     file.write("data")
-        'myfile.txt'... identical. untouched.
+        Example:
+
+            >>> mklt = Makolator(config=Config(verbose=True))
+            >>> with mklt.open_outputfile("myfile.txt") as file:
+            ...     file.write("data")
+            'myfile.txt'... CREATED.
+            >>> with mklt.open_outputfile("myfile.txt") as file:
+            ...     file.write("data")
+            'myfile.txt'... identical. untouched.
         """
         config = self.config
         kwargs.setdefault("existing", config.existing)
@@ -166,10 +168,15 @@ class Makolator:
         context = context or {}
         comment_sep = self._get_comment_sep(dest)
         if dest is None:
-            with read(dest, comment_sep, self.config) as staticcode:
-                template = next(templates)  # Load template
-                LOGGER.info("gen(%r, STDOUT)", template.filename)
-                self._render(template, sys.stdout, None, context, staticcode, comment_sep)
+            # newlines may be broken on STDOUT under windows - WON'T FIX
+            with TemporaryFile(mode="w+", newline="") as out:
+                with read(dest, comment_sep, self.config) as staticcode:
+                    template = next(templates)  # Load template
+                    LOGGER.info("gen(%r, STDOUT)", template.filename)
+                    self._render(template, out, None, context, staticcode, comment_sep)
+                out.seek(0)
+                for line in out:
+                    print(line.rstrip())
         else:
             # Mako takes care about proper newline handling. Therefore we deactivate
             # the universal newline mode, by setting newline="".
@@ -182,7 +189,6 @@ class Makolator:
     def _render(
         self, template: Template, output, dest: Path | None, context: dict, staticcode: StaticCode, comment_sep: str
     ):
-        # pylint: disable=too-many-arguments
         context = Context(output, **self._get_render_context(dest, context, staticcode, comment_sep))
         template.render_context(context)
 
@@ -237,7 +243,6 @@ ${helper.run(*args, **kwargs)}\
         lookuppaths = uniquelist([tplfilepath.parent for tplfilepath in tplfilepaths] + searchpaths)
 
         def get_module_filename(filepath: str, uri: str):
-            # pylint: disable=unused-argument
             hash_ = hashlib.sha256()
             hash_.update(bytes(filepath, encoding="utf-8"))
             ident = hash_.hexdigest()

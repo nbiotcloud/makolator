@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 """Inplace Generation."""
 
 import io
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -38,8 +39,6 @@ from mako.template import Template
 from ._util import LOGGER, check_indent, fill_marker
 from .config import Config
 from .exceptions import MakolatorError
-
-# pylint: disable=too-many-arguments,too-few-public-methods
 
 
 @define
@@ -74,7 +73,6 @@ class InplaceRenderer:
 
     def render(self, lookup: TemplateLookup, filepath: Path, outputfile, context: dict):  # noqa: C901
         """Render."""
-        # pylint: disable=too-many-locals,too-many-nested-blocks
         inplace_marker = self.config.inplace_marker
         ibegin = re.compile(rf"(?P<indent>\s*).*{inplace_marker}\s+BEGIN\s(?P<funcname>[a-z_]+)\((?P<args>.*)\)")
         iinfo = None
@@ -84,7 +82,7 @@ class InplaceRenderer:
         tbegin = re.compile(rf"(?P<pre>.*)\s*{template_marker}\s+BEGIN")
         templates = list(self.templates)
 
-        with filepath.open(encoding="utf-8") as inputfile:
+        with filepath.open(encoding="utf-8", newline="") as inputfile:
             inputiter = enumerate(inputfile.readlines(), 1)
             try:
                 while True:
@@ -191,12 +189,10 @@ class InplaceRenderer:
         return None
 
     def _fill_inplace(self, filepath: Path, outputfile, inplace: InplaceInfo, context: dict):
-        # pylint: disable=too-many-locals
         LOGGER.debug("Inplace '%s:%d'", str(filepath), inplace.lineno)
         # determine args, kwargs
         try:
-            # pylint: disable=eval-used
-            args, kwargs = eval(f"_extract({inplace.args})", {"_extract": _extract})
+            args, kwargs = eval(f"_extract({inplace.args})", {"_extract": _extract})  # noqa: S307
         except Exception as exc:
             raise MakolatorError(
                 f"{filepath!s}:{inplace.lineno} Function invocation failed. "
@@ -216,18 +212,19 @@ class InplaceRenderer:
             ) from exc
         eol = self.eol
         lines = buffer.getvalue().splitlines()
+        linesep = os.linesep
         if eol:
             align = Align()
             for line in lines:
                 align.add_row(line, eol)
             for item in align:
-                outputfile.write(f"{indent}{item}\n")
+                outputfile.write(f"{indent}{item}{linesep}")
         else:
             for line in lines:
                 if line:
-                    outputfile.write(f"{indent}{line}\n")
+                    outputfile.write(f"{indent}{line}{linesep}")
                 else:
-                    outputfile.write("\n")
+                    outputfile.write(linesep)
 
         buffer.close()
 
@@ -236,7 +233,7 @@ class InplaceRenderer:
         marker_linelength = self.config.marker_linelength
         if marker_fill and marker_linelength:
             line = mat.string[mat.start() : mat.end()]
-            return fill_marker(line, marker_fill, marker_linelength) + "\n"
+            return fill_marker(line, marker_fill, marker_linelength) + os.linesep
         return mat.string
 
 

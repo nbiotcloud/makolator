@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,23 +25,22 @@
 
 
 class Datamodel:
-    # pylint: disable=too-few-public-methods
     """
     Datamodel.
 
     A simple container for all data attributes.
     Add attributes on your needs. That's it.
 
-    >>> Datamodel()
-    Datamodel()
-    >>> Datamodel(abc='def', item=4)
-    Datamodel(abc='def', item=4)
-    >>> datamodel = Datamodel(abc='def')
-    >>> datamodel
-    Datamodel(abc='def')
-    >>> datamodel.item=4
-    >>> datamodel
-    Datamodel(abc='def', item=4)
+        >>> Datamodel()
+        Datamodel()
+        >>> Datamodel(abc='def', item=4)
+        Datamodel(abc='def', item=4)
+        >>> datamodel = Datamodel(abc='def')
+        >>> datamodel
+        Datamodel(abc='def')
+        >>> datamodel.item=4
+        >>> datamodel
+        Datamodel(abc='def', item=4)
     """
 
     def __init__(self, **kwargs):

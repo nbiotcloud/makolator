@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023 nbiotcloud
+# Copyright (c) 2023-2025 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 #
 """Static Code Preservation."""
 
+import os
 import re
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -35,8 +36,6 @@ from .config import Config
 from .exceptions import MakolatorError
 
 StaticCodeMap = dict[str, str]
-
-# pylint: disable=too-few-public-methods
 
 
 @define
@@ -76,7 +75,7 @@ class StaticCode:
         lines = [begin]
         lines.extend(code.splitlines())
         lines.append(end)
-        return "\n".join(lines)
+        return os.linesep.join(lines)
 
     @property
     def is_volatile(self) -> bool:
@@ -102,7 +101,7 @@ def _read(filepath: Path | None, marker: str, staticcodemap: StaticCodeMap):
         info = None
 
         try:
-            with filepath.open(encoding="utf-8") as file:
+            with filepath.open(encoding="utf-8", newline="") as file:
                 fileiter = enumerate(file, 1)
                 while True:
                     if info:
@@ -127,7 +126,6 @@ def _read(filepath: Path | None, marker: str, staticcodemap: StaticCodeMap):
 
 
 def _process(filepath: Path, marker: str, staticcodemap: StaticCodeMap, fileiter, begin, info: Info):
-    # pylint: disable=too-many-arguments
     end = re.compile(rf"(?P<indent>\s*).*{marker}\s+END\s+(?P<name>\S+)\s*")
     lines: list[str] = []
     while True:

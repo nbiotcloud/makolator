@@ -138,6 +138,7 @@ The number of inspected lines at the top of a file is defined by --tag_lines.
             help=("Static Code, Inplace and Template Marker are filled until --marker-linelength."),
         )
         sub.add_argument("--eol", "-E", help="EOL comment on generated lines")
+        sub.add_argument("--create", "-c", action="store_true", default=False, help="Create Missing Inplace File")
 
     args = parser.parse_args(args=args)
     if args.cmd:
@@ -151,6 +152,7 @@ The number of inspected lines at the top of a file is defined by --tag_lines.
         else:
             config = Config(
                 verbose=args.verbose,
+                create=args.create,
                 diffout=print if args.show_diff else None,
                 existing=args.existing,
                 template_paths=[*args.template_path, Path()],

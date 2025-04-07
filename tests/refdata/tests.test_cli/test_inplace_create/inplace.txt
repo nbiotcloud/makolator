@@ -1,0 +1,15 @@
+-- GENERATE INPLACE BEGIN afunc("foo2")
+THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+inplace.txt
+('@generated', '@inplace-generated')
+pos=foo2
+
+-- GENERATE INPLACE END afunc
+
+-- GENERATE INPLACE BEGIN afunc("foo3")
+THIS SECTION IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+inplace.txt
+('@generated', '@inplace-generated')
+pos=foo3
+
+-- GENERATE INPLACE END afunc

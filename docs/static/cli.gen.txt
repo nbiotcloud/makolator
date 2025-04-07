@@ -4,6 +4,7 @@ usage: makolator gen [-h] [--verbose] [--show-diff] [--tag_lines TAG_LINES]
                      [--template-path TEMPLATE_PATH]
                      [--marker-fill MARKER_FILL]
                      [--marker-linelength MARKER_LINELENGTH] [--eol EOL]
+                     [--create]
                      templates [templates ...] output
 
 positional arguments:
@@ -26,6 +27,7 @@ options:
   --marker-linelength MARKER_LINELENGTH
                         Static Code, Inplace and Template Marker are filled until --marker-linelength.
   --eol, -E EOL         EOL comment on generated lines
+  --create, -c          Create Missing Inplace File
 
 Generate a file from a template:
 

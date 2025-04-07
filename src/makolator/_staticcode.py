@@ -82,14 +82,24 @@ class StaticCode:
         """Static Code is Empty."""
         return not self.staticcodemap
 
+    @staticmethod
+    def from_config(config: Config, comment_sep: str, staticcodemap: StaticCodeMap | None = None) -> "StaticCode":
+        staticcodemap = staticcodemap or {}
+        return StaticCode(
+            comment_sep=comment_sep,
+            staticcodemap=staticcodemap,
+            marker=config.static_marker,
+            marker_fill=config.marker_fill,
+            marker_linelength=config.marker_linelength,
+        )
+
 
 @contextmanager
 def read(filepath: Path | None, comment_sep: str, config: Config) -> Iterator[StaticCode]:
     """Read from ``filepath``."""
     staticcodemap: StaticCodeMap = {}
-    marker = config.static_marker
-    _read(filepath, marker, staticcodemap)
-    yield StaticCode(comment_sep, staticcodemap, marker, config.marker_fill, config.marker_linelength)
+    _read(filepath, config.static_marker, staticcodemap)
+    yield StaticCode.from_config(config, comment_sep, staticcodemap=staticcodemap)
     if staticcodemap:
         names = humanify(staticcodemap)
         raise MakolatorError(f"'{filepath!s}': unknown static code {names}")

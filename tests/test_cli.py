@@ -23,11 +23,14 @@
 #
 """Datamodel Testing."""
 
+import re
 from pathlib import Path
 from shutil import copyfile
 
+from pytest import raises
 from test2ref import assert_refdata
 
+from makolator import MakolatorError
 from makolator.cli import main
 
 FILEPATH = Path(__file__)
@@ -61,3 +64,27 @@ def test_inplace_stat(tmp_path, capsys):
     copyfile(TESTDATA / "inplace.txt", filepath)
     main(["inplace", "--stat", str(TESTDATA / "inplace.txt.mako"), str(filepath)])
     assert_refdata(test_inplace_stat, tmp_path, capsys=capsys)
+
+
+def test_inplace_missing(tmp_path):
+    """Inplace File Not Found."""
+    with raises(FileNotFoundError):
+        main(["inplace", str(TESTDATA / "inplace.txt.mako"), str(tmp_path / "inplace.txt")])
+
+
+def test_inplace_create_missing(tmp_path, caplog):
+    """Inplace With Create - missing create_inplace."""
+    with raises(MakolatorError, match=re.escape("None of the templates implements 'create_inplace'")):
+        main(["inplace", "--create", str(TESTDATA / "inplace.txt.mako"), str(tmp_path / "inplace.txt")])
+
+
+def test_inplace_create_broken(tmp_path, caplog):
+    """Inplace With Create - broken create_inplace."""
+    with raises(MakolatorError, match=re.escape("assert False")):
+        main(["inplace", "--create", str(TESTDATA / "inplace-create-broken.txt.mako"), str(tmp_path / "inplace.txt")])
+
+
+def test_inplace_create(tmp_path, caplog):
+    """Inplace With Create."""
+    main(["inplace", "--create", str(TESTDATA / "inplace-create.txt.mako"), str(tmp_path / "inplace.txt")])
+    assert_refdata(test_inplace_create, tmp_path, caplog=caplog)

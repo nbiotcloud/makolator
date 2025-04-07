@@ -80,6 +80,9 @@ class Config:
     verbose: bool = False
     """Enable Verbose Output."""
 
+    create: bool = False
+    """Create Missing Inplace Files."""
+
     template_marker: str = "MAKO TEMPLATE"
     """Search marker for template code within output file."""
 

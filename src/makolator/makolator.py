@@ -28,6 +28,7 @@ A simple API to an improved Mako.
 """
 
 import hashlib
+import io
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -36,6 +37,7 @@ from shutil import rmtree
 from tempfile import TemporaryFile
 
 from attrs import define, field
+from mako.exceptions import text_error_template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from mako.template import Template
@@ -217,13 +219,37 @@ class Makolator:
         config = self.config
         context = context or {}
         comment_sep = self._get_comment_sep(filepath)
+
         eol = self._get_eol(filepath, config.inplace_eol_comment)
         inplace = InplaceRenderer(config, templates, ignore_unknown, eol)
+
+        if not filepath.exists() and config.create:
+            LOGGER.info("create inplace(%r, %r)", str(tplfilepaths[0]) if tplfilepaths else None, str(filepath))
+            self._create_inplace(inplace, filepath, config, comment_sep, context)
+
+        LOGGER.info("inplace(%r, %r)", str(tplfilepaths[0]) if tplfilepaths else None, str(filepath))
         with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
             with read(filepath, comment_sep, config) as staticcode:
-                LOGGER.info("inplace(%r, %r)", str(tplfilepaths[0]) if tplfilepaths else None, str(filepath))
-                context = self._get_render_context(filepath, context, staticcode, comment_sep, inplace=True)
-                inplace.render(lookup, filepath, outputfile, context)
+                rendercontext = self._get_render_context(filepath, context, staticcode, comment_sep, inplace=True)
+                inplace.render(lookup, filepath, outputfile, rendercontext)
+
+    def _create_inplace(
+        self, inplace: InplaceRenderer, filepath: Path, config: Config, comment_sep: str, context: dict
+    ):
+        func = inplace.get_func("create_inplace")
+        if func:
+            staticcode = StaticCode.from_config(config, comment_sep)
+            rendercontext = self._get_render_context(filepath, context, staticcode, comment_sep, inplace=True)
+            buffer = io.StringIO()
+            try:
+                func.render_context(Context(buffer, **rendercontext))
+            except Exception as exc:
+                debug = str(text_error_template().render())
+                raise MakolatorError(f"Function 'create_inplace' invocation failed. {exc!r}. {debug}") from exc
+            with self.open_outputfile(filepath, existing=Existing.KEEP_TIMESTAMP, newline="") as outputfile:
+                outputfile.write(buffer.getvalue())
+        else:
+            raise MakolatorError("None of the templates implements 'create_inplace'")
 
     def _create_templates(self, tplfilepaths: list[Path], lookup: TemplateLookup) -> Generator[Template, None, None]:
         for tplfilepath in tplfilepaths:

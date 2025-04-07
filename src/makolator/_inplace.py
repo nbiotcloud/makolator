@@ -174,14 +174,24 @@ class InplaceRenderer:
                 line = line[prelen:]
             tinfo.lines.append(line)
 
+    def get_func(self, funcname: str):
+        """Retrieve `funcname` from templates."""
+        return self._get_func(list(self.templates), funcname)
+
+    @staticmethod
+    def _get_func(templates: list[Template], funcname: str):
+        for template in templates:
+            try:
+                return template.get_def(funcname)
+            except AttributeError:  # noqa: PERF203
+                continue
+        return None
+
     def _start_inplace(
         self, templates: list[Template], filepath: Path, lineno: int, indent: str, funcname: str, args: str
     ) -> InplaceInfo | None:
-        for template in templates:
-            try:
-                func = template.get_def(funcname)
-            except AttributeError:
-                continue
+        func = self._get_func(templates, funcname)
+        if func:
             end = re.compile(rf"(?P<indent>\s*).*{self.config.inplace_marker}\s+END\s{funcname}")
             return InplaceInfo(lineno, indent, funcname, args, func, end)
         if not self.ignore_unknown:

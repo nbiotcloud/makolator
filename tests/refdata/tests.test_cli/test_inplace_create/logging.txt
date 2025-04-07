@@ -1,0 +1,2 @@
+INFO     makolator  create inplace('$PRJ/tests/testdata/inplace-create.txt.mako', '$GEN/inplace.txt')
+INFO     makolator  inplace('$PRJ/tests/testdata/inplace-create.txt.mako', '$GEN/inplace.txt')

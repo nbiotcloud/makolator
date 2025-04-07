@@ -4,6 +4,7 @@ usage: makolator inplace [-h] [--ignore-unknown] [--verbose] [--show-diff]
                          [--template-path TEMPLATE_PATH]
                          [--marker-fill MARKER_FILL]
                          [--marker-linelength MARKER_LINELENGTH] [--eol EOL]
+                         [--create]
                          [templates ...] inplace
 
 positional arguments:
@@ -27,6 +28,7 @@ options:
   --marker-linelength MARKER_LINELENGTH
                         Static Code, Inplace and Template Marker are filled until --marker-linelength.
   --eol, -E EOL         EOL comment on generated lines
+  --create, -c          Create Missing Inplace File
 
 Update with inplace template only:
 

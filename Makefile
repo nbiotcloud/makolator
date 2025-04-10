@@ -52,6 +52,7 @@ doc-static:  .venv/.valid ## Static Documentation Content
 	cd docs/static && cp inplace-mako-pre.txt inplace-mako.txt && ${ENV} makolator inplace inplace-mako.txt
 	cd docs/static && ${ENV} makolator gen test.txt.mako test.txt
 	cd docs/static && cp static-pre.txt static.txt && ${ENV} makolator gen static.txt.mako static.txt
+	cd docs/static && ${ENV} makolator inplace inplace-create.txt.mako file-create.txt -c
 
 
 .PHONY: doc-serve

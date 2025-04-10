@@ -80,6 +80,26 @@ An inplace update (``makolator inplace inplace.txt.mako file.txt``) will result 
   ```
 
 
+## Inplace Skeleton
+
+The inplce code generation is a powerful mechanism.
+There is only the challenge to create a proper file with
+placeholders at the beginning.
+A template is allowed to serve a `<%def name="create_inplace()">`:
+
+```text
+--8<-- "docs/static/inplace-create.txt.mako"
+```
+
+A missing inplace file is an error by default.
+The `-c` option activates the `create_inplace` mechanism:
+``makolator inplace inplace-create.txt.mako file-create.txt -c``
+
+```text
+--8<-- "docs/static/file-create.txt"
+```
+
+
 ## Inplace Template
 
 The file can contain templates too:

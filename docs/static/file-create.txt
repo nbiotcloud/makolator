@@ -1,0 +1,12 @@
+-- GENERATE INPLACE BEGIN afunc("foo2")
+file-create.txt
+pos=foo2
+
+-- GENERATE INPLACE END afunc
+manually maintained code goes here
+this is just the default
+-- GENERATE INPLACE BEGIN afunc("foo3")
+file-create.txt
+pos=foo3
+
+-- GENERATE INPLACE END afunc

@@ -24,7 +24,8 @@
 r"""
 Extended Mako Templates for Python.
 
-Makolator is not makulation. It extends the https://www.makotemplates.org/ engine by the following features:
+Makolator is not makulation. It extends the [mako template engine](https://www.makotemplates.org/) by the following
+features:
 
 * Simple API
 * Keep timestamp of generated files, if content did not change (a gift for every build system user)
@@ -35,7 +36,7 @@ This is how to use it
 
 ## Initialize
 
-Just create your instance of :any:`Makolator`
+Just create your instance of [`Makolator`](#makolator.Makolator)
 
     >>> from makolator import Makolator
     >>> mklt = Makolator()
@@ -43,13 +44,13 @@ Just create your instance of :any:`Makolator`
 ## Configure
 
 The config attribute contains all settings.
-See :any:`Config` for a complete documentation.
+See [`Config`](#makolator.Config) for a complete documentation.
 The most relevant settings are search paths for general templates ...
 
     >>> mklt.config.template_paths
     []
 
-... and the replacement strategy for :any:`outputfile.Existing` files:
+... and the replacement strategy for `outputfile.Existing` files:
 
     >>> mklt.config.existing
     <Existing.KEEP_TIMESTAMP: 'keep_timestamp'>
@@ -80,7 +81,7 @@ Assume you have this template in a file
     ... ${bot('foo', b=4)}\\
     ... ''') and None
 
-:any:`gen` use ``sys.stdout`` by default ...
+`gen` uses ``sys.stdout`` by default ...
 
     >>> mklt.gen([Path('file.txt.mako')])
     Datamodel()
@@ -96,7 +97,7 @@ Assume you have this template in a file
 
 ## Datamodel
 
-The :any:`Datamodel` is your container to forward data to the template.
+The [`Datamodel`](#makolator.Datamodel) is your container to forward data to the template.
 
     >>> mklt.datamodel.mydata = {'a': 0, 'b': 1}
 

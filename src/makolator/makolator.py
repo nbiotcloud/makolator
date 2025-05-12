@@ -30,7 +30,7 @@ A simple API to an improved Mako.
 import hashlib
 import io
 import tempfile
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
@@ -163,6 +163,43 @@ class Makolator:
         """
         template_filepaths = norm_paths(template_filepaths)
         LOGGER.debug("_gen(%r, %r)", [str(filepath) for filepath in template_filepaths], str(dest or "STDOUT"))
+        is_recursive = any(path.is_dir() for path in template_filepaths)
+        if is_recursive:
+            self._check_recursive(template_filepaths, dest)
+            datamodel = self.datamodel
+            for tplbasepath, path in self._iter_recursive(template_filepaths):
+                tplpath = tplbasepath / path
+                outpath = dest / Template(str(path).removesuffix(".mako")).render(datamodel=datamodel)
+                if tplpath.name.endswith(".mako"):
+                    self._gen_file([tplpath], outpath, context)
+                else:
+                    with self.open_outputfile(outpath) as output:
+                        output.write(tplpath.read_text())
+        else:
+            self._gen_file(template_filepaths, dest, context)
+
+    @staticmethod
+    def _check_recursive(template_filepaths: list[Path], dest: Path | None = None):
+        if dest:
+            if not dest.exists() or not dest.is_dir():
+                raise ValueError(f"Destination ({str(dest)!r}) must not exists or has to be a directory")
+        else:
+            raise ValueError("Destination is required")
+        if not all(path.is_dir() or not path.exists() for path in template_filepaths):
+            raise ValueError("All templates must not exist or have to be a directory")
+
+    @staticmethod
+    def _iter_recursive(template_paths: list[Path]) -> Iterator[tuple[Path, Path]]:
+        for basepath in template_paths:
+            paths = sorted(basepath.glob("**/*"))
+            if not paths:
+                continue
+            for path in paths:
+                if path.is_file():
+                    yield basepath, path.relative_to(basepath)
+            break
+
+    def _gen_file(self, template_filepaths: list[Path], dest: Path | None = None, context: dict | None = None):
         tplfilepaths, lookup = self._create_template_lookup(
             template_filepaths, self.config.template_paths, required=True
         )

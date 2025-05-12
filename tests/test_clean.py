@@ -30,6 +30,15 @@ from makolator._util import iter_files
 
 
 @fixture
+def mklt():
+    """Makolator."""
+    mklt = Makolator()
+    mklt.config.track = True
+    mklt.config.verbose = True
+    return mklt
+
+
+@fixture
 def example(tmp_path):
     """Example File Structure."""
     onedir = tmp_path / "one"
@@ -66,9 +75,8 @@ def test_find_files(example):
     )
 
 
-def test_clean(example):
+def test_clean(example, mklt, capsys):
     """Clean Operation."""
-    mklt = Makolator()
     onefile = example / "one" / "one.txt"
     secfile = example / "sec.txt"
     thirdfile = example / "third.txt"
@@ -82,11 +90,16 @@ def test_clean(example):
     assert not fourfile.exists()
 
     assert mklt.tracker.stat == "4 files. 2 identical. untouched. 2 REMOVED."
+    assert capsys.readouterr().out.splitlines() == [
+        f"'{onefile}'... identical. untouched.",
+        f"'{fourfile}'... REMOVED.",
+        f"'{secfile}'... REMOVED.",
+        f"'{thirdfile}'... identical. untouched.",
+    ]
 
 
-def test_remove_files(example):
+def test_remove_files(example, mklt, capsys):
     """Remove Files."""
-    mklt = Makolator()
     onefile = example / "one" / "one.txt"
     secfile = example / "sec.txt"
     thirdfile = example / "third.txt"
@@ -100,11 +113,12 @@ def test_remove_files(example):
     assert fourfile.exists()
 
     assert mklt.tracker.stat == "1 files. 1 REMOVED."
+    assert capsys.readouterr().out.splitlines() == [f"'{onefile}'... REMOVED."]
 
 
-def test_remove(example):
+def test_remove(example, mklt, capsys):
     """Remove Directories."""
-    mklt = Makolator()
+    binfile = example / "one" / "file.bin"
     onefile = example / "one" / "one.txt"
     secfile = example / "sec.txt"
     thirdfile = example / "third.txt"
@@ -118,14 +132,19 @@ def test_remove(example):
     assert not fourfile.exists()
 
     assert mklt.tracker.stat == "3 files. 3 REMOVED."
+    assert capsys.readouterr().out.splitlines() == [
+        f"'{binfile}'... REMOVED.",
+        f"'{onefile}'... REMOVED.",
+        f"'{fourfile}'... REMOVED.",
+    ]
 
 
-def test_remove_failed(example):
+def test_remove_failed(example, mklt, capsys):
     """Remove Failed."""
-    mklt = Makolator()
     onefile = example / "one" / "one.txt"
 
     onefile.unlink()
     mklt._remove_file(onefile)
 
     assert mklt.tracker.stat == "1 files. 1 FAILED."
+    assert capsys.readouterr().out.splitlines() == [f"'{onefile!s}'... FAILED."]

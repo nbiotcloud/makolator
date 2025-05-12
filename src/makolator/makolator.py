@@ -110,10 +110,10 @@ class Makolator:
     def _remove_file(self, filepath: Path):
         try:
             filepath.unlink()
-            self.tracker.add(filepath, AddState.REMOVED)
+            self._track_state(filepath, AddState.REMOVED)
 
         except (PermissionError, FileNotFoundError):
-            self.tracker.add(filepath, State.FAILED)
+            self._track_state(filepath, State.FAILED)
 
     @contextmanager
     def open_outputfile(self, filepath: Path, encoding: str = "utf-8", **kwargs):
@@ -145,10 +145,15 @@ class Makolator:
                 yield file
             state = file.state
         finally:
-            if config.track:
-                self.tracker.add(filepath, state)
-            if config.verbose:
-                print(f"'{filepath!s}'... {state.value}")
+            self._track_state(filepath, state)
+
+    def _track_state(self, filepath: Path, state: State) -> None:
+        # Track State
+        config = self.config
+        if config.track:
+            self.tracker.add(filepath, state)
+        if config.verbose:
+            print(f"'{filepath!s}'... {state.value}")
 
     def gen(self, template_filepaths: Paths, dest: Path | None = None, context: dict | None = None):
         """
@@ -349,7 +354,7 @@ ${helper.run(*args, **kwargs)}\
             if is_fully_generated:
                 self._remove_file(filepath)
             elif is_fully_generated is False:
-                self.tracker.add(filepath, State.IDENTICAL)
+                self._track_state(filepath, State.IDENTICAL)
 
     def is_fully_generated(self, filepath: Path) -> bool | None:
         """Check If File Is Fully Generated."""

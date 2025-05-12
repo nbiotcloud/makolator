@@ -264,3 +264,11 @@ def test_undefined(tmp_path, mklt):
     filepath = tmp_path / "undefined.txt"
     with raises(NameError):
         mklt.gen([Path("undefined.txt.mako")], filepath)
+
+
+def test_gen_recursive(tmp_path):
+    """Recursive Rendering."""
+    mklt = Makolator()
+    mklt.datamodel.name = "some-name"
+    mklt.gen([TESTDATA / "gen-recursive"], tmp_path)
+    assert_refdata(test_gen_recursive, tmp_path)

@@ -50,8 +50,3 @@ class Datamodel:
     def __repr__(self):
         kwargs = ", ".join(f"{key}={value!r}" for key, value in self.__dict__.items())
         return f"{self.__class__.__name__}({kwargs})"
-
-    def __eq__(self, other):
-        if self.__class__ == other.__class__:
-            return self.__dict__ == other.__dict__
-        return NotImplemented

@@ -37,7 +37,7 @@ def test_makolator():
     """Basic Testing On Makolator."""
     mkl = Makolator()
     assert mkl.config == Config()
-    assert mkl.datamodel == Datamodel()
+    assert isinstance(mkl.datamodel, Datamodel)
     assert mkl.tracker == Tracker()
 
 

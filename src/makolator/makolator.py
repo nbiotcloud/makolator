@@ -186,7 +186,7 @@ class Makolator:
     @staticmethod
     def _check_recursive(template_filepaths: list[Path], dest: Path | None = None):
         if dest:
-            if not dest.exists() or not dest.is_dir():
+            if dest.exists() and not dest.is_dir():
                 raise ValueError(f"Destination ({str(dest)!r}) must not exists or has to be a directory")
         else:
             raise ValueError("Destination is required")

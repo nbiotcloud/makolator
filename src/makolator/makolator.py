@@ -178,15 +178,23 @@ class Makolator:
                 if tplpath.name.endswith(".mako"):
                     self._gen_file([tplpath], outpath, context)
                 else:
-                    with self.open_outputfile(outpath) as output:
-                        output.write(tplpath.read_text())
+                    try:
+                        text = tplpath.read_text()
+                    except ValueError:
+                        text = None
+                    if text is None:
+                        with self.open_outputfile(outpath, mode="wb", encoding=None) as output:  # type: ignore[arg-type]
+                            output.write(tplpath.read_bytes())
+                    else:
+                        with self.open_outputfile(outpath, mode="w") as output:
+                            output.write(text)
         else:
             self._gen_file(template_filepaths, dest, context)
 
     @staticmethod
     def _check_recursive(template_filepaths: list[Path], dest: Path | None = None):
         if dest:
-            if not dest.exists() or not dest.is_dir():
+            if dest.exists() and not dest.is_dir():
                 raise ValueError(f"Destination ({str(dest)!r}) must not exists or has to be a directory")
         else:
             raise ValueError("Destination is required")

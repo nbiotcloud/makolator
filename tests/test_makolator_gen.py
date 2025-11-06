@@ -28,7 +28,7 @@ import time
 from pathlib import Path
 from shutil import copyfile
 
-from pytest import approx, fixture, raises
+from pytest import approx, fixture, mark, raises
 from test2ref import assert_paths, assert_refdata
 
 from makolator import Config, Makolator, MakolatorError
@@ -264,3 +264,15 @@ def test_undefined(tmp_path, mklt):
     filepath = tmp_path / "undefined.txt"
     with raises(NameError):
         mklt.gen([Path("undefined.txt.mako")], filepath)
+
+
+@mark.parametrize("existing", (False, True))
+def test_gen_recursive(tmp_path, existing: bool):
+    """Recursive Rendering."""
+    mklt = Makolator()
+    mklt.datamodel.name = "some-name"  # type: ignore[attr-defined]
+    gen_path = tmp_path / "gen"
+    if existing:
+        gen_path.mkdir()
+    mklt.gen([TESTDATA / "gen-recursive"], gen_path)
+    assert_refdata(test_gen_recursive, gen_path)

@@ -30,7 +30,7 @@ A simple API to an improved Mako.
 import hashlib
 import io
 import tempfile
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from shutil import rmtree
@@ -110,10 +110,10 @@ class Makolator:
     def _remove_file(self, filepath: Path):
         try:
             filepath.unlink()
-            self.tracker.add(filepath, AddState.REMOVED)
+            self._track_state(filepath, AddState.REMOVED)
 
         except (PermissionError, FileNotFoundError):
-            self.tracker.add(filepath, State.FAILED)
+            self._track_state(filepath, State.FAILED)
 
     @contextmanager
     def open_outputfile(self, filepath: Path, encoding: str = "utf-8", **kwargs):
@@ -145,10 +145,15 @@ class Makolator:
                 yield file
             state = file.state
         finally:
-            if config.track:
-                self.tracker.add(filepath, state)
-            if config.verbose:
-                print(f"'{filepath!s}'... {state.value}")
+            self._track_state(filepath, state)
+
+    def _track_state(self, filepath: Path, state: State) -> None:
+        # Track State
+        config = self.config
+        if config.track:
+            self.tracker.add(filepath, state)
+        if config.verbose:
+            print(f"'{filepath!s}'... {state.value}")
 
     def gen(self, template_filepaths: Paths, dest: Path | None = None, context: dict | None = None):
         """
@@ -163,6 +168,51 @@ class Makolator:
         """
         template_filepaths = norm_paths(template_filepaths)
         LOGGER.debug("_gen(%r, %r)", [str(filepath) for filepath in template_filepaths], str(dest or "STDOUT"))
+        is_recursive = any(path.is_dir() for path in template_filepaths)
+        if is_recursive:
+            self._check_recursive(template_filepaths, dest)
+            datamodel = self.datamodel
+            for tplbasepath, path in self._iter_recursive(template_filepaths):
+                tplpath = tplbasepath / path
+                outpath = dest / Template(str(path).removesuffix(".mako")).render(datamodel=datamodel)
+                if tplpath.name.endswith(".mako"):
+                    self._gen_file([tplpath], outpath, context)
+                else:
+                    try:
+                        text = tplpath.read_text()
+                    except ValueError:
+                        text = None
+                    if text is None:
+                        with self.open_outputfile(outpath, mode="wb", encoding=None) as output:  # type: ignore[arg-type]
+                            output.write(tplpath.read_bytes())
+                    else:
+                        with self.open_outputfile(outpath, mode="w") as output:
+                            output.write(text)
+        else:
+            self._gen_file(template_filepaths, dest, context)
+
+    @staticmethod
+    def _check_recursive(template_filepaths: list[Path], dest: Path | None = None):
+        if dest:
+            if dest.exists() and not dest.is_dir():
+                raise ValueError(f"Destination ({str(dest)!r}) must not exists or has to be a directory")
+        else:
+            raise ValueError("Destination is required")
+        if not all(path.is_dir() or not path.exists() for path in template_filepaths):
+            raise ValueError("All templates must not exist or have to be a directory")
+
+    @staticmethod
+    def _iter_recursive(template_paths: list[Path]) -> Iterator[tuple[Path, Path]]:
+        for basepath in template_paths:
+            paths = sorted(basepath.glob("**/*"))
+            if not paths:
+                continue
+            for path in paths:
+                if path.is_file():
+                    yield basepath, path.relative_to(basepath)
+            break
+
+    def _gen_file(self, template_filepaths: list[Path], dest: Path | None = None, context: dict | None = None):
         tplfilepaths, lookup = self._create_template_lookup(
             template_filepaths, self.config.template_paths, required=True
         )
@@ -349,7 +399,7 @@ ${helper.run(*args, **kwargs)}\
             if is_fully_generated:
                 self._remove_file(filepath)
             elif is_fully_generated is False:
-                self.tracker.add(filepath, State.IDENTICAL)
+                self._track_state(filepath, State.IDENTICAL)
 
     def is_fully_generated(self, filepath: Path) -> bool | None:
         """Check If File Is Fully Generated."""

@@ -38,7 +38,7 @@ dependencies = [
     "aligntext>=1.0.3",
     "attrs>=23.1.0",
     "mako>=1.3.9",
-    "outputfile>=1.2.0",
+    "outputfile>=1.3.0",
     "uniquer>=1.0.5",
 ]
 

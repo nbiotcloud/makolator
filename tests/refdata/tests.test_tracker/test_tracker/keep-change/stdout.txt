@@ -1,4 +1,5 @@
 'file.txt'... CREATED.
 'file.txt'... existing. SKIPPED.
 'exc.txt'... FAILED.
-3 files. 1 CREATED. 1 existing. SKIPPED. 1 FAILED.
+'file.txt'... REMOVED.
+4 files. 1 CREATED. 1 existing. SKIPPED. 1 FAILED. 1 REMOVED.

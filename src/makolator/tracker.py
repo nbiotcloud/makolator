@@ -111,4 +111,4 @@ class Tracker:
     @property
     def removed(self) -> int:
         """Files Removed."""
-        return self._stat["rm"]
+        return self._stat[AddState.REMOVED]

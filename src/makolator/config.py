@@ -27,7 +27,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from attrs import define
-from outputfile import Existing
+from outputfile import Existing, Hookup
 
 COMMENT_MAP_DEFAULT = {
     ".c": "//",
@@ -121,3 +121,16 @@ class Config:
 
     tag_lines: int = 50
     """Number Of Lines Within A Files to look for Tags."""
+
+    pre_create: Hookup | None = None
+    """Function called before opening a file for creating."""
+    post_create: Hookup | None = None
+    """Function called after creating."""
+    pre_update: Hookup | None = None
+    """Function called before opening a file for update."""
+    post_update: Hookup | None = None
+    """Function called after writing."""
+    pre_remove: Hookup | None = None
+    """Function called removing a file."""
+    post_remove: Hookup | None = None
+    """Function called removing a file."""

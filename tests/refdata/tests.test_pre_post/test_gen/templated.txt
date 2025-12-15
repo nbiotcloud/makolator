@@ -1,2 +1,1 @@
-('@generated', '@fully-generated')
 I am a template using Datamodel(name='some-name').

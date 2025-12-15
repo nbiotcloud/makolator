@@ -471,7 +471,7 @@ requires-dist = [
     { name = "aligntext", specifier = ">=1.0.3" },
     { name = "attrs", specifier = ">=23.1.0" },
     { name = "mako", specifier = ">=1.3.9" },
-    { name = "outputfile", specifier = ">=1.2.0" },
+    { name = "outputfile", specifier = ">=1.3.2" },
     { name = "uniquer", specifier = ">=1.0.5" },
 ]
 
@@ -812,11 +812,14 @@ wheels = [
 
 [[package]]
 name = "outputfile"
-version = "1.2.0"
+version = "1.3.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ad/1d/1a2cad0ee6f5a254fd030f721e1270c9204d75e26a305b03390428226f46/outputfile-1.2.0.tar.gz", hash = "sha256:17b1a7cb9da17e0965f24908559c0d24129d4db3c85cb4fa666b6fe2c51fd827", size = 7614, upload-time = "2025-11-06T08:24:28.648Z" }
+dependencies = [
+    { name = "mkdocstrings" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e9/57/b54f1aedcc8c357922c7927ff28de35beb376f204dac67b111cb26828aae/outputfile-1.3.2.tar.gz", hash = "sha256:cf01a53878030cf46bf96383e1fb063f1798cd16b554d6cf2adb1ed07411fdbe", size = 8336, upload-time = "2025-12-14T20:19:24.935Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/55/7b/51ca9df8811a9f4633538ebeae7e32bc2c2d2b2d971d53f29eaab4d2e1e2/outputfile-1.2.0-py3-none-any.whl", hash = "sha256:bb1ab579b785a302df6d712a5b7c0af3d2d00c2629ea02eb3eba82331546cceb", size = 6138, upload-time = "2025-11-06T08:24:27.623Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/f7/65c987b1d803eb90a31bcb0f305b1e0fdb08f003f6d8bb58fbb0c92a5d9e/outputfile-1.3.2-py3-none-any.whl", hash = "sha256:4920c3038e8f0b4884e26a01040d0713ddd44f4c2190b7bf9a6afced7d3d7f4c", size = 6448, upload-time = "2025-12-14T20:19:24.242Z" },
 ]
 
 [[package]]

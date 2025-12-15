@@ -55,10 +55,35 @@ def test_config():
     assert config.inplace_marker == "GENERATE INPLACE"
     assert config.template_marker == "MAKO TEMPLATE"
     assert config.static_marker == "STATIC"
+    assert config.pre_create is None
+    assert config.post_create is None
+    assert config.pre_update is None
+    assert config.post_update is None
+    assert config.pre_remove is None
+    assert config.post_remove is None
 
 
 def test_config_modified():
     """Modified Configuration."""
+
+    def pre_create(filepath):
+        pass
+
+    def post_create(filepath):
+        pass
+
+    def pre_update(filepath):
+        pass
+
+    def post_update(filepath):
+        pass
+
+    def pre_remove(filepath):
+        pass
+
+    def post_remove(filepath):
+        pass
+
     config = Config(
         template_paths=[Path("foo"), Path("bar")],
         existing=Existing.KEEP,
@@ -67,6 +92,12 @@ def test_config_modified():
         inplace_marker="INP",
         template_marker="TPL",
         static_marker="STAT",
+        pre_create=pre_create,
+        post_create=post_create,
+        pre_update=pre_update,
+        post_update=post_update,
+        pre_remove=pre_remove,
+        post_remove=post_remove,
     )
 
     assert config.template_paths == [Path("foo"), Path("bar")]
@@ -78,3 +109,9 @@ def test_config_modified():
     assert config.inplace_marker == "INP"
     assert config.template_marker == "TPL"
     assert config.static_marker == "STAT"
+    assert config.pre_create is pre_create
+    assert config.post_create is post_create
+    assert config.pre_update is pre_update
+    assert config.post_update is post_update
+    assert config.pre_remove is pre_remove
+    assert config.post_remove is post_remove

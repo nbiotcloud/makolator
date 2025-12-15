@@ -25,6 +25,6 @@
 Command Line Interface.
 """
 
-from makolator.cli import main
+from makolator.cli import main  # pragma: no cover
 
-main()
+main()  # pragma: no cover

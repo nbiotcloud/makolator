@@ -222,8 +222,6 @@ class Makolator:
     def _iter_recursive(template_paths: list[Path]) -> Iterator[tuple[Path, Path]]:
         for basepath in template_paths:
             paths = sorted(basepath.glob("**/*"))
-            if not paths:
-                continue
             for path in paths:
                 if path.is_file():
                     yield basepath, path.relative_to(basepath)

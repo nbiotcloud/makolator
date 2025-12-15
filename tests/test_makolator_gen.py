@@ -276,3 +276,18 @@ def test_gen_recursive(tmp_path, existing: bool):
         gen_path.mkdir()
     mklt.gen([TESTDATA / "gen-recursive"], gen_path)
     assert_refdata(test_gen_recursive, gen_path)
+
+
+def test_gen_recursive_fail(tmp_path):
+    """Exceptions In Recursive Mode."""
+    mklt = Makolator()
+    gen_path = tmp_path / "gen"
+    with raises(ValueError, match=re.escape("Destination is required")):
+        mklt.gen([TESTDATA / "gen-recursive"])
+    with raises(MakolatorError, match=re.escape("None of the templates")):
+        mklt.gen([TESTDATA / "gen-recursive-missing"], gen_path)
+
+    # gen_path is file
+    gen_path.touch()
+    with raises(ValueError, match=re.compile("Destination .* must not exists or has to be a directory")):
+        mklt.gen([TESTDATA / "gen-recursive"], gen_path)

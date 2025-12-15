@@ -108,8 +108,14 @@ class Makolator:
             self._remove_file(filepath)
 
     def _remove_file(self, filepath: Path):
+        pre_remove = self.config.pre_remove
+        post_remove = self.config.post_remove
         try:
+            if pre_remove:
+                pre_remove(filepath)
             filepath.unlink()
+            if post_remove:
+                post_remove(filepath)
             self._track_state(filepath, AddState.REMOVED)
 
         except (PermissionError, FileNotFoundError):
@@ -141,7 +147,17 @@ class Makolator:
         kwargs.setdefault("existing", config.existing)
         state = State.FAILED
         try:
-            with open_(filepath, encoding=encoding, mkdir=True, diffout=self.config.diffout, **kwargs) as file:
+            with open_(
+                filepath,
+                encoding=encoding,
+                mkdir=True,
+                diffout=self.config.diffout,
+                pre_create=config.pre_create,
+                post_create=config.post_create,
+                pre_update=config.pre_update,
+                post_update=config.post_update,
+                **kwargs,
+            ) as file:
                 yield file
             state = file.state
         finally:
@@ -178,6 +194,7 @@ class Makolator:
                 if tplpath.name.endswith(".mako"):
                     self._gen_file([tplpath], outpath, context)
                 else:
+                    # automatically detect binary mode
                     try:
                         text = tplpath.read_text()
                     except ValueError:
@@ -205,8 +222,6 @@ class Makolator:
     def _iter_recursive(template_paths: list[Path]) -> Iterator[tuple[Path, Path]]:
         for basepath in template_paths:
             paths = sorted(basepath.glob("**/*"))
-            if not paths:
-                continue
             for path in paths:
                 if path.is_file():
                     yield basepath, path.relative_to(basepath)

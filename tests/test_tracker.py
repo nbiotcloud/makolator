@@ -23,6 +23,8 @@
 #
 """Tracker Testing."""
 
+from pathlib import Path
+
 from contextlib_chdir import chdir
 from pytest import mark, raises
 from test2ref import assert_refdata
@@ -36,23 +38,29 @@ def test_tracker(tmp_path, capsys, existing, update):
     """Test Tracker."""
     mkl = Makolator(config=Config(verbose=True, existing=existing, track=True))
     with chdir(tmp_path):
-        with mkl.open_outputfile("file.txt") as file:
+        filepath = Path("file.txt")
+        with mkl.open_outputfile(filepath) as file:
             file.write("content")
 
         if existing == Existing.ERROR:
             with raises(FileExistsError):
-                with mkl.open_outputfile("file.txt") as file:
+                with mkl.open_outputfile(filepath) as file:
                     file.write(update)
         else:
-            with mkl.open_outputfile("file.txt") as file:
+            with mkl.open_outputfile(filepath) as file:
                 file.write(update)
 
         with raises(RuntimeError):
             with mkl.open_outputfile("exc.txt"):
                 raise RuntimeError
 
+        assert (
+            filepath.read_text() == update if existing in (Existing.KEEP_TIMESTAMP, Existing.OVERWRITE) else "content"
+        )
+        mkl.remove(filepath)
+
     tracker = mkl.tracker
-    assert tracker.total == 3
+    assert tracker.total == 4
     assert tracker.created == 1
     assert tracker.updated == (1 if update == "change" and existing == Existing.KEEP_TIMESTAMP else 0)
     assert tracker.identical == (1 if update == "content" and existing == Existing.KEEP_TIMESTAMP else 0)
@@ -60,6 +68,7 @@ def test_tracker(tmp_path, capsys, existing, update):
     assert tracker.identical == (1 if update == "content" and existing == Existing.KEEP_TIMESTAMP else 0)
     assert tracker.existing == (1 if existing == Existing.KEEP else 0)
     assert tracker.failed == (2 if existing == Existing.ERROR else 1)
+    assert tracker.removed == 1
 
     print(tracker.stat)
 

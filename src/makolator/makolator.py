@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023-2025 nbiotcloud
+# Copyright (c) 2023-2026 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -182,6 +182,7 @@ class Makolator:
             dest: Output File.
             context: Key-Value Pairs pairs forwarded to the template.
         """
+        excludes = self.config.excludes
         template_filepaths = norm_paths(template_filepaths)
         LOGGER.debug("_gen(%r, %r)", [str(filepath) for filepath in template_filepaths], str(dest or "STDOUT"))
         is_recursive = any(path.is_dir() for path in template_filepaths)
@@ -190,7 +191,10 @@ class Makolator:
             datamodel = self.datamodel
             for tplbasepath, path in self._iter_recursive(template_filepaths):
                 tplpath = tplbasepath / path
-                outpath = dest / Template(str(path).removesuffix(".mako")).render(datamodel=datamodel)
+                out = Template(str(path).removesuffix(".mako")).render(datamodel=datamodel)
+                outpath = dest / out
+                if not out or any(outpath.match(exclude) for exclude in excludes):
+                    continue
                 if tplpath.name.endswith(".mako"):
                     self._gen_file([tplpath], outpath, context)
                 else:
@@ -218,8 +222,7 @@ class Makolator:
         if not all(path.is_dir() or not path.exists() for path in template_filepaths):
             raise ValueError("All templates must not exist or have to be a directory")
 
-    @staticmethod
-    def _iter_recursive(template_paths: list[Path]) -> Iterator[tuple[Path, Path]]:
+    def _iter_recursive(self, template_paths: list[Path]) -> Iterator[tuple[Path, Path]]:
         for basepath in template_paths:
             paths = sorted(basepath.glob("**/*"))
             for path in paths:

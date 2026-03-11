@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023-2025 nbiotcloud
+# Copyright (c) 2023-2026 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,13 @@ class Config:
 
     tag_lines: int = 50
     """Number Of Lines Within A Files to look for Tags."""
+
+    excludes: tuple[str, ...] = ()
+    """
+    Exclude Patterns for Directory Handling.
+
+    See https://docs.python.org/3/library/pathlib.html#pathlib-pattern-language
+    """
 
     pre_create: Hookup | None = None
     """Function called before opening a file for creating."""

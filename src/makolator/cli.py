@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023-2025 nbiotcloud
+# Copyright (c) 2023-2026 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -138,6 +138,12 @@ The number of inspected lines at the top of a file is defined by --tag_lines.
             help=("Static Code, Inplace and Template Marker are filled until --marker-linelength."),
         )
         sub.add_argument("--eol", "-E", help="EOL comment on generated lines")
+        sub.add_argument(
+            "--exclude",
+            "-x",
+            action="append",
+            help="Exclude Pattern For Recursive Directory Generation",
+        )
         sub.add_argument("--create", "-c", action="store_true", default=False, help="Create Missing Inplace File")
 
     args = parser.parse_args(args=args)
@@ -161,6 +167,7 @@ The number of inspected lines at the top of a file is defined by --tag_lines.
                 inplace_eol_comment=args.eol,
                 tag_lines=args.tag_lines,
                 track=args.stat,
+                excludes=tuple(args.exclude or ()),
             )
         info = Info(cli=get_cli())
         mklt = Makolator(config=config, info=info)

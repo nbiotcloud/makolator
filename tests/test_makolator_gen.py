@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023-2025 nbiotcloud
+# Copyright (c) 2023-2026 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -266,16 +266,23 @@ def test_undefined(tmp_path, mklt):
         mklt.gen([Path("undefined.txt.mako")], filepath)
 
 
+EXCLUDES = (None, ("*.txt", "*.docx"), ("empty.txt", "sub/*"))
+
+
 @mark.parametrize("existing", (False, True))
-def test_gen_recursive(tmp_path, existing: bool):
+@mark.parametrize("excludeidx", range(len(EXCLUDES)))
+def test_gen_recursive(tmp_path, existing: bool, excludeidx: int):
     """Recursive Rendering."""
     mklt = Makolator()
     mklt.datamodel.name = "some-name"  # type: ignore[attr-defined]
+    excludes = EXCLUDES[excludeidx]
+    if excludes:
+        mklt.config.excludes = excludes
     gen_path = tmp_path / "gen"
     if existing:
         gen_path.mkdir()
     mklt.gen([TESTDATA / "gen-recursive"], gen_path)
-    assert_refdata(test_gen_recursive, gen_path)
+    assert_refdata(test_gen_recursive, gen_path, flavor=str(excludeidx))
 
 
 def test_gen_recursive_fail(tmp_path):

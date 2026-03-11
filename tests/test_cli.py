@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2023-2025 nbiotcloud
+# Copyright (c) 2023-2026 nbiotcloud
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,12 @@ def test_gen_stat(tmp_path, capsys):
     """Gen."""
     main(["gen", str(TESTDATA / "test.txt.mako"), str(tmp_path / "test.txt"), "--stat"])
     assert_refdata(test_gen_stat, tmp_path, capsys=capsys)
+
+
+def test_gen_exclude(tmp_path, capsys):
+    """Gen."""
+    main(["gen", str(TESTDATA / "gen-recursive2"), str(tmp_path), "--exclude", "*.xlsx", "-x", "sub/*"])
+    assert_refdata(test_gen_exclude, tmp_path, capsys=capsys)
 
 
 def test_inplace(tmp_path, capsys):

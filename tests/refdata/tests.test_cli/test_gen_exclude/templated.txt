@@ -1,0 +1,2 @@
+('@generated', '@fully-generated')
+I am a template using Datamodel().

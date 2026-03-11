@@ -122,6 +122,13 @@ class Config:
     tag_lines: int = 50
     """Number Of Lines Within A Files to look for Tags."""
 
+    excludes: tuple[str, ...] = ()
+    """
+    Exclude Patterns for Directory Handling.
+
+    See https://docs.python.org/3/library/pathlib.html#pathlib-pattern-language
+    """
+
     pre_create: Hookup | None = None
     """Function called before opening a file for creating."""
     post_create: Hookup | None = None

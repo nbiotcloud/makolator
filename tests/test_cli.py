@@ -50,6 +50,12 @@ def test_gen_stat(tmp_path, capsys):
     assert_refdata(test_gen_stat, tmp_path, capsys=capsys)
 
 
+def test_gen_exclude(tmp_path, capsys):
+    """Gen."""
+    main(["gen", str(TESTDATA / "gen-recursive2"), str(tmp_path), "--exclude", "*.xlsx", "-x", "sub/*"])
+    assert_refdata(test_gen_exclude, tmp_path, capsys=capsys)
+
+
 def test_inplace(tmp_path, capsys):
     """Inplace."""
     filepath = tmp_path / "inplace.txt"
